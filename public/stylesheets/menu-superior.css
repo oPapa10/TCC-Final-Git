@@ -37,3 +37,55 @@
 .nav-link:hover .nav-icon {
     transform: scale(1.1);
 }
+
+/* ===== CONTADOR DE CARRINHO (GLOBAL) ===== */
+.cart-counter {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid white;
+}
+
+.nav-item-cart {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Ajuste para ícones de navegação */
+.nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+/* Efeito hover para itens do menu */
+.nav-item:hover .nav-link {
+    opacity: 0.9;
+}
+
+/* Ajuste responsivo */
+@media (max-width: 768px) {
+    .cart-counter {
+        top: 0;
+        right: 0;
+        width: 18px;
+        height: 18px;
+        font-size: 0.7rem;
+    }
+    
+    .logo-img {
+        height: 150%;
+    }
+}

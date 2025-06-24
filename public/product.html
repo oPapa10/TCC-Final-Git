@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Detalhes do Produto</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./stylesheets/index.css"/>
+    <link rel="stylesheet" href="./stylesheets/menu-superior.css"/>
+    <link rel="stylesheet" href="./stylesheets/footer.css"/>
+    <link rel="stylesheet" href="./stylesheets/product.css"/>
+</head>
+
+<body>
+    <!-- Navbar Superior (original) -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="/">
+                <img src="images/logo.png" alt="Logomarca" class="logo-img" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
+                aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perfil">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
+                        </a>
+                    </li>
+                    <li class="nav-item nav-item-cart"> <!-- Adicionei a classe nav-item-cart -->
+                        <a class="nav-link" href="/carrinho">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
+                            <span id="cartCounter" class="cart-counter"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
+                            role="button" data-bs-toggle="dropdown">
+                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
+                                alt="Opções" class="nav-icon"/>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
+                            <li><a class="dropdown-item" href="#funcionalidade1">Opções</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Central de Ajuda</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    
+    <!-- Conteúdo Principal -->
+    <main class="container mt-5 pt-4">
+        <div class="row">
+            <!-- Galeria de Imagens -->
+            <div class="col-md-6">
+                <div class="main-image mb-3">
+                    <img id="mainProductImage" src="" alt="Imagem do Produto" class="img-fluid rounded">
+                </div>
+                <div class="thumbnail-container">
+                    <div class="thumbnail-item active">
+                        <img src="" alt="Miniatura 1" class="img-thumbnail">
+                    </div>
+                    <div class="thumbnail-item">
+                        <img src="" alt="Miniatura 2" class="img-thumbnail">
+                    </div>
+                    <div class="thumbnail-item">
+                        <img src="" alt="Miniatura 3" class="img-thumbnail">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Informações do Produto -->
+            <div class="col-md-6">
+                <h1 class="product-title"></h1>
+                <div class="rating mb-3">
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star-half-alt checked"></span>
+                    <span class="ms-2">4.5 (128 avaliações)</span>
+                </div>
+                
+                <div class="price-container mb-3">
+                    <span class="current-price"></span>
+                    <span class="original-price"></span>
+                    <span class="discount-badge"></span>
+                </div>
+                
+                <p class="product-description"></p>
+                
+                <div class="details-section mb-4">
+                    <h5 class="section-title">Detalhes do Produto</h5>
+                    <ul class="details-list"></ul>
+                </div>
+                
+                <div class="actions-container">
+                    <div class="quantity-selector mb-3">
+                        <button class="btn btn-outline-secondary quantity-btn" id="decreaseQty">-</button>
+                        <input type="number" id="productQuantity" class="form-control text-center" value="1" min="1">
+                        <button class="btn btn-outline-secondary quantity-btn" id="increaseQty">+</button>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-add-to-cart">
+                        <i class="fas fa-shopping-cart me-2"></i>Adicionar ao Carrinho
+                    </button>
+                    
+                    <button class="btn btn-outline-primary mt-2 btn-buy-now">
+                        <i class="fas fa-bolt me-2"></i>Comprar Agora
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Avaliações e Comentários -->
+        <section class="reviews-section mt-5">
+            <h3 class="section-title mb-4">Avaliações dos Clientes</h3>
+            
+            <div class="review-summary mb-4">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="average-rating">4.5</div>
+                        <div class="stars mb-2">
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star-half-alt checked"></span>
+                        </div>
+                        <div class="total-reviews">128 avaliações</div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="rating-progress">
+                            <div class="progress-item">
+                                <span>5 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                                <span>70%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>4 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 20%"></div>
+                                </div>
+                                <span>20%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>3 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 7%"></div>
+                                </div>
+                                <span>7%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>2 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 2%"></div>
+                                </div>
+                                <span>2%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>1 estrela</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 1%"></div>
+                                </div>
+                                <span>1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-reviews">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="user-info">
+                            <span class="user-name">João Silva</span>
+                            <div class="rating">
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                            </div>
+                        </div>
+                        <span class="review-date">15/05/2024</span>
+                    </div>
+                    <h5 class="review-title">Excelente produto</h5>
+                    <p class="review-text"></p>
+                </div>
+                
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="user-info">
+                            <span class="user-name">Maria Oliveira</span>
+                            <div class="rating">
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star"></span>
+                            </div>
+                        </div>
+                        <span class="review-date">10/05/2024</span>
+                    </div>
+                    <h5 class="review-title">Boa qualidade</h5>
+                    <p class="review-text"></p>
+                </div>
+            </div>
+            
+            <button class="btn btn-outline-primary mt-3">Ver todas as avaliações</button>
+        </section>
+        
+        <!-- Produtos Relacionados -->
+        <section class="related-products mt-5">
+            <h3 class="section-title mb-4">Produtos Relacionados</h3>
+            
+            <div class="row">
+                <!-- Produto Relacionado 1 -->
+                <div class="col-6 col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="https://recursos.sacramento.com.br/MediaCenter/2%20-%20Cal%C3%A7a%20Touring%20(2).png" class="card-img-top" alt="Calça Jeans">
+                        <div class="card-body">
+                            <h5 class="card-title">Calça Jeans</h5>
+                            <p class="card-text">Calça jeans reforçada para motociclistas urbanos.</p>
+                            <p class="price">R$ 79,99</p>
+                            <a href="/product" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Produto Relacionado 2 -->
+                <div class="col-6 col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="https://images.tcdn.com.br/img/img_prod/879024/capacete_axxis_hummer_b_solid_a1_preto_fosco_3097_1_2d4a26ddcd9ac5dd7ea056804ec69352.jpg" class="card-img-top" alt="Capacete Esportivo">
+                        <div class="card-body">
+                            <h5 class="card-title">Capacete Esportivo</h5>
+                            <p class="card-text">Capacete com design aerodinâmico e proteção certificada.</p>
+                            <p class="price">R$ 129,99</p>
+                            <a href="/product" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Produto Relacionado 3 -->
+                <div class="col-6 col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="https://images.tcdn.com.br/img/img_prod/895069/luva_x11_nitro_4_motoqueiro_bike_motociclista_protecao_full_9767_1_2eb12320c215464c7e89cfc45f4e06dd.png" class="card-img-top" alt="Luva de Couro">
+                        <div class="card-body">
+                            <h5 class="card-title">Luva de Couro</h5>
+                            <p class="card-text">Luvas de couro genuíno com proteção para articulações.</p>
+                            <p class="price">R$ 89,99</p>
+                            <a href="/product" class="stretched-link"></a>  
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Produto Relacionado 4 -->
+                <div class="col-6 col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="https://nacar.vteximg.com.br/arquivos/ids/184049-1000-1000/JAQUETA-ALPINESTARS-andes-v3-drystar8.jpg?v=637716413018900000" class="card-img-top" alt="Jaqueta Impermeável">
+                        <div class="card-body">
+                            <h5 class="card-title">Jaqueta Impermeável</h5>
+                            <p class="card-text">Jaqueta com proteção contra chuva e vento.</p>
+                            <p class="price">R$ 149,99</p>
+                            <a href="/product" class="stretched-link"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Contato</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-whatsapp me-2"></i>(48) 99850-3648</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-instagram me-2"></i>Instagram</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-facebook me-2"></i>Facebook</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Informações</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Política de Privacidade</a></li>
+                        <li class="mb-2"><a href="#">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#">Sobre Nós</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright text-center">
+                <small>© 2025 Todos os direitos reservados</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mensagem do Carrinho -->
+    <div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./javascripts/product.js"></script>
+   
+</body>
+</html>

@@ -17,4 +17,8 @@ router.get('/perfil', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'perfil.html'));
 });
 
+router.get('/produtc', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'product.html'));        
+})
+
 module.exports = router;

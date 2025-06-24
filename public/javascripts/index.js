@@ -10,7 +10,6 @@ function searchProducts() {
         const productName = item.querySelector('.card-title').textContent.toLowerCase();
         const productCategory = item.classList[2];
 
-        // A pesquisa agora só compara com o NOME do produto
         const matchesSearch = searchTerm === '' || productName.includes(searchTerm);
         const matchesCategory = activeCategory === '' || productCategory === activeCategory;
         
@@ -53,78 +52,33 @@ function filterProducts(category) {
     searchProducts();
 }
 
-/// Carrinho (array para armazenar os itens)
-let cartItems = [];
-
-// Função melhorada para adicionar ao carrinho
-function addToCart(name, price, image, event) {
-    event.preventDefault();
-    
-    const existingItem = cartItems.find(item => item.name === name);
-    
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cartItems.push({
-            name,
-            price,
-            image,
-            quantity: 1
-        });
-    }
-    
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-    showCartMessage();
-    updateCartCounter();
-}
-
-// Mostra mensagem de produto adicionado
-function showCartMessage() {
-    const cartMessage = document.getElementById('cartMessage');
-    cartMessage.style.display = 'block';
-    setTimeout(() => {
-        cartMessage.style.display = 'none';
-    }, 2000);
-}
-
-// Atualiza o contador no ícone do carrinho
-function updateCartCounter() {
-    const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-    const cartCounter = document.getElementById('cartCounter');
-    
-    if (cartCounter) {
-        cartCounter.textContent = totalItems;
-    } else {
-        const cartLink = document.querySelector('a[href="/carrinho"]');
-        if (cartLink) {
-            const counter = document.createElement('span');
-            counter.id = 'cartCounter';
-            counter.className = 'cart-counter';
-            counter.textContent = totalItems;
-            cartLink.appendChild(counter);
-        }
-    }
-}
-
-// Carrega o carrinho ao iniciar a página
-function loadCart() {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-        cartItems = JSON.parse(savedCart);
-        updateCartCounter();
-    }
-}
-
 // DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
-    loadCart();
-
     // Cria a mensagem de nenhum resultado
     const noResultsMsg = document.createElement('div');
     noResultsMsg.id = 'noResultsMessage';
     noResultsMsg.className = 'no-results-message';
     noResultsMsg.textContent = 'Nenhum produto encontrado. Tente outros termos.';
     document.getElementById('produtos').appendChild(noResultsMsg);
+
+    // Adiciona evento de clique nos links dos produtos
+    document.querySelectorAll('.product-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productCard = this.closest('.card');
+            const productData = {
+                name: productCard.dataset.productName,
+                price: productCard.dataset.productPrice,
+                image: productCard.dataset.productImage,
+                description: productCard.dataset.productDescription,
+                details: productCard.dataset.productDetails
+            };
+            
+            // Salva os dados do produto no localStorage antes de redirecionar
+            localStorage.setItem('currentProduct', JSON.stringify(productData));
+            window.location.href = this.getAttribute('href');
+        });
+    });
 
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('button-search');
@@ -162,28 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function filterProducts(category) {
     var products = document.querySelectorAll('.product-item');
     products.forEach(function (product) {
-        if (category === 'Calças' && product.classList.contains('Calças')) {
+        if (category === '' || product.classList.contains(category)) {
             product.style.display = 'block';
-        } else if (category === 'Calças') {
-            product.style.display = 'none';
-        } else if (category === 'Capacetes' && product.classList.contains('Capacetes')) {
-            product.style.display = 'block';
-        } else if (category === 'Capacetes') {
-            product.style.display = 'none';
-        } else if (category === 'Luvas' && product.classList.contains('Luvas')) {
-            product.style.display = 'block';
-        } else if (category === 'Luvas') {
-            product.style.display = 'none';
-        } else if (category === 'Jaquetas' && product.classList.contains('Jaquetas')) {
-            product.style.display = 'block';
-        } else if (category === 'Jaquetas') {
-            product.style.display = 'none';
-        } else if (category === 'Motos' && product.classList.contains('Motos')) {
-            product.style.display = 'block';
-        } else if (category === 'Motos') {
-            product.style.display = 'none';
         } else {
-            product.style.display = 'block';
+            product.style.display = 'none';
         }
     });
 }
@@ -191,7 +127,7 @@ function filterProducts(category) {
 // Carrossel de produtos
 document.addEventListener('DOMContentLoaded', function() {
     const carousel = new bootstrap.Carousel('#productCarousel', {
-        interval: 10000
+        interval: 7000
     });
 
     document.getElementById('productCarousel').addEventListener('slid.bs.carousel', function(e) {

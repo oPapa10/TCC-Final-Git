@@ -302,3 +302,34 @@
         height: 120px;
     }
 }
+
+/* Contador do Carrinho - Estilizado */
+.cart-counter {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background-color: #dc3545; /* vermelho Bootstrap */
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    z-index: 10;
+}
+
+.cart-counter:hover {
+    transform: scale(1.1);
+    background-color: #c82333;
+}
+
+.nav-item {
+    position: relative;
+}
+
