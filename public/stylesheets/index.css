@@ -1,11 +1,58 @@
-/*CARROSSEL DE PRODUTOS*/
+/* ===== GERAL ===== */
+:root {
+    --primary-dark: #343a40;
+    --primary-medium: #495057;
+    --primary-light: #6c757d;
+    --accent-color: #0d6efd;
+    --text-light: #f8f9fa;
+}
 
+
+
+/* ===== NAVBAR CATEGORIAS ===== */
+#navbar2 {
+    background-color: var(--primary-medium) !important;
+    padding: 0;
+    position: relative;
+    z-index: 1020;
+}
+
+#navbarNavCategorias {
+    padding: 10px 0;
+}
+
+.navbar-nav.mx-auto {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 15px;
+}
+
+.btn-category {
+    padding: 8px 20px;
+    background-color: var(--primary-light);
+    color: var(--text-light);
+    border-radius: 4px;
+    border: 2px solid rgba(255,255,255,0.1);
+    font-weight: 500;
+    transition: all 0.3s;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-category:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* ===== CARROSSEL ===== */
 .carousel {
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1300px; /* Garante que o carrossel tenha um tamanho máximo */
-    height: 400px; /* Ajustado para um tamanho mais adequado */
-    margin-top: 50px;
+    max-width: 1300px;
+    height: 400px;
+    margin: 20px auto 0;
 }
 
 .carousel-inner {
@@ -15,106 +62,175 @@
 .carousel-item img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ajuste para manter a proporção da imagem */
+    object-fit: cover;
 }
 
-/* Ajustes dos controles do carrossel */
-.carousel-control-prev-icon, .carousel-control-next-icon {
-    background-color: black;
+.carousel-control-prev-icon, 
+.carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    padding: 20px;
 }
 
-/* Fim do Carrossel de Produtos */
-
-/*PRODUTOS*/
-
+/* ===== PRODUTOS ===== */
 .card {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 20px;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
 }
 
 .card img {
-    height: 150px; /* Reduzindo altura */
+    height: 150px;
     object-fit: contain;
+    padding: 10px;
 }
 
 .card-body {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 150px);
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: #555;
+    flex-grow: 1;
 }
 
 .card .btn {
-    background-color: #0025f5;
+    background-color: var(--accent-color);
     color: white;
     font-weight: bold;
     border-radius: 8px;
     width: 100%;
     padding: 10px;
+    margin-top: auto;
+    transition: background-color 0.3s;
 }
 
 .card .btn:hover {
-    background-color: #2e6cff;
-    transition: 0.5s;
+    background-color: #0b5ed7;
 }
 
-.product-item {
-    padding: 10px;
-}
-
-
-/*FIM DO PRODUTOS*/
-
-/* Estilo das Categorias */
-
-/* Navbar de Categorias */
-#navbar2 {
-    display: flex; /* Mantém os itens da navbar organizados */
-    justify-content: center; /* Centraliza os itens horizontalmente */
-    background-color: #808080 !important; /* Cor de fundo cinza */
-    width: 100%;
-    padding: 10px 0;
-    height: 60px;
-}
-
-/* Estilo para os itens dentro da navbar */
-#navbar2 .navbar-nav {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-
-/* Estilo do botão dentro da navbar */
-#navbar2 .navbar-nav .nav-item .btn {
-    padding: 10px 20px;
-    background-color: #787878;
+/* ===== FOOTER ===== */
+.footer {
+    background-color: var(--primary-medium) !important;
     color: white;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    border: none;
-    cursor: pointer;
+    padding-top: 2rem;
+    margin-top: 50px;
 }
 
-#navbar2 .navbar-nav .nav-item .btn:hover {
-    background-color: #666666;
-    transform: scale(1.05);
+.footer a {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
+.footer a:hover {
+    color: #d1d1d1;
+    text-decoration: underline;
+}
 
-/* Fim das Categorias */
+.copyright {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
 
-/* Estilo da mensagem de carrinho */
+/* ===== MENSAGEM CARRINHO ===== */
 .cart-message {
     position: fixed;
-    top: 20px; /* Agora está mais para o topo */
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #4CAF50; /* Verde */
+    background-color: #4CAF50;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 25px;
     border-radius: 5px;
-    display: none; /* Oculta por padrão */
-    z-index: 1000; /* Garante que fique sobre outros elementos */
+    display: none;
+    z-index: 1050;
+    animation: fadeInOut 2.5s ease-in-out;
 }
 
-/* Fim da mensagem de carrinho */
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    10%, 90% { opacity: 1; }
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+    .navbar-nav.mx-auto {
+        gap: 6px;
+    }
+    
+    .btn-category {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .carousel {
+        height: 250px;
+    }
+    
+    .card img {
+        height: 120px;
+    }
+}
+
+
+/* ===== BARRA DE PESQUISA ===== */
+.search-container {
+    flex-grow: 1;
+    max-width: 500px;
+}
+
+#searchInput {
+    border-radius: 20px 0 0 20px;
+    border-right: none;
+    padding-left: 20px;
+}
+
+#searchInput:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+#button-search {
+    border-radius: 0 20px 20px 0;
+    border-left: none;
+    background-color: var(--accent-color);
+    color: white;
+}
+
+#button-search:hover {
+    background-color: #0b5ed7;
+    color: white;
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+    .search-container {
+        order: 3;
+        width: 100%;
+        margin-top: 10px;
+        max-width: none;
+    }
+    
+    .navbar-collapse {
+        flex-basis: 100%;
+        flex-grow: 0;
+    }
+}

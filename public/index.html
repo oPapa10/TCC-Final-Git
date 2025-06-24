@@ -8,17 +8,33 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="./stylesheets/menu-superior.css"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./stylesheets/index.css"/>
+    <link rel="stylesheet" href="./stylesheets/menu-superior.css"/>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="images/logo.png" alt="Logomarca" />
+            <a class="navbar-brand logo-container" href="/">
+                <img src="images/logo.png" alt="Logomarca" class="logo-img" />
             </a>
+
+
+                <!-- Barra de Pesquisa -->
+    <div class="search-container ms-md-3 mx-auto mx-md-0">
+        <div class="input-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar produtos..." 
+                aria-label="Pesquisar produtos" aria-describedby="button-search">
+            <button class="btn btn-outline-light" type="button" id="button-search">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
                 aria-label="Alternar navegação">
@@ -28,33 +44,29 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/">
-                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" />
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/perfil">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="perfil-icon"/>
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/carrinho">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho"/>
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
                             role="button" data-bs-toggle="dropdown">
                             <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
-                                alt="Opções" class="options-icon"/>
+                                alt="Opções" class="nav-icon"/>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
                             <li><a class="dropdown-item" href="#funcionalidade1">Opções</a></li>
                             <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
-                            <li><a class="dropdown-item" href="#funcionalidade2">Contato</a></li>
                             <li><a class="dropdown-item" href="#funcionalidade3">Central de Ajuda</a></li>
-                            <li><a class="dropdown-item" href="#funcionalidade3">Política de Privacidade</a></li>
-                            <li><a class="dropdown-item" href="#funcionalidade3">Termos de Uso</a></li>
-                            <li><a class="dropdown-item" href="#funcionalidade3">Sobre Nós</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -62,41 +74,29 @@
         </div>
     </nav>
 
-    <!-- Barra de Navegação com Filtros de Categorias -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="navbar2">
+    <!-- Navbar de Categorias -->
+    <nav class="navbar navbar-expand-lg navbar-dark" id="navbar2">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavCategorias" aria-controls="navbarNavCategorias" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavCategorias">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavCategorias">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <button class="btn btn-secondary" onclick="filterProducts('')">Mostrar Todos</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-secondary" onclick="filterProducts('Calças')">Calças</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-secondary" onclick="filterProducts('Capacetes')">Capacetes</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-secondary" onclick="filterProducts('Luvas')">Luvas</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-secondary" onclick="filterProducts('Jaquetas')">Jaquetas</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-secondary" onclick="filterProducts('Motos')">Motos</button>
-                    </li>
-                </ul>
+                <div class="navbar-nav mx-auto">
+                    <button class="nav-link btn-category" onclick="filterProducts('')">Mostrar Todos</button>
+                    <button class="nav-link btn-category" onclick="filterProducts('Calças')">Calças</button>
+                    <button class="nav-link btn-category" onclick="filterProducts('Capacetes')">Capacetes</button>
+                    <button class="nav-link btn-category" onclick="filterProducts('Luvas')">Luvas</button>
+                    <button class="nav-link btn-category" onclick="filterProducts('Jaquetas')">Jaquetas</button>
+                    <button class="nav-link btn-category" onclick="filterProducts('Motos')">Motos</button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Carrossel Bootstrap -->
+    <!-- Carrossel -->
     <div id="carouselProdutos" class="carousel slide mb-5" data-bs-ride="carousel">
         <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="0" class="active" aria-current="true"></button>
+            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="0" class="active"></button>
             <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="1"></button>
             <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="2"></button>
             <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="3"></button>
@@ -123,21 +123,20 @@
         </button>
     </div>
 
-
-   <!-- Grid de Produtos -->
-<div id="produtos" class="container mt-5">
-    <div class="row">
-        <!-- Produto 1 -->
-        <div class="col-6 col-md-3 mb-4 product-item Calças">
-            <div class="card">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s" class="card-img-top" alt="Produto 1">
-                <div class="card-body">
-                    <h5 class="card-title">Produto 1</h5>
-                    <p class="card-text">Descrição do produto 1.</p>
-                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 1', 99.99, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s',event)">Adicionar ao Carrinho</a>
+    <!-- Grid de Produtos -->
+    <div id="produtos" class="container mt-5">
+        <div class="row">
+            <!-- Produto 1 -->
+            <div class="col-6 col-md-3 mb-4 product-item Calças">
+                <div class="card">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s" class="card-img-top" alt="Produto 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Produto 1</h5>
+                        <p class="card-text">Descrição do produto 1.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Produto 1', 99.99, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s',event)">Adicionar ao Carrinho</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
         <!-- Produto 2 -->
         <div class="col-6 col-md-3 mb-4 product-item Capacetes">
@@ -201,11 +200,44 @@
     </div>
 </div>
 
-<div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
+<!-- Mensagem do Carrinho -->
+    <div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Contato</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-whatsapp me-2"></i>WhatsApp</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-instagram me-2"></i>Instagram</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-facebook me-2"></i>Facebook</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Links Úteis</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Política de Privacidade</a></li>
+                        <li class="mb-2"><a href="#">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#">Sobre Nós</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright text-center">
+                <small>© 2024 Todos os direitos reservados</small>
+            </div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./javascripts/index.js"></script>
 </body>
-
 </html>

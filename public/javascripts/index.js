@@ -68,5 +68,3 @@ function addToCart(productName, productPrice, productImage, event) {
         event.preventDefault();
     }
 }
-
-
