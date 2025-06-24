@@ -4,10 +4,18 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 const cartContainer = document.getElementById('cart-container');
 const totalDisplay = document.getElementById('total');
 
+// Função para formatar preços no padrão brasileiro
+function formatPrice(price) {
+    return price.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
 // Função para atualizar o total
 function updateTotal() {
     let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    totalDisplay.innerText = total.toFixed(2).replace('.', ',');
+    totalDisplay.innerText = formatPrice(total);
 }
 
 // Função para renderizar o carrinho
@@ -35,7 +43,7 @@ function renderCart() {
                 <img src="${item.image}" class="item-image" alt="${item.name}">
                 <div class="item-info">
                     <div class="item-name">${item.name}</div>
-                    <div class="item-price">R$ ${item.price.toFixed(2).replace('.', ',')}</div>
+                    <div class="item-price">${formatPrice(item.price)}</div>
                 </div>
             </div>
             <div class="item-quantity">
@@ -46,6 +54,7 @@ function renderCart() {
             <button class="remove-btn">Remover</button>
         `;
         
+        // Event listeners para os botões de quantidade
         cartItemDiv.querySelector('.increase-quantity').addEventListener('click', () => {
             item.quantity++;
             updateCart();
@@ -75,13 +84,21 @@ cartContainer.addEventListener("click", (event) => {
     }
 });
 
-// Função para salvar o carrinho no localStorage
+// Função para salvar e atualizar o carrinho
 function updateCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
     renderCart();
     updateTotal();
+    
+    // Atualiza o contador no menu superior (se existir)
+    const cartCounter = document.getElementById('cartCounter');
+    if (cartCounter) {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCounter.textContent = totalItems;
+        cartCounter.style.display = totalItems > 0 ? 'flex' : 'none';
+    }
 }
 
-// Inicializa o carrinho na página
+// Inicializa o carrinho
 renderCart();
 updateTotal();

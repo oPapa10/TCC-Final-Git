@@ -1,0 +1,317 @@
+/* Estilos Gerais */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #3498db;
+  --light-color: #ecf0f1;
+  --dark-color: #2c3e50;
+  --success-color: #2ecc71;
+  --warning-color: #f39c12;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+body {
+  background-color: #f5f7fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--dark-color);
+}
+
+/* Sidebar Modernizada */
+.options-sidebar {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  height: 100%;
+  box-shadow: var(--box-shadow);
+  border-left: 4px solid var(--secondary-color);
+}
+
+.sidebar-header {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.options-sidebar .nav {
+  gap: 0.5rem;
+}
+
+.options-sidebar .nav-link {
+  color: #555;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 0.25rem;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+
+.options-sidebar .nav-link:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--secondary-color);
+  transform: translateX(3px);
+}
+
+.options-sidebar .nav-link.active {
+  background-color: var(--secondary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.options-sidebar .nav-link i {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+
+/* Conteúdo Principal */
+.options-content {
+  padding: 0 1rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--secondary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Cards Modernos */
+.option-section .card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+  transition: var(--transition);
+  margin-bottom: 2rem;
+}
+
+.option-section .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Formulários Estilizados */
+.form-control, .form-select {
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+/* Switches Modernos */
+.form-check-input:checked {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.form-switch .form-check-input {
+  width: 3em;
+  height: 1.5em;
+}
+
+/* Botões Melhorados */
+.btn {
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(41, 128, 185, 0.3);
+}
+
+.btn-outline-primary {
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+/* Métodos de Pagamento */
+.payment-method {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem;
+  border: 1px solid #eee;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  background-color: white;
+  transition: var(--transition);
+}
+
+.payment-method:hover {
+  border-color: var(--secondary-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.method-icon {
+  font-size: 2rem;
+  color: var(--secondary-color);
+  margin-right: 1.25rem;
+  width: 50px;
+  text-align: center;
+}
+
+.method-info h6 {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--primary-color);
+}
+
+.method-info p {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* Opções de Tema */
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.theme-option {
+  cursor: pointer;
+}
+
+.theme-option input[type="radio"] {
+  display: none;
+}
+
+.theme-option input[type="radio"]:checked + label .theme-preview {
+  border: 3px solid var(--secondary-color);
+  box-shadow: 0 0 0 2px white, 0 0 0 5px var(--secondary-color);
+}
+
+.theme-preview {
+  width: 100%;
+  height: 100px;
+  border-radius: var(--border-radius);
+  border: 3px solid #eee;
+  margin-bottom: 0.75rem;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.theme-name {
+  display: block;
+  text-align: center;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+/* Accordion Moderno */
+.accordion-item {
+  border: none;
+  margin-bottom: 1rem;
+  border-radius: var(--border-radius) !important;
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+}
+
+.accordion-button {
+  font-weight: 500;
+  padding: 1.25rem;
+  background-color: white;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--secondary-color);
+  box-shadow: none;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.accordion-body {
+  padding: 1.25rem;
+  background-color: #f9f9f9;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .options-sidebar {
+    margin-bottom: 2rem;
+  }
+  
+  .theme-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .theme-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .payment-method {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .method-icon {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .method-actions {
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+}

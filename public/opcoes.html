@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opções - Center Motos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./stylesheets/menu-superior.css">
+    <link rel="stylesheet" href="./stylesheets/footer.css">
+    <link rel="stylesheet" href="./stylesheets/opcoes.css">
+</head>
+<body>
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="/">
+                <img src="images/logo.png" alt="Logomarca" class="logo-img">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
+                aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perfil">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon">
+                        </a>
+                    </li>
+                    <li class="nav-item nav-item-cart">
+                        <a class="nav-link" href="/carrinho">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon">
+                            <span id="cartCounter" class="cart-counter"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
+                            role="button" data-bs-toggle="dropdown">
+                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
+                                alt="Opções" class="nav-icon">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
+                            <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
+                            <li><a class="dropdown-item" href="#notificacoes">Notificações</a></li>
+                            <li><a class="dropdown-item" href="#ajuda">Central de Ajuda</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="container mt-5 pt-5">
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Menu Lateral -->
+                <div class="options-sidebar">
+                    <div class="sidebar-header">
+                        <h3><i class="fas fa-cog me-2"></i>Configurações</h3>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#conta">
+                                <i class="fas fa-user-circle me-2"></i>Minha Conta
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#privacidade">
+                                <i class="fas fa-lock me-2"></i>Privacidade
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#notificacoes">
+                                <i class="fas fa-bell me-2"></i>Notificações
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pagamento">
+                                <i class="fas fa-credit-card me-2"></i>Pagamentos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tema">
+                                <i class="fas fa-palette me-2"></i>Aparência
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#ajuda">
+                                <i class="fas fa-question-circle me-2"></i>Ajuda
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="col-md-9">
+                <!-- Área de Conteúdo -->
+                <div class="options-content">
+                    <!-- Seção Minha Conta -->
+                    <section id="conta" class="option-section">
+                        <h2 class="section-title"><i class="fas fa-user-circle me-2"></i>Minha Conta</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="nome" class="form-label">Nome Completo</label>
+                                        <input type="text" class="form-control" id="nome" value="João da Silva">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" value="joao.silva@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="telefone" class="form-label">Telefone</label>
+                                        <input type="tel" class="form-control" id="telefone" value="(48) 99999-9999">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="data-nascimento" class="form-label">Data de Nascimento</label>
+                                        <input type="date" class="form-control" id="data-nascimento" value="1990-01-15">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção Privacidade -->
+                    <section id="privacidade" class="option-section" style="display: none;">
+                        <h2 class="section-title"><i class="fas fa-lock me-2"></i>Privacidade</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="perfil-publico" checked>
+                                    <label class="form-check-label" for="perfil-publico">Perfil Público</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="mostrar-email">
+                                    <label class="form-check-label" for="mostrar-email">Mostrar email publicamente</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="mostrar-telefone" checked>
+                                    <label class="form-check-label" for="mostrar-telefone">Mostrar telefone para vendedores</label>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="visibilidade-endereco" class="form-label">Visibilidade do Endereço</label>
+                                    <select class="form-select" id="visibilidade-endereco">
+                                        <option value="privado">Privado</option>
+                                        <option value="vendedores" selected>Apenas para vendedores</option>
+                                        <option value="publico">Público</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-primary">Atualizar Configurações</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção Notificações -->
+                    <section id="notificacoes" class="option-section" style="display: none;">
+                        <h2 class="section-title"><i class="fas fa-bell me-2"></i>Notificações</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-subtitle mb-3">Preferências de Notificação</h5>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notificacoes-email" checked>
+                                    <label class="form-check-label" for="notificacoes-email">Receber notificações por email</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notificacoes-sms">
+                                    <label class="form-check-label" for="notificacoes-sms">Receber notificações por SMS</label>
+                                </div>
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="promocoes" checked>
+                                    <label class="form-check-label" for="promocoes">Receber promoções e ofertas</label>
+                                </div>
+                                
+                                <h5 class="card-subtitle mt-4 mb-3">Tipos de Notificação</h5>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="notif-pedidos" checked>
+                                    <label class="form-check-label" for="notif-pedidos">Atualizações de pedidos</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="notif-estoque" checked>
+                                    <label class="form-check-label" for="notif-estoque">Produtos em estoque</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="notif-novidades">
+                                    <label class="form-check-label" for="notif-novidades">Novidades e lançamentos</label>
+                                </div>
+                                
+                                <button type="button" class="btn btn-primary mt-3">Salvar Preferências</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção Pagamentos -->
+                    <section id="pagamento" class="option-section" style="display: none;">
+                        <h2 class="section-title"><i class="fas fa-credit-card me-2"></i>Métodos de Pagamento</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="payment-methods">
+                                    <div class="payment-method">
+                                        <div class="method-icon">
+                                            <i class="fab fa-cc-visa"></i>
+                                        </div>
+                                        <div class="method-info">
+                                            <h6>Cartão Visa</h6>
+                                            <p>Terminado em 4242 · Expira em 12/25</p>
+                                        </div>
+                                        <div class="method-actions">
+                                            <button class="btn btn-outline-danger btn-sm">Remover</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="payment-method">
+                                        <div class="method-icon">
+                                            <i class="fab fa-cc-mastercard"></i>
+                                        </div>
+                                        <div class="method-info">
+                                            <h6>Cartão Mastercard</h6>
+                                            <p>Terminado em 5555 · Expira em 08/24</p>
+                                        </div>
+                                        <div class="method-actions">
+                                            <button class="btn btn-outline-danger btn-sm">Remover</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn btn-outline-primary mt-3">
+                                        <i class="fas fa-plus me-2"></i>Adicionar Novo Método de Pagamento
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção Aparência -->
+                    <section id="tema" class="option-section" style="display: none;">
+                        <h2 class="section-title"><i class="fas fa-palette me-2"></i>Aparência</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <h5 class="mb-3">Tema do Site</h5>
+                                    <div class="theme-options">
+                                        <div class="theme-option">
+                                            <input type="radio" id="tema-claro" name="tema" checked>
+                                            <label for="tema-claro">
+                                                <div class="theme-preview light-theme"></div>
+                                                <span>Tema Claro</span>
+                                            </label>
+                                        </div>
+                                        <div class="theme-option">
+                                            <input type="radio" id="tema-escuro" name="tema">
+                                            <label for="tema-escuro">
+                                                <div class="theme-preview dark-theme"></div>
+                                                <span>Tema Escuro</span>
+                                            </label>
+                                        </div>
+                                        <div class="theme-option">
+                                            <input type="radio" id="tema-sistema" name="tema">
+                                            <label for="tema-sistema">
+                                                <div class="theme-preview system-theme"></div>
+                                                <span>Seguir Sistema</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <h5 class="mb-3">Tamanho da Fonte</h5>
+                                    <div class="font-size-options">
+                                        <button class="btn btn-outline-secondary btn-sm">Pequeno</button>
+                                        <button class="btn btn-primary btn-sm">Médio</button>
+                                        <button class="btn btn-outline-secondary btn-sm">Grande</button>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" class="btn btn-primary">Aplicar Configurações</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Seção Ajuda -->
+                    <section id="ajuda" class="option-section" style="display: none;">
+                        <h2 class="section-title"><i class="fas fa-question-circle me-2"></i>Central de Ajuda</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="accordion" id="accordionAjuda">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ajuda1">
+                                                Como alterar minha senha?
+                                            </button>
+                                        </h2>
+                                        <div id="ajuda1" class="accordion-collapse collapse show" data-bs-parent="#accordionAjuda">
+                                            <div class="accordion-body">
+                                                <p>Para alterar sua senha, acesse a seção "Minha Conta" e clique no botão "Alterar Senha". Você receberá um email com instruções para criar uma nova senha.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ajuda2">
+                                                Como rastrear meu pedido?
+                                            </button>
+                                        </h2>
+                                        <div id="ajuda2" class="accordion-collapse collapse" data-bs-parent="#accordionAjuda">
+                                            <div class="accordion-body">
+                                                <p>Acesse a seção "Meus Pedidos" no seu perfil. Lá você encontrará o código de rastreio e o link para acompanhar a entrega.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ajuda3">
+                                                Como devolver um produto?
+                                            </button>
+                                        </h2>
+                                        <div id="ajuda3" class="accordion-collapse collapse" data-bs-parent="#accordionAjuda">
+                                            <div class="accordion-body">
+                                                <p>Entre em contato com nosso suporte dentro de 7 dias após o recebimento. Nós enviaremos instruções para a devolução e o reembolso.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <h5 class="mb-3">Contato do Suporte</h5>
+                                    <p><i class="fas fa-envelope me-2"></i> suporte@centermotos.com.br</p>
+                                    <p><i class="fas fa-phone me-2"></i> (48) 3333-3333</p>
+                                    <p><i class="fas fa-clock me-2"></i> Segunda a Sexta, das 8h às 18h</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Contato</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-whatsapp me-2"></i>(48) 99850-3648</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="https://www.instagram.com/center.motos1/" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-instagram me-2"></i>Instagram
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="https://www.facebook.com/centermotossombrio/" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-facebook me-2"></i>Facebook
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Informações</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Política de Privacidade</a></li>
+                        <li class="mb-2"><a href="#">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#">Sobre Nós</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright text-center">
+                <small>© 2025 Todos os direitos reservados</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./javascripts/opcoes.js"></script>
+</body>
+</html>

@@ -122,7 +122,6 @@
 
 .original-price {
     font-size: 1.2rem;
-    text-decoration: line-through;
     color: var(--primary-light);
 }
 
@@ -323,3 +322,42 @@
     }
 }
 
+/* ==================Estilo para o container do preço total */
+.total-price-container {
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.total-price-container:hover {
+    background-color: #e9ecef;
+}
+
+.total-price-label {
+    font-weight: 600;
+    color: var(--primary-dark);
+    font-size: 1rem;
+}
+
+.total-price-amount {
+    font-weight: 700;
+    color: #dc3545;
+    font-size: 1.2rem;
+}
+
+/* Adicione isto para animação suave */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.total-price-container.pulse {
+    animation: pulse 0.5s ease;
+}
