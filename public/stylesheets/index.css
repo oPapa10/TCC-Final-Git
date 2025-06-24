@@ -3,6 +3,7 @@
     --primary-dark: #343a40;
     --primary-medium: #495057;
     --primary-light: #6c757d;
+    --primary-top: #84898d;
     --accent-color: #0d6efd;
     --text-light: #f8f9fa;
 }
@@ -49,8 +50,8 @@
 
 /* Categoria ativa */
 .btn-category.active {
-    background-color: var(--accent-color) !important;
-    border-color: var(--accent-color) !important;
+    background-color: var(--primary-top) !important;
+    border-color: var(--primary-top) !important;
     color: white !important;
 }
 
@@ -331,4 +332,8 @@
 
 .nav-item {
     position: relative;
+}
+
+.alert-custom {
+    background-color: #f8f9fa;
 }

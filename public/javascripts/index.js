@@ -3,17 +3,36 @@ document.addEventListener('DOMContentLoaded', function() {
     let cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     updateCartCounter();
 
-    // Filtro de produtos por categoria
-    function filterProducts(category) {
-        const products = document.querySelectorAll('.product-item');
-        products.forEach(product => {
-            if (category === '' || product.classList.contains(category)) {
-                product.style.display = 'block';
-            } else {
-                product.style.display = 'none';
-            }
-        });
+    // Elementos da mensagem de pesquisa
+    const searchMessage = document.getElementById('searchMessage');
+
+    // Filtro de produtos por categoria - FUNÇÃO GLOBAL
+window.filterProducts = function(category, clickedButton) {
+    // Esconde a mensagem de pesquisa quando filtrar por categoria
+    searchMessage.style.display = 'none';
+    
+    // Remove a classe 'active' de todos os botões de categoria (exceto se for o de "Todos")
+    document.querySelectorAll('.btn-category').forEach(btn => {
+        if (!btn.textContent.includes("Mostrar Todos")) {
+            btn.classList.remove('active');
+        }
+    });
+    
+    // Adiciona 'active' apenas ao botão clicado (se não for o de "Todos")
+    if (clickedButton && category !== '') {
+        clickedButton.classList.add('active');
     }
+    
+    // Filtra os produtos
+    const products = document.querySelectorAll('.product-item');
+    products.forEach(product => {
+        if (category === '' || product.classList.contains(category)) {
+            product.style.display = 'block';
+        } else {
+            product.style.display = 'none';
+        }
+    });
+};
 
     // Configura o clique nos produtos
     document.querySelectorAll('.product-link').forEach(link => {
@@ -28,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 image: productCard.dataset.productImage,
                 thumbnails: JSON.parse(productCard.dataset.productThumbnails || '[]'),
                 description: productCard.dataset.productDescription,
-                details: JSON.parse(productCard.dataset.productDetails)
+                details: JSON.parse(productCard.dataset.productDetails || '[]')
             };
             
             localStorage.setItem('currentProduct', JSON.stringify(productData));
@@ -36,21 +55,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Barra de pesquisa
+    // Função para rolar até os produtos
+    function scrollToProducts() {
+        const produtosSection = document.getElementById('produtos');
+        if (produtosSection) {
+            produtosSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Barra de pesquisa - FUNÇÃO ATUALIZADA
     document.getElementById('button-search').addEventListener('click', function() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const products = document.querySelectorAll('.product-card');
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        const products = document.querySelectorAll('.product-item');
+        let hasResults = false;
+        
+        // Esconde a mensagem inicialmente
+        searchMessage.style.display = 'none';
         
         products.forEach(product => {
-            const title = product.querySelector('.card-title').textContent.toLowerCase();
-            const description = product.querySelector('.card-text').textContent.toLowerCase();
+            const card = product.querySelector('.product-card');
+            const title = card.querySelector('.card-title').textContent.toLowerCase();
+            const description = card.querySelector('.card-text').textContent.toLowerCase();
             
-            if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                product.closest('.product-item').style.display = 'block';
+            if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
+                product.style.display = 'block';
+                hasResults = true;
             } else {
-                product.closest('.product-item').style.display = 'none';
+                product.style.display = 'none';
             }
         });
+        
+        // Mostra mensagem se não houver resultados e a pesquisa não estiver vazia
+        if (!hasResults && searchTerm !== '') {
+            searchMessage.style.display = 'block';
+        }
+        
+        // Rola para a seção de produtos
+        scrollToProducts();
+    });
+
+    // Permitir pesquisa ao pressionar Enter
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('button-search').click();
+        }
     });
 
     // Carrossel de produtos
@@ -79,4 +127,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
-
