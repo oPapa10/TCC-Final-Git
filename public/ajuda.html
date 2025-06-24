@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Ajuda - Minha Loja Online</title>
+    <link rel="stylesheet" href="stylesheets/ajuda.css">
+    <link rel="stylesheet" href="./stylesheets/menu-superior.css" />
+    <link rel="stylesheet" href="./stylesheets/footer.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="/">
+                <img src="images/logo.png" alt="Logomarca" class="logo-img" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavMenuSuperior"
+                aria-controls="navbarNavMenuSuperior" aria-expanded="false" aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon" />
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perfil">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil"
+                                class="nav-icon" />
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carrinho">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho"
+                                class="nav-icon" />
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes" role="button"
+                            data-bs-toggle="dropdown">
+                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
+                                alt="Opções" class="nav-icon" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
+                            <li><a class="dropdown-item" href="#funcionalidade1">Opções</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade">Central de Ajuda</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="help-header">
+        <div class="container">
+            <h1><i class="fas fa-question-circle"></i> Central de Ajuda</h1>
+            <div class="search-box">
+                <input type="text" placeholder="Digite sua dúvida...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container help-container">
+        <section class="help-categories">
+            <div class="category-card" onclick="showQuestions('pedidos')">
+                <div class="category-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h3>Pedidos e Entregas</h3>
+                <p>Status, rastreamento e prazos</p>
+            </div>
+
+            <div class="category-card" onclick="showQuestions('pagamentos')">
+                <div class="category-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>Pagamentos</h3>
+                <p>Formas de pagamento e segurança</p>
+            </div>
+
+            <div class="category-card" onclick="showQuestions('trocas')">
+                <div class="category-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3>Trocas e Devoluções</h3>
+                <p>Políticas e procedimentos</p>
+            </div>
+
+            <div class="category-card" onclick="showQuestions('cadastro')">
+                <div class="category-icon">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <h3>Cadastro e Conta</h3>
+                <p>Acesso e gerenciamento</p>
+            </div>
+        </section>
+
+        <section class="help-content" id="helpContent">
+            <div class="welcome-message">
+                <h2>Como podemos ajudar você hoje?</h2>
+                <p>Selecione uma categoria acima ou busque por palavras-chave para encontrar respostas para suas
+                    dúvidas.</p>
+                <div class="popular-questions">
+                    <h3>Perguntas frequentes:</h3>
+                    <ul>
+                        <li onclick="showAnswer('como-rastrear')">Como rastrear meu pedido?</li>
+                        <li onclick="showAnswer('prazo-devolucao')">Qual o prazo para devolução?</li>
+                        <li onclick="showAnswer('seguranca-pagamento')">O pagamento é seguro?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="questions-list" id="questionsList" style="display: none;">
+                <h2 id="categoryTitle"></h2>
+                <div class="questions-container" id="questionsContainer"></div>
+            </div>
+
+            <div class="answer-container" id="answerContainer" style="display: none;">
+                <button class="back-button" onclick="backToQuestions()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <h2 id="questionTitle"></h2>
+                <div class="answer-content" id="answerContent"></div>
+                <div class="helpful-box">
+                    <p>Esta resposta foi útil?</p>
+                    <div>
+                        <button onclick="rateHelpful(true)"><i class="fas fa-thumbs-up"></i> Sim</button>
+                        <button onclick="rateHelpful(false)"><i class="fas fa-thumbs-down"></i> Não</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <div class="contact-card">
+                <i class="fas fa-headset"></i>
+                <h3>Precisa de mais ajuda?</h3>
+                <p>Nosso atendimento está disponível de segunda a sexta, das 8h às 18h.</p>
+                <button onclick="showEmailForm()"><i class="fas fa-envelope"></i> Enviar E-mail</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="help-footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">Termos de Uso</a>
+            </div>
+            <p>© 2023 Minha Loja Online. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="javascripts/ajuda.js"></script>
+</body>
+
+</html>

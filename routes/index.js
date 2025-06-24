@@ -25,4 +25,8 @@ router.get('/opcoes', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'opcoes.html'));        
 })
 
+router.get('/opcoes', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'ajuda.html'));        
+})
+
 module.exports = router;
