@@ -1,0 +1,108 @@
+ /* Estilos do menu superior */
+ .navbar-custom {
+    background-color: #3064ff;
+    background-size: 500% 100%;
+    animation: wave 10s ease-in-out infinite;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 80px; /* Define a altura desejada */
+}
+
+@keyframes wave {
+    0%, 100% {
+        background-position: 100% 50%;
+    }
+    50% {
+        background-position: 0% 50%;
+    }   
+}
+
+.navbar-custom .nav-link {
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-custom .nav-link:hover {
+    color: #d0e4ff;
+}
+
+.navbar-custom .nav-item .nav-link img {
+    width: 30px;
+    vertical-align: middle;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar-custom .nav-item .nav-link:hover img {
+    transform: scale(1.2);
+    opacity: 0.8;
+}
+
+/* Alinhando os itens do menu */
+.navbar-nav {
+    margin-left: 1100px;
+}
+
+/* Estilos do formulário de cadastro */
+.form-container {
+    margin-top: 50px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #0033cc;
+}
+
+.btn-submit {
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+.btn-cancelar {
+    background-color: #dc3545;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+}
+
+.btn-cancelar:hover {
+    background-color: #c82333;
+}
+
+/* Estilos para os botões de Ação */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand img {
+    width: 150px; /* Defina o tamanho padrão */
+    height: auto; /* Mantém a proporção da imagem */
+    position: absolute;
+}

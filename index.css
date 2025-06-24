@@ -1,0 +1,185 @@
+/*CARROSSEL DE PRODUTOS*/
+
+.slider{
+    margin: 0 auto;
+    width: 1300px;
+    height: 300px;
+    overflow: hidden;
+}
+
+.slides{
+    width: 400%;
+    height: 400px;
+    display: flex;
+}
+
+.slides input{
+    display: none;
+}
+
+.slide{
+    width: 25%;
+    position: relative;
+    transition: 2s;
+}
+
+.slide img{
+    width: 1300px;
+}
+
+.manual-navigation{
+    position: absolute;
+    width: 1300px;
+    margin-top: -125px;
+    display: flex;
+    justify-content: center;
+}
+
+.manual-btn{
+    border: 2px solid #fff;
+    padding: 5px;
+    border-radius: 10px;
+    cursor: pointer
+}
+
+.manual-btn:not(:Last-child){
+    margin-right: 40px;
+}
+
+.manual-btn:hover{
+    background-color: #fff;
+        
+}
+
+#radio1:checked ~ .first{
+    margin-left: 0;
+}
+
+#radio2:checked ~ .first{
+    margin-left: -25%;
+}
+
+#radio3:checked ~ .first{
+    margin-left: -50%;
+}
+
+#radio4:checked ~ .first{
+    margin-left: -75%;
+}
+
+.navigation-auto div{
+    border: 2px solid #20a6ff;
+    padding: 5px;
+    border-radius: 10px;
+    transition: 2s;
+}
+
+.navigation-auto{
+    position: absolute;
+    width: 1300px;
+    margin-top: 275px;
+    display: flex;
+    justify-content: center;
+}
+
+.navigation-auto div:not(:Last-child){
+    margin-right: 40px;
+}
+
+#radio1:checked ~ .navigation-auto .auto-btn1{
+    background-color: #fff;
+}
+
+#radio2:checked ~ .navigation-auto .auto-btn2{
+    background-color: #fff;
+}
+
+#radio3:checked ~ .navigation-auto .auto-btn3{
+    background-color: #fff;
+}
+
+#radio4:checked ~ .navigation-auto .auto-btn4{
+    background-color: #fff;
+}
+    
+/*FIM DO CARROSSEL DE PRODUTOS*/
+
+
+/*PRODUTOS*/
+
+.product-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.product-card img {
+    width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+}
+
+.product-card .card-body {
+    text-align: center;
+}
+
+.product-card .btn {
+    background-color: #0025f5;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    width: 100%;
+    padding: 10px;
+}
+
+.product-card .btn:hover {
+    background-color: #2e6cff;
+    transition: 0.5s;
+}
+
+/*FIM DO PRODUTOS*/
+
+
+/* Estilo das Categorias*/
+
+.custom-container {
+    background: #b2b2b2;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    top: -10px;
+}
+
+.filter-button {
+    margin: 1px;
+    padding: 5px 22px;
+    background-color: #787878; /* Cor de fundo azul */
+    color: white; /* Cor do texto */
+    border-radius: 5px; /* Borda com cantos mais quadrados */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Efeito de transição */
+    border: none; /* Remover borda padrão */
+    cursor: pointer; /* Cursor em forma de mão ao passar sobre o botão */
+}
+
+/* Efeito de hover (quando o mouse passa por cima) */
+.filter-button:hover {
+    background-color: #666666; /* Cor azul mais clara ao passar o mouse */
+    transform: scale(1.05); /* Aumenta um pouco o tamanho do botão */
+}
+
+/* Efeito de foco (quando o botão é clicado) */
+.filter-button:focus {
+    outline: none; /* Remove o contorno padrão do foco */
+    box-shadow: 0 0 8px rgb(0, 0, 0); /* Sombra suave ao focar no botão */
+}
+
+/* Efeito de clique (quando o botão é pressionado) */
+.filter-button:active {
+    transform: scale(0.98); /* Diminui o tamanho do botão ao clicar */
+}
+
+/*Fim das Categorias*/
+

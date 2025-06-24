@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Link do CSS do Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="menu-superior.css">
+    <link rel="stylesheet" href="index.css">
+
+</head>
+<body>
+    
+    <!-- Menu Superior -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="text.html">
+                <img src="imagens/logo.png" alt="Logomarca">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="perfil.html">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil"
+                                class="perfil-icon">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="carrinho.html">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho">
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png" alt="Opções" class="options-icon">
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownOpcoes">
+                            <li><a class="dropdown-item" href="#funcionalidade1">Opções</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade2">Contato</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Central de Ajuda</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Política de Privacidade</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Termos de Uso</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Sobre Nós</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    
+    <div class="slider">
+
+        <div class="slides">
+
+            <input type="radio" name="radio-btn" id="radio1">
+            <input type="radio" name="radio-btn" id="radio2">
+            <input type="radio" name="radio-btn" id="radio3">
+            <input type="radio" name="radio-btn" id="radio4">
+
+
+            <div class="slide first">
+                <img src="https://blog.autocompara.com.br/wp-content/uploads/2024/06/carros-esportivos.jpeg" alt="Imagem 1"/>
+            </div>
+            
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1704340142770-b52988e5b6eb?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxzZWFyY2h8MXx8Y2Fycm98ZW58MHx8MHx8fDA%3D" alt="Imagem 2"/>
+            </div>
+
+            <div class="slide">
+                <img src="https://cdn.motor1.com/images/mgl/lEmjGg/s3/chevrolet-tracker-rs-2024.jpg" alt="Imagem 3"/>
+            </div>
+
+            <div class="slide">
+                <img src="https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/02/221223090506-01-bugatti-chiron-profilee.jpg?w=1200&h=900&crop=1" alt="Imagem 4"/>
+            </div>
+
+
+            <div class="navigation-auto">
+                <div class="auto-btn1"></div>
+                <div class="auto-btn2"></div>
+                <div class="auto-btn3"></div>
+                <div class="auto-btn4"></div>
+            </div>
+            
+        </div>
+
+        <div class="manual-navigation">
+            <label for="radio1" class="manual-btn"></label>
+            <label for="radio2" class="manual-btn"></label>
+            <label for="radio3" class="manual-btn"></label>
+            <label for="radio4" class="manual-btn"></label>
+        </div>
+
+
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
