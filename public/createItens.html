@@ -47,6 +47,13 @@
                 </select>
             </div>
 
+            <!-- Quantidade agora é obrigatória e 5º item -->
+            <div class="form-group">
+                <label for="quantidade" class="required">Quantidade em Estoque</label>
+                <input type="number" id="quantidade" name="quantidade" min="0" step="1" required>
+                <small>Quantidade disponível em estoque</small>
+            </div>
+
             <!-- Campos opcionais com checkbox -->
             <div class="form-group">
                 <label for="material">Material</label>
@@ -106,15 +113,6 @@
             </div>
 
             <div class="form-group">
-                <label for="quantidade">Quantidade em Estoque</label>
-                <input type="number" id="quantidade" name="quantidade" min="0" step="1" disabled>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="useQuantidade" name="useQuantidade">
-                    <label for="useQuantidade">Controlar quantidade em estoque?</label>
-                </div>
-            </div>
-
-            <div class="form-group">
                 <label for="peso">Peso</label>
                 <div class="weight-container">
                     <select id="peso_tipo" name="peso_tipo" disabled>
@@ -162,7 +160,7 @@
         </form>
     </div>
 
-    <script src="script.js"></script>
+    <script src="javascripts/createItens.js"></script>
 </body>
 
 </html>

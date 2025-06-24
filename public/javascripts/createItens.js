@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Controle de campos opcionais
+    // Controle de campos opcionais (exceto quantidade)
     document.querySelectorAll('[id^="use"]').forEach(checkbox => {
         const fieldId = checkbox.id.replace('use', '').toLowerCase();
         
@@ -66,26 +66,59 @@ document.addEventListener('DOMContentLoaded', function() {
             fields = [document.getElementById(fieldId)];
         }
         
+        // Configurar estado inicial (campos habilitados por padrão)
+        fields.forEach(field => {
+            if (field) {
+                field.disabled = false;
+            }
+        });
+        
         checkbox.addEventListener('change', function() {
             fields.forEach(field => {
                 if (field) {
-                    field.disabled = !this.checked;
+                    field.disabled = this.checked;
+                    
+                    // Limpar campo quando desabilitado
+                    if (this.checked) {
+                        if (field.tagName === 'INPUT' || field.tagName === 'TEXTAREA') {
+                            field.value = '';
+                        } else if (field.tagName === 'SELECT') {
+                            field.selectedIndex = 0;
+                        }
+                    }
                 }
             });
             
-            // Ativar/desativar opções visuais
-            if (fieldId === 'cor' || fieldId === 'tamanho') {
-                const options = document.querySelectorAll(`.${fieldId}-option`);
-                options.forEach(opt => {
-                    if (!this.checked) {
-                        opt.classList.remove('selected');
+            // Tratamento especial para cores e tamanhos
+            if (fieldId === 'cor') {
+                colorOptions.forEach(option => {
+                    option.style.pointerEvents = this.checked ? 'none' : 'auto';
+                    option.style.opacity = this.checked ? '0.5' : '1';
+                    
+                    if (this.checked) {
+                        option.classList.remove('selected');
                     }
                 });
                 
-                if (!this.checked) {
-                    if (fieldId === 'cor') coresSelecionadas = [];
-                    if (fieldId === 'tamanho') tamanhosSelecionados = [];
-                    fields[0].value = '';
+                if (this.checked) {
+                    coresSelecionadas = [];
+                    coresInput.value = '';
+                }
+            }
+            
+            if (fieldId === 'tamanho') {
+                sizeOptions.forEach(option => {
+                    option.style.pointerEvents = this.checked ? 'none' : 'auto';
+                    option.style.opacity = this.checked ? '0.5' : '1';
+                    
+                    if (this.checked) {
+                        option.classList.remove('selected');
+                    }
+                });
+                
+                if (this.checked) {
+                    tamanhosSelecionados = [];
+                    tamanhosInput.value = '';
                 }
             }
         });
@@ -95,8 +128,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('productForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Validação básica - campos obrigatórios
-        const requiredFields = ['nome', 'valor', 'descricao', 'categoria'];
+        // Campos obrigatórios (incluindo quantidade agora)
+        const requiredFields = ['nome', 'valor', 'descricao', 'categoria', 'quantidade'];
         let isValid = true;
         
         requiredFields.forEach(fieldId => {
@@ -128,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
             coresSelecionadas = [];
             tamanhosSelecionados = [];
             
-            // Desabilitar campos opcionais novamente
+            // Habilitar todos os campos opcionais novamente
             document.querySelectorAll('[id^="use"]').forEach(checkbox => {
                 checkbox.checked = false;
                 const fieldId = checkbox.id.replace('use', '').toLowerCase();
@@ -138,14 +171,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     fields = [document.getElementById('peso_tipo'), document.getElementById('peso_valor')];
                 } else if (fieldId === 'cor') {
                     fields = [document.getElementById('cores')];
+                    // Reativar visualmente as opções de cor
+                    colorOptions.forEach(option => {
+                        option.style.pointerEvents = 'auto';
+                        option.style.opacity = '1';
+                    });
                 } else if (fieldId === 'tamanho') {
                     fields = [document.getElementById('tamanhos')];
+                    // Reativar visualmente as opções de tamanho
+                    sizeOptions.forEach(option => {
+                        option.style.pointerEvents = 'auto';
+                        option.style.opacity = '1';
+                    });
                 } else {
                     fields = [document.getElementById(fieldId)];
                 }
                 
                 fields.forEach(field => {
-                    if (field) field.disabled = true;
+                    if (field) field.disabled = false;
                 });
             });
         }
