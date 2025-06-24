@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./stylesheets/index.css"/>
     <link rel="stylesheet" href="./stylesheets/menu-superior.css"/>
+    <link rel="stylesheet" href="./stylesheets/footer.css"/>
 </head>
 
 <body>
@@ -21,20 +22,18 @@
             <a class="navbar-brand logo-container" href="/">
                 <img src="images/logo.png" alt="Logomarca" class="logo-img" />
             </a>
-
-
-                <!-- Barra de Pesquisa -->
-    <div class="search-container ms-md-3 mx-auto mx-md-0">
-        <div class="input-group">
-            <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar produtos..." 
-                aria-label="Pesquisar produtos" aria-describedby="button-search">
-            <button class="btn btn-outline-light" type="button" id="button-search">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </div>
-
-
+            
+            <!-- Barra de Pesquisa -->
+            <div class="search-container ms-md-3 mx-auto mx-md-0">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar produtos..." 
+                           aria-label="Pesquisar produtos" aria-describedby="button-search">
+                    <button class="btn btn-outline-light" type="button" id="button-search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
                 aria-label="Alternar navegação">
@@ -131,76 +130,76 @@
                 <div class="card">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s" class="card-img-top" alt="Produto 1">
                     <div class="card-body">
-                        <h5 class="card-title">Produto 1</h5>
-                        <p class="card-text">Descrição do produto 1.</p>
-                        <a href="#" class="btn btn-primary" onclick="addToCart('Produto 1', 99.99, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s',event)">Adicionar ao Carrinho</a>
+                        <h5 class="card-title">Calça Motociclística</h5>
+                        <p class="card-text">Calça de proteção para motociclistas com tecnologia avançada.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça Motociclística', 99.99, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s',event)">Adicionar ao Carrinho</a>
                     </div>
                 </div>
             </div>
 
-        <!-- Produto 2 -->
-        <div class="col-6 col-md-3 mb-4 product-item Capacetes">
-            <div class="card">
-                <img src="https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png" class="card-img-top" alt="Produto 2">
-                <div class="card-body">
-                    <h5 class="card-title">Produto 2</h5>
-                    <p class="card-text">Descrição do produto 2.</p>
-                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 2', 129.99, 'https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png',event)">Adicionar ao Carrinho</a>
+            <!-- Produto 2 -->
+            <div class="col-6 col-md-3 mb-4 product-item Capacetes">
+                <div class="card">
+                    <img src="https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png" class="card-img-top" alt="Produto 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Capacete Esportivo</h5>
+                        <p class="card-text">Capacete com design aerodinâmico e proteção certificada.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Capacete Esportivo', 129.99, 'https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png',event)">Adicionar ao Carrinho</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Produto 3 -->
-        <div class="col-6 col-md-3 mb-4 product-item Luvas">
-            <div class="card">
-                <img src="https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png" class="card-img-top" alt="Produto 3">
-                <div class="card-body">
-                    <h5 class="card-title">Produto 3</h5>
-                    <p class="card-text">Descrição do produto 3.</p>
-                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 3', 89.99, 'https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png',event)">Adicionar ao Carrinho</a>
+            <!-- Produto 3 -->
+            <div class="col-6 col-md-3 mb-4 product-item Luvas">
+                <div class="card">
+                    <img src="https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png" class="card-img-top" alt="Produto 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Luva de Couro</h5>
+                        <p class="card-text">Luvas de couro genuíno com proteção para articulações.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Luva de Couro', 89.99, 'https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png',event)">Adicionar ao Carrinho</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Produto 4 -->
-        <div class="col-6 col-md-3 mb-4 product-item Jaquetas">
-            <div class="card">
-                <img src="https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png" class="card-img-top" alt="Produto 4">
-                <div class="card-body">
-                    <h5 class="card-title">Produto 4</h5>
-                    <p class="card-text">Descrição do produto 4.</p>
-                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 4', 149.99, 'https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png',event)">Adicionar ao Carrinho</a>
+            <!-- Produto 4 -->
+            <div class="col-6 col-md-3 mb-4 product-item Jaquetas">
+                <div class="card">
+                    <img src="https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png" class="card-img-top" alt="Produto 4">
+                    <div class="card-body">
+                        <h5 class="card-title">Jaqueta Impermeável</h5>
+                        <p class="card-text">Jaqueta com proteção contra chuva e vento.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Jaqueta Impermeável', 149.99, 'https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png',event)">Adicionar ao Carrinho</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Produto 5 -->
-        <div class="col-6 col-md-3 mb-4 product-item Motos">
-            <div class="card">
-                <img src="https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 5">
-                <div class="card-body">
-                    <h5 class="card-title">Produto 5</h5>
-                    <p class="card-text">Descrição do produto 5.</p>
-                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 5', 199.99, 'https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
+            <!-- Produto 5 -->
+            <div class="col-6 col-md-3 mb-4 product-item Motos">
+                <div class="card">
+                    <img src="https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 5">
+                    <div class="card-body">
+                        <h5 class="card-title">Moto Esportiva</h5>
+                        <p class="card-text">Moto de alta performance com motor 600cc.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Moto Esportiva', 199.99, 'https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Produto 6 -->
-        <div class="col-6 col-md-3 mb-4 product-item Calças">
-            <div class="card">
-                <img src="https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 6">
-                <div class="card-body">
-                    <h5 class="card-title">Produto 6</h5>
-                    <p class="card-text">Descrição do produto 6.</p>
-                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 6', 79.99, 'https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
+            <!-- Produto 6 -->
+            <div class="col-6 col-md-3 mb-4 product-item Calças">
+                <div class="card">
+                    <img src="https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 6">
+                    <div class="card-body">
+                        <h5 class="card-title">Calça Jeans</h5>
+                        <p class="card-text">Calça jeans reforçada para motociclistas urbanos.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça Jeans', 79.99, 'https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Mensagem do Carrinho -->
+    <!-- Mensagem do Carrinho -->
     <div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
 
     <!-- Footer -->
@@ -222,7 +221,7 @@
                     </ul>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h4 class="mb-3 border-bottom pb-2">Links Úteis</h4>
+                    <h4 class="mb-3 border-bottom pb-2">Informações</h4>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#">Política de Privacidade</a></li>
                         <li class="mb-2"><a href="#">Termos de Uso</a></li>
@@ -231,7 +230,7 @@
                 </div>
             </div>
             <div class="copyright text-center">
-                <small>© 2024 Todos os direitos reservados</small>
+                <small>© 2025 Todos os direitos reservados</small>
             </div>
         </div>
     </footer>

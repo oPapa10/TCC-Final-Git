@@ -1,0 +1,24 @@
+/* ===== FOOTER ===== */
+.footer {
+    background-color: var(--primary-medium) !important;
+    color: white;
+    padding-top: 2rem;
+    margin-top: 50px;
+}
+
+.footer a {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer a:hover {
+    color: #d1d1d1;
+    text-decoration: underline;
+}
+
+.copyright {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+    margin-top: 2rem;
+}

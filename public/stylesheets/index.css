@@ -7,7 +7,52 @@
     --text-light: #f8f9fa;
 }
 
+/* ===== BARRA DE PESQUISA ===== */
+.search-container {
+    flex-grow: 1;
+    max-width: 500px;
+}
 
+#searchInput {
+    border-radius: 20px 0 0 20px;
+    border-right: none;
+    padding-left: 20px;
+}
+
+#searchInput:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+#button-search {
+    border-radius: 0 20px 20px 0;
+    border-left: none;
+    background-color: var(--accent-color);
+    color: white;
+}
+
+#button-search:hover {
+    background-color: #0b5ed7;
+    color: white;
+}
+
+/* Mensagem de nenhum resultado */
+.no-results-message {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1.2rem;
+    color: #6c757d;
+    width: 100%;
+    grid-column: 1 / -1;
+    display: none;
+}
+
+/* Categoria ativa */
+.btn-category.active {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: white !important;
+}
 
 /* ===== NAVBAR CATEGORIAS ===== */
 #navbar2 {
@@ -125,30 +170,6 @@
     background-color: #0b5ed7;
 }
 
-/* ===== FOOTER ===== */
-.footer {
-    background-color: var(--primary-medium) !important;
-    color: white;
-    padding-top: 2rem;
-    margin-top: 50px;
-}
-
-.footer a {
-    color: var(--text-light);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-.footer a:hover {
-    color: #d1d1d1;
-    text-decoration: underline;
-}
-
-.copyright {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem 0;
-    margin-top: 2rem;
-}
 
 /* ===== MENSAGEM CARRINHO ===== */
 .cart-message {
@@ -172,6 +193,18 @@
 
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
+    .search-container {
+        order: 3;
+        width: 100%;
+        margin-top: 10px;
+        max-width: none;
+    }
+    
+    .navbar-collapse {
+        flex-basis: 100%;
+        flex-grow: 0;
+    }
+    
     .navbar-nav.mx-auto {
         gap: 6px;
     }
@@ -187,50 +220,5 @@
     
     .card img {
         height: 120px;
-    }
-}
-
-
-/* ===== BARRA DE PESQUISA ===== */
-.search-container {
-    flex-grow: 1;
-    max-width: 500px;
-}
-
-#searchInput {
-    border-radius: 20px 0 0 20px;
-    border-right: none;
-    padding-left: 20px;
-}
-
-#searchInput:focus {
-    box-shadow: none;
-    border-color: #ced4da;
-}
-
-#button-search {
-    border-radius: 0 20px 20px 0;
-    border-left: none;
-    background-color: var(--accent-color);
-    color: white;
-}
-
-#button-search:hover {
-    background-color: #0b5ed7;
-    color: white;
-}
-
-/* Ajustes para mobile */
-@media (max-width: 768px) {
-    .search-container {
-        order: 3;
-        width: 100%;
-        margin-top: 10px;
-        max-width: none;
-    }
-    
-    .navbar-collapse {
-        flex-basis: 100%;
-        flex-grow: 0;
     }
 }
