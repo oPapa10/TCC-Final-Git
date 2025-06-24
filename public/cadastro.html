@@ -5,12 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
-
-    <!-- Link para o CSS do Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./stylesheets/menu-superior.css">
     <link rel="stylesheet" href="./stylesheets/cadastro.css">
-
+    <link rel="stylesheet" href="./stylesheets/footer.css">
 </head>
 
 <body>
@@ -59,109 +58,195 @@
         </div>
     </nav>
 
-    <!-- Formulário de Cadastro -->
-    <div class="form-container">
-        <h2>Cadastro</h2>
-        <div class="form-row">
-            <!-- Formulário Pessoal -->
-            <div class="form-col">
-                <form>
-                    <div class="mb-3">
-                        <label for="nome" class="form-label">Nome</label>
-                        <input type="text" class="form-control" id="nome" placeholder="Digite seu nome">
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">E-mail</label>
-                        <input type="email" class="form-control" id="email" placeholder="Digite seu e-mail">
-                    </div>
-                    <div class="mb-3">
-                        <label for="senha" class="form-label">Senha</label>
-                        <input type="password" class="form-control" id="senha" placeholder="Digite sua senha">
-                    </div>
-                    <div class="mb-3">
-                        <label for="cpf" class="form-label">CPF</label>
-                        <input type="text" class="form-control" id="cpf" placeholder="Digite seu CPF">
-                    </div>
-                    <div class="mb-3">
-                        <label for="telefone" class="form-label">Telefone</label>
-                        <input type="text" class="form-control" id="telefone" placeholder="Digite seu telefone">
-                    </div>
-                    <div class="mb-3">
-                        <label for="genero" class="form-label">Gênero</label>
-                        <select class="form-select" id="genero">
-                            <option value="masculino">Masculino</option>
-                            <option value="feminino">Feminino</option>
-                            <option value="Outro">Outro</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow-1 d-flex align-items-center">
+        <div class="container cadastro-container">
+            <div class="cadastro-card">
+                <div class="cadastro-header text-center mb-4">
+                    <h2 class="cadastro-title">Crie sua conta</h2>
+                    <p class="cadastro-subtitle">Preencha os campos abaixo para se cadastrar</p>
+                </div>
+                
+                <form class="cadastro-form" id="formCadastro">
+                    <div class="form-row">
+                        <!-- Coluna 1 - Dados Pessoais -->
+                        <div class="form-col">
+                            <h5 class="form-section-title"><i class="fas fa-user me-2"></i>Dados Pessoais</h5>
+                            
+                            <div class="form-group mb-3">
+                                <label for="nome" class="form-label">Nome Completo</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="nome" placeholder="Digite seu nome" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="email" class="form-label">E-mail</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email" placeholder="Digite seu e-mail" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="senha" class="form-label">Senha</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="senha" placeholder="Crie uma senha" required>
+                                </div>
+                                <div class="invalid-feedback" id="senha-feedback">
+                                    A senha deve conter pelo menos 8 caracteres
+                                </div>
+                            </div>
 
-            <!-- Formulário de Endereço -->
-            <div class="form-col">
-                <form>
-                    <div class="mb-3">
-                        <label for="estado" class="form-label">Estado (UF)</label>
-                        <select class="form-select" id="estado" onchange="atualizarCidades()">
-                            <option value="">Selecione um estado</option>
-                                <option value="AC">Acre</option>
-                                <option value="AL">Alagoas</option>
-                                <option value="AM">Amazonas</option>
-                                <option value="AP">Amapá</option>
-                                <option value="BA">Bahia</option>
-                                <option value="CE">Ceará</option>
-                                <option value="DF">Distrito Federal</option>
-                                <option value="ES">Espírito Santo</option>
-                                <option value="GO">Goiás</option>
-                                <option value="MA">Maranhão</option>
-                                <option value="MG">Minas Gerais</option>
-                                <option value="MS">Mato Grosso do Sul</option>
-                                <option value="MT">Mato Grosso</option>
-                                <option value="MG">Minas Gerais</option>
-                                <option value="PA">Pará</option>
-                                <option value="PB">Paraíba</option>
-                                <option value="PE">Pernambuco</option>
-                                <option value="PI">Piauí</option>
-                                <option value="PR">Paraná</option>
-                                <option value="RJ">Rio de Janeiro</option>
-                                <option value="RN">Rio Grande do Norte</option>
-                                <option value="RS">Rio Grande do Sul</option>
-                                <option value="RO">Rondônia</option>
-                                <option value="RR">Roraima</option>
-                                <option value="SC" selected>Santa Catarina</option>
-                                <option value="SE">Sergipe</option>
-                                <option value="SP">São Paulo</option>
-                                <option value="TO">Tocantins</option>
-                        </select>
+                            <div class="form-group mb-3">
+                                <label for="confirmarSenha" class="form-label">Confirme a senha</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme a senha" required>
+                                </div>
+                                <div class="invalid-feedback" id="confirmarSenha-feedback">
+                                    As senhas não coincidem
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="cpf" class="form-label">CPF</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    <input type="text" class="form-control" id="cpf" placeholder="Digite seu CPF" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Coluna 2 - Contato -->
+                        <div class="form-col">
+                            <h5 class="form-section-title"><i class="fas fa-address-book me-2"></i>Contato</h5>
+                            
+                           <div class="form-group mb-3">
+                            <div class="form-group mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">+55</span>
+                                    <input type="text" class="form-control" id="telefone" 
+                                        placeholder="(XX) 9XXXX-XXXX" required
+                                        maxlength="15">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="genero" class="form-label">Gênero</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
+                                    <select class="form-select" id="genero" required>
+                                        <option value="" selected disabled>Selecione</option>
+                                        <option value="masculino">Masculino</option>
+                                        <option value="feminino">Feminino</option>
+                                        <option value="outro">Outro</option>
+                                        <option value="prefiro-nao-informar">Prefiro não informar</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Espaço reservado -->
+                            <div class="form-group mb-3" style="visibility: hidden;">
+                                <label class="form-label">Espaço</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-question"></i></span>
+                                    <input type="text" class="form-control" disabled>
+                                </div>
+                            </div>
+                            
+                            <!-- Espaço reservado -->
+                            <div class="form-group mb-3" style="visibility: hidden;">
+                                <label class="form-label">Espaço</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-question"></i></span>
+                                    <input type="text" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="cidade" class="form-label">Cidade</label>
-                        <input type="text" class="form-control" id="cidade" placeholder="Digite sua ciade">
+                </div>
+                    
+                    <!-- Endereço Completo -->
+                    <h5 class="form-section-title mt-4"><i class="fas fa-home me-2"></i>Endereço Completo</h5>
+                        <div class="form-row">
+                            <div class="form-group mb-3 col-md-6">
+                                <label for="estado" class="form-label">Estado (UF)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <select class="form-select" id="estado" required>
+                                        <option value="" selected disabled>Carregando estados...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 col-md-6">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-city"></i></span>
+                                    <select class="form-select" id="cidade" disabled required>
+                                        <option value="" selected disabled>Selecione um estado primeiro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="form-row">
+                        <div class="form-group mb-3 col-md-8">
+                            <label for="rua" class="form-label">Rua</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-road"></i></span>
+                                <input type="text" class="form-control" id="rua" placeholder="Digite sua rua" required>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 col-md-4">
+                            <label for="numero" class="form-label">Número</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                <input type="number" class="form-control" id="numero" placeholder="Nº" required min="1">
+                            </div>
+                            
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="rua" class="form-label">Rua</label>
-                        <input type="text" class="form-control" id="rua" placeholder="Digite sua rua">
-                    </div>
-                    <div class="mb-3">
-                        <label for="numero" class="form-label">Número da casa</label>
-                        <input type="text" class="form-control" id="numero" placeholder="Digite o número da casa">
+                    <div class="form-group mb-3">
+                        <label for="complemento" class="form-label">Complemento</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-building"></i></span>
+                            <input type="text" class="form-control" id="complemento" placeholder="Apto, bloco, etc.">
+                        </div>
                     </div>
                     
+                    <div class="form-group mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="termos" required>
+                            <label class="form-check-label" for="termos">
+                                Concordo com os <a href="#" class="text-primary">Termos de Serviço</a> e <a href="#" class="text-primary">Política de Privacidade</a>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+                        <button type="button" class="btn btn-outline-secondary btn-lg" onclick="window.location.href='/perfil'">
+                            Já tenho uma conta
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
-        <div class="button-container">
-            <a class="button Cancelar" href="/perfil">
-                <button type="button" class="btn btn-cancelar">Cancelar</button>
-            </a>
-            <a class="button Cadastrar-se" href="/perfil">
-                <button type="submit" class="btn btn-submit">Cadastrar</button>
-            </a>
+    </main>
+
+     <footer class="footer mt-auto">
+        <div class="copyright text-center">
+                <small>© 2025 Todos os direitos reservados</small>
         </div>
-    </div>
-    
-    <!-- Link para os scripts do Bootstrap -->
+    </footer >
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./javascripts/cadastro.js"></script>
+
+   
 </body>
 
 </html>

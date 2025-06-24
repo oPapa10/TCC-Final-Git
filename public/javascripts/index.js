@@ -8,13 +8,10 @@ function searchProducts() {
 
     productItems.forEach(item => {
         const productName = item.querySelector('.card-title').textContent.toLowerCase();
-        const productDesc = item.querySelector('.card-text').textContent.toLowerCase();
         const productCategory = item.classList[2];
-        
-        const matchesSearch = searchTerm === '' || 
-                            productName.includes(searchTerm) || 
-                            productDesc.includes(searchTerm);
-        
+
+        // A pesquisa agora só compara com o NOME do produto
+        const matchesSearch = searchTerm === '' || productName.includes(searchTerm);
         const matchesCategory = activeCategory === '' || productCategory === activeCategory;
         
         if (matchesSearch && matchesCategory) {
@@ -45,7 +42,6 @@ function showNoResultsMessage(show) {
 
 // Função de filtro por categoria
 function filterProducts(category) {
-    // Ativa/desativa o botão
     document.querySelectorAll('.btn-category').forEach(btn => {
         btn.classList.remove('active');
     });
@@ -64,7 +60,6 @@ let cartItems = [];
 function addToCart(name, price, image, event) {
     event.preventDefault();
     
-    // Verifica se o item já está no carrinho
     const existingItem = cartItems.find(item => item.name === name);
     
     if (existingItem) {
@@ -78,13 +73,8 @@ function addToCart(name, price, image, event) {
         });
     }
     
-    // Atualiza o carrinho no localStorage
     localStorage.setItem('cart', JSON.stringify(cartItems));
-    
-    // Mostra mensagem
     showCartMessage();
-    
-    // Atualiza o contador do carrinho
     updateCartCounter();
 }
 
@@ -105,7 +95,6 @@ function updateCartCounter() {
     if (cartCounter) {
         cartCounter.textContent = totalItems;
     } else {
-        // Cria o contador se não existir
         const cartLink = document.querySelector('a[href="/carrinho"]');
         if (cartLink) {
             const counter = document.createElement('span');
@@ -126,87 +115,91 @@ function loadCart() {
     }
 }
 
-// Adicione ao DOMContentLoaded
+// DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
     loadCart();
-    // ... outros códigos de inicialização
-});
-// Inicialização
-document.addEventListener('DOMContentLoaded', function() {
-    // Adiciona a mensagem de nenhum resultado
+
+    // Cria a mensagem de nenhum resultado
     const noResultsMsg = document.createElement('div');
     noResultsMsg.id = 'noResultsMessage';
     noResultsMsg.className = 'no-results-message';
     noResultsMsg.textContent = 'Nenhum produto encontrado. Tente outros termos.';
     document.getElementById('produtos').appendChild(noResultsMsg);
-    
-    // Event listeners para pesquisa
+
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('button-search');
-    
+
     // Pesquisa em tempo real com debounce
     let searchTimeout;
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(searchProducts, 300);
     });
-    
-    searchButton.addEventListener('click', searchProducts);
-    
+
+    // Clique no botão de pesquisa
+    searchButton.addEventListener('click', function() {
+        searchProducts();
+
+        // Scroll para a seção de produtos
+        const produtosSection = document.getElementById('produtos');
+        if (produtosSection) {
+            produtosSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Enter na barra de pesquisa
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             searchProducts();
         }
     });
-    
-    // Inicializa a exibição de todos os produtos
+
+    // Inicializa exibindo os produtos
     searchProducts();
 });
 
 // Função para filtrar produtos
 function filterProducts(category) {
     var products = document.querySelectorAll('.product-item');
-        products.forEach(function (product) {
-            if (category === 'Calças' && product.classList.contains('Calças')) {
-                product.style.display = 'block';
-            } else if (category === 'Calças' && !product.classList.contains('Calças')) {
-                product.style.display = 'none';
-            } else if (category === 'Capacetes' && product.classList.contains('Capacetes')) {
-                product.style.display = 'block';
-            } else if (category === 'Capacetes' && !product.classList.contains('Capacetes')) {
-                product.style.display = 'none';
-            } else if (category === 'Luvas' && product.classList.contains('Luvas')) {
-                product.style.display = 'block';
-            } else if (category === 'Luvas' && !product.classList.contains('Luvas')) {
-                product.style.display = 'none';
-             } else if (category === 'Jaquetas' && product.classList.contains('Jaquetas')) {
-                product.style.display = 'block';
-            } else if (category === 'Jaquetas' && !product.classList.contains('Jaquetas')) {
-                product.style.display = 'none';
-            } else if (category === 'Motos' && product.classList.contains('Motos')) {
-                product.style.display = 'block';
-            } else if (category === 'Motos' && !product.classList.contains('Motos')) {
-                product.style.display = 'none';
-            } else {
-                product.style.display = 'block';
-            }
-        });
-    }
+    products.forEach(function (product) {
+        if (category === 'Calças' && product.classList.contains('Calças')) {
+            product.style.display = 'block';
+        } else if (category === 'Calças') {
+            product.style.display = 'none';
+        } else if (category === 'Capacetes' && product.classList.contains('Capacetes')) {
+            product.style.display = 'block';
+        } else if (category === 'Capacetes') {
+            product.style.display = 'none';
+        } else if (category === 'Luvas' && product.classList.contains('Luvas')) {
+            product.style.display = 'block';
+        } else if (category === 'Luvas') {
+            product.style.display = 'none';
+        } else if (category === 'Jaquetas' && product.classList.contains('Jaquetas')) {
+            product.style.display = 'block';
+        } else if (category === 'Jaquetas') {
+            product.style.display = 'none';
+        } else if (category === 'Motos' && product.classList.contains('Motos')) {
+            product.style.display = 'block';
+        } else if (category === 'Motos') {
+            product.style.display = 'none';
+        } else {
+            product.style.display = 'block';
+        }
+    });
+}
 
-// ====Carrossel de produtos
+// Carrossel de produtos
 document.addEventListener('DOMContentLoaded', function() {
     const carousel = new bootstrap.Carousel('#productCarousel', {
         interval: 10000
     });
 
-    // Sincroniza informações com o slide
     document.getElementById('productCarousel').addEventListener('slid.bs.carousel', function(e) {
         document.querySelectorAll('.info-content').forEach((el, index) => {
             el.classList.toggle('active', index === e.to);
         });
     });
 
-    // Click nos indicadores
     document.querySelectorAll('.carousel-indicators button').forEach(button => {
         button.addEventListener('click', function() {
             const slideTo = parseInt(this.getAttribute('data-bs-slide-to'));

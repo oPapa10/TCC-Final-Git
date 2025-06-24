@@ -7,11 +7,25 @@ const totalDisplay = document.getElementById('total');
 // Função para atualizar o total
 function updateTotal() {
     let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    totalDisplay.innerText = total.toFixed(2);
+    totalDisplay.innerText = total.toFixed(2).replace('.', ',');
 }
 
 // Função para renderizar o carrinho
 function renderCart() {
+    if (cart.length === 0) {
+        cartContainer.innerHTML = `
+            <div class="cart-empty">
+                <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" alt="Carrinho vazio">
+                <p>Seu carrinho está vazio</p>
+                <a href="/" class="cart-continue-btn">Voltar às compras</a>
+            </div>
+        `;
+        document.querySelector('.cart-summary').style.display = 'none';
+        return;
+    }
+    
+    document.querySelector('.cart-summary').style.display = 'block';
+    
     cartContainer.innerHTML = '';
     cart.forEach((item, index) => {
         const cartItemDiv = document.createElement('div');
@@ -19,14 +33,15 @@ function renderCart() {
         cartItemDiv.innerHTML = `
             <div class="item-details">
                 <img src="${item.image}" class="item-image" alt="${item.name}">
-                <div>
+                <div class="item-info">
                     <div class="item-name">${item.name}</div>
-                    <div class="item-quantity">
-                        <button class="decrease-quantity btn btn-sm btn-secondary">-</button>
-                        <input type="text" value="${item.quantity}" class="quantity-input" disabled>
-                        <button class="increase-quantity btn btn-sm btn-secondary">+</button>
-                    </div>
+                    <div class="item-price">R$ ${item.price.toFixed(2).replace('.', ',')}</div>
                 </div>
+            </div>
+            <div class="item-quantity">
+                <button class="quantity-btn decrease-quantity">-</button>
+                <input type="text" value="${item.quantity}" class="quantity-input" disabled>
+                <button class="quantity-btn increase-quantity">+</button>
             </div>
             <button class="remove-btn">Remover</button>
         `;
@@ -54,8 +69,8 @@ cartContainer.addEventListener("click", (event) => {
         const itemIndex = Array.from(cartContainer.children).indexOf(itemDiv);
         
         if (itemIndex !== -1) {
-            cart.splice(itemIndex, 1); // Remove o item do array cart
-            updateCart(); // Atualiza localStorage e interface
+            cart.splice(itemIndex, 1);
+            updateCart();
         }
     }
 });

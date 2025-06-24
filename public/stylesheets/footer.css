@@ -1,3 +1,18 @@
+/* ===== ESTRUTURA GLOBAL ===== */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Garante que o body ocupe pelo menos toda a altura da viewport */
+}
+
+.container {
+    flex: 1; /* Faz o container principal crescer e empurrar o footer para baixo */
+}
+
 /* ===== FOOTER ===== */
 .footer {
     background-color: var(--primary-medium) !important;

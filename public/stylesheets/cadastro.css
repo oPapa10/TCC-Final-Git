@@ -1,108 +1,165 @@
- /* Estilos do menu superior */
- .navbar-custom {
-    background-color: #3064ff;
-    background-size: 500% 100%;
-    animation: wave 10s ease-in-out infinite;
-    color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    height: 80px; /* Define a altura desejada */
-}
-
-@keyframes wave {
-    0%, 100% {
-        background-position: 100% 50%;
-    }
-    50% {
-        background-position: 0% 50%;
-    }   
-}
-
-.navbar-custom .nav-link {
-    color: white;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.navbar-custom .nav-link:hover {
-    color: #d0e4ff;
-}
-
-.navbar-custom .nav-item .nav-link img {
-    width: 30px;
-    vertical-align: middle;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.navbar-custom .nav-item .nav-link:hover img {
-    transform: scale(1.2);
-    opacity: 0.8;
-}
-
-/* Alinhando os itens do menu */
-.navbar-nav {
-    margin-left: 1100px;
-}
-
-/* Estilos do formulário de cadastro */
-.form-container {
-    margin-top: 50px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
+/* Container Principal */
+.cadastro-container {
+    max-width: 900px;
     padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.form-container h2 {
+/* Cartão de Cadastro */
+.cadastro-card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    width: 100%;
+}
+
+/* Cabeçalho */
+.cadastro-header {
+    margin-bottom: 30px;
+}
+
+.cadastro-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.cadastro-subtitle {
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-bottom: 0;
+}
+
+/* Formulário */
+.cadastro-form .form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.cadastro-form .form-control,
+.cadastro-form .form-select {
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #dfe6e9;
+    padding-left: 45px;
+    transition: all 0.3s;
+}
+
+.cadastro-form .form-control:focus,
+.cadastro-form .form-select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+.cadastro-form .input-group-text {
+    background-color: transparent;
+    border-right: none;
+    color: #7f8c8d;
+}
+
+/* Seções do Formulário */
+.form-section-title {
+    color: #3498db;
+    font-weight: 600;
     margin-bottom: 20px;
-    text-align: center;
-    color: #0033cc;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
 }
 
-.btn-submit {
-    background-color: #007bff;
-    color: white;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    padding: 10px 20px;
-}
-
-.btn-submit:hover {
-    background-color: #0056b3;
-}
-
-.btn-cancelar {
-    background-color: #dc3545;
-    color: white;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    padding: 10px 20px;
-}
-
-.btn-cancelar:hover {
-    background-color: #c82333;
-}
-
-/* Estilos para os botões de Ação */
-.button-container {
+.form-row {
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
-.navbar-brand {
-    display: flex;
-    align-items: center;
+.form-col {
+    flex: 1;
+    min-width: 300px;
 }
 
-.navbar-brand img {
-    width: 150px; /* Defina o tamanho padrão */
-    height: auto; /* Mantém a proporção da imagem */
-    position: absolute;
+/* Validação */
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+/* Checkbox e Link */
+.form-check-input:checked {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.form-check-label a {
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.form-check-label a:hover {
+    text-decoration: underline;
+}
+
+/* Botões */
+.btn-lg {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 12px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+    border-color: #dfe6e9;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #dfe6e9;
+    transform: translateY(-2px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .form-col {
+        min-width: 100%;
+    }
+    
+    .cadastro-card {
+        padding: 30px 20px;
+    }
+    
+    .cadastro-title {
+        font-size: 24px;
+    }
+    
+    .form-row .col-md-6 {
+        width: 100%;
+    }
+    
+    .form-row .col-md-8, 
+    .form-row .col-md-4 {
+        width: 100%;
+    }
 }
