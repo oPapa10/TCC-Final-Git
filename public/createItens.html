@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produtos - Loja de Motos</title>
+    <link rel="stylesheet" href="stylesheets/createItens.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Cadastro de Produtos</h1>
+        <form id="productForm">
+            <!-- Campos obrigatórios -->
+            <div class="form-group">
+                <label for="nome" class="required">Nome do Produto</label>
+                <input type="text" id="nome" name="nome" maxlength="40" required>
+                <small>(Máximo 40 caracteres)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="valor" class="required">Valor (R$)</label>
+                <input type="text" id="valor" name="valor" pattern="^\$\d+(\.\d{1,2})?$" required>
+                <small>Formato: R$0.00 (máximo 2 casas decimais)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao" class="required">Descrição</label>
+                <textarea id="descricao" name="descricao" maxlength="100" required></textarea>
+                <small>(Máximo 100 caracteres)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="categoria" class="required">Categoria</label>
+                <select id="categoria" name="categoria" required>
+                    <option value="">Selecione uma categoria</option>
+                    <option value="capacete">Capacetes</option>
+                    <option value="jaqueta">Jaquetas</option>
+                    <option value="luvas">Luvas</option>
+                    <option value="botas">Botas</option>
+                    <option value="pecas">Peças</option>
+                    <option value="acessorios">Acessórios</option>
+                    <option value="eletronicos">Eletrônicos</option>
+                    <option value="seguranca">Segurança</option>
+                    <option value="manutencao">Manutenção</option>
+                </select>
+            </div>
+
+            <!-- Campos opcionais com checkbox -->
+            <div class="form-group">
+                <label for="material">Material</label>
+                <input type="text" id="material" name="material" maxlength="75" disabled>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useMaterial" name="useMaterial">
+                    <label for="useMaterial">Este produto possui material específico?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="protecao">Proteção</label>
+                <input type="text" id="protecao" name="protecao" maxlength="75" disabled>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useProtecao" name="useProtecao">
+                    <label for="useProtecao">Este produto oferece proteção?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Cor</label>
+                <div class="color-options">
+                    <div class="color-option" style="background-color: #000000;" data-value="Preto"></div>
+                    <div class="color-option" style="background-color: #ffffff; border: 1px solid #ccc;"
+                        data-value="Branco"></div>
+                    <div class="color-option" style="background-color: #ff0000;" data-value="Vermelho"></div>
+                    <div class="color-option" style="background-color: #0000ff;" data-value="Azul"></div>
+                    <div class="color-option" style="background-color: #008000;" data-value="Verde"></div>
+                    <div class="color-option" style="background-color: #ffff00;" data-value="Amarelo"></div>
+                    <div class="color-option" style="background-color: #ffa500;" data-value="Laranja"></div>
+                    <div class="color-option" style="background-color: #800080;" data-value="Roxo"></div>
+                    <div class="color-option" style="background-color: #a52a2a;" data-value="Marrom"></div>
+                    <div class="color-option" style="background-color: #808080;" data-value="Cinza"></div>
+                </div>
+                <input type="hidden" id="cores" name="cores">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useCor" name="useCor">
+                    <label for="useCor">Este produto possui cor específica?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tamanho</label>
+                <div class="size-options">
+                    <div class="size-option" data-value="PP">PP</div>
+                    <div class="size-option" data-value="P">P</div>
+                    <div class="size-option" data-value="M">M</div>
+                    <div class="size-option" data-value="G">G</div>
+                    <div class="size-option" data-value="GG">GG</div>
+                    <div class="size-option" data-value="XG">XG</div>
+                </div>
+                <input type="hidden" id="tamanhos" name="tamanhos">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useTamanho" name="useTamanho">
+                    <label for="useTamanho">Este produto possui tamanho?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="quantidade">Quantidade em Estoque</label>
+                <input type="number" id="quantidade" name="quantidade" min="0" step="1" disabled>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useQuantidade" name="useQuantidade">
+                    <label for="useQuantidade">Controlar quantidade em estoque?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="peso">Peso</label>
+                <div class="weight-container">
+                    <select id="peso_tipo" name="peso_tipo" disabled>
+                        <option value="g">Gramas (g)</option>
+                        <option value="kg">Quilos (kg)</option>
+                        <option value="ml">Mililitros (ml)</option>
+                        <option value="l">Litros (l)</option>
+                    </select>
+                    <input type="number" id="peso_valor" name="peso_valor" min="0" step="0.01" disabled>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="usePeso" name="usePeso">
+                    <label for="usePeso">Este produto possui peso específico?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cilindrada">Cilindrada (cc)</label>
+                <input type="number" id="cilindrada" name="cilindrada" min="0" disabled>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useCilindrada" name="useCilindrada">
+                    <label for="useCilindrada">Este produto possui cilindrada?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="potencia">Potência (cv)</label>
+                <input type="number" id="potencia" name="potencia" min="0" step="0.1" disabled>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="usePotencia" name="usePotencia">
+                    <label for="usePotencia">Este produto possui potência?</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tanque">Tanque (litros)</label>
+                <input type="number" id="tanque" name="tanque" min="0" step="0.1" disabled>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useTanque" name="useTanque">
+                    <label for="useTanque">Este produto possui capacidade de tanque?</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Cadastrar Produto</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
