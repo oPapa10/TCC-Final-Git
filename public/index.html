@@ -93,34 +93,59 @@
     </nav>
 
     <!-- Carrossel -->
-    <div id="carouselProdutos" class="carousel slide mb-5" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="2"></button>
-            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="3"></button>
-        </div>
+<!-- Carrossel de Produtos -->
+<div class="carousel-container">
+    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
+            <!-- Itens do Carrossel -->
             <div class="carousel-item active">
-                <img src="https://blog.autocompara.com.br/wp-content/uploads/2024/06/carros-esportivos.jpeg" class="d-block w-100" alt="Imagem 1">
+                <img src="https://blog.sportbay.com.br/wp-content/uploads/2024/04/motos-mais-vendidas-no-brasil-CAPA.webp" class="d-block" alt="Moto esportiva">
             </div>
             <div class="carousel-item">
-                <img src="https://images.unsplash.com/photo-1704340142770-b52988e5b6eb?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxzZWFyY2h8MXx8Y2Fycm98ZW58MHx8MHx8fDA%3D" class="d-block w-100" alt="Imagem 2">
+                <img src="https://www.remaza.com.br/uploads/9ca6a0b4-91d3-41e8-9e87-5af18309b836/blog-header-motos-de-luxo-valem-a-pena-remaza_730x295.jpg" class="d-block" alt="Carro Moderno">
             </div>
             <div class="carousel-item">
-                <img src="https://cdn.motor1.com/images/mgl/lEmjGg/s3/chevrolet-tracker-rs-2024.jpg" class="d-block w-100" alt="Imagem 3">
-            </div>
-            <div class="carousel-item">
-                <img src="https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/02/221223090506-01-bugatti-chiron-profilee.jpg?w=1200&h=900&crop=1" class="d-block w-100" alt="Imagem 4">
+                <img src="https://www.tecfil.com.br/wp-content/uploads/2021/12/TECFIL_SEO_IMAGENS_M7-1.jpg" class="d-block" alt="Tracker RS">
             </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselProdutos" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
+        
+        <!-- Setas de Navegação -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselProdutos" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
+        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
         </button>
+        
+        <!-- Indicadores Centralizados -->
+        <div class="carousel-indicators-container">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
+            </div>
+        </div>
     </div>
+    
+    <!-- Container de Informações -->
+    <div class="product-info">
+        <div class="info-content active">
+            <h3>Moto Esportivo</h3>
+            <p class="price">R$ 250.000,00</p>
+            <p class="description">0-100km/h em 5.2s, motor V6</p>
+        </div>
+        <div class="info-content">
+            <h3>Moto Moderna</h3>
+            <p class="price">R$ 180.000,00</p>
+            <p class="description">Tecnologia avançada</p>
+        </div>
+        <div class="info-content">
+            <h3>Moto SUV</h3>
+            <p class="price">R$ 150.000,00</p>
+            <p class="description">SUV esportivo</p>
+        </div>
+    </div>
+</div>
 
     <!-- Grid de Produtos -->
     <div id="produtos" class="container mt-5">
@@ -128,11 +153,11 @@
             <!-- Produto 1 -->
             <div class="col-6 col-md-3 mb-4 product-item Calças">
                 <div class="card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s" class="card-img-top" alt="Produto 1">
+                    <img src="https://recursos.sacramento.com.br/MediaCenter/3%20-%20Cal%C3%A7a%20Racing.png" class="card-img-top" alt="Produto 1">
                     <div class="card-body">
                         <h5 class="card-title">Calça Motociclística</h5>
                         <p class="card-text">Calça de proteção para motociclistas com tecnologia avançada.</p>
-                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça Motociclística', 99.99, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s',event)">Adicionar ao Carrinho</a>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça Motociclística', 99.99, 'https://recursos.sacramento.com.br/MediaCenter/3%20-%20Cal%C3%A7a%20Racing.png',event)">Adicionar ao Carrinho</a>
                     </div>
                 </div>
             </div>
@@ -140,11 +165,11 @@
             <!-- Produto 2 -->
             <div class="col-6 col-md-3 mb-4 product-item Capacetes">
                 <div class="card">
-                    <img src="https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png" class="card-img-top" alt="Produto 2">
+                    <img src="https://images.tcdn.com.br/img/img_prod/879024/capacete_axxis_hummer_b_solid_a1_preto_fosco_3097_1_2d4a26ddcd9ac5dd7ea056804ec69352.jpg" class="card-img-top" alt="Produto 2">
                     <div class="card-body">
                         <h5 class="card-title">Capacete Esportivo</h5>
                         <p class="card-text">Capacete com design aerodinâmico e proteção certificada.</p>
-                        <a href="#" class="btn btn-primary" onclick="addToCart('Capacete Esportivo', 129.99, 'https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png',event)">Adicionar ao Carrinho</a>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Capacete Esportivo', 129.99, 'https://images.tcdn.com.br/img/img_prod/879024/capacete_axxis_hummer_b_solid_a1_preto_fosco_3097_1_2d4a26ddcd9ac5dd7ea056804ec69352.jpg',event)">Adicionar ao Carrinho</a>
                     </div>
                 </div>
             </div>
@@ -152,11 +177,11 @@
             <!-- Produto 3 -->
             <div class="col-6 col-md-3 mb-4 product-item Luvas">
                 <div class="card">
-                    <img src="https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png" class="card-img-top" alt="Produto 3">
+                    <img src="https://images.tcdn.com.br/img/img_prod/895069/luva_x11_nitro_4_motoqueiro_bike_motociclista_protecao_full_9767_1_2eb12320c215464c7e89cfc45f4e06dd.png" class="card-img-top" alt="Produto 3">
                     <div class="card-body">
                         <h5 class="card-title">Luva de Couro</h5>
                         <p class="card-text">Luvas de couro genuíno com proteção para articulações.</p>
-                        <a href="#" class="btn btn-primary" onclick="addToCart('Luva de Couro', 89.99, 'https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png',event)">Adicionar ao Carrinho</a>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Luva de Couro', 89.99, 'https://images.tcdn.com.br/img/img_prod/895069/luva_x11_nitro_4_motoqueiro_bike_motociclista_protecao_full_9767_1_2eb12320c215464c7e89cfc45f4e06dd.png',event)">Adicionar ao Carrinho</a>
                     </div>
                 </div>
             </div>
@@ -164,11 +189,11 @@
             <!-- Produto 4 -->
             <div class="col-6 col-md-3 mb-4 product-item Jaquetas">
                 <div class="card">
-                    <img src="https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png" class="card-img-top" alt="Produto 4">
+                    <img src="https://nacar.vteximg.com.br/arquivos/ids/184049-1000-1000/JAQUETA-ALPINESTARS-andes-v3-drystar8.jpg?v=637716413018900000" class="card-img-top" alt="Produto 4">
                     <div class="card-body">
                         <h5 class="card-title">Jaqueta Impermeável</h5>
                         <p class="card-text">Jaqueta com proteção contra chuva e vento.</p>
-                        <a href="#" class="btn btn-primary" onclick="addToCart('Jaqueta Impermeável', 149.99, 'https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png',event)">Adicionar ao Carrinho</a>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Jaqueta Impermeável', 149.99, 'https://nacar.vteximg.com.br/arquivos/ids/184049-1000-1000/JAQUETA-ALPINESTARS-andes-v3-drystar8.jpg?v=637716413018900000',event)">Adicionar ao Carrinho</a>
                     </div>
                 </div>
             </div>
@@ -176,11 +201,11 @@
             <!-- Produto 5 -->
             <div class="col-6 col-md-3 mb-4 product-item Motos">
                 <div class="card">
-                    <img src="https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 5">
+                    <img src="https://www.despachantedok.com.br/blog/wp-content/uploads/2024/09/Yamaha-Fazer-250-.jpg" class="card-img-top" alt="Produto 5">
                     <div class="card-body">
                         <h5 class="card-title">Moto Esportiva</h5>
                         <p class="card-text">Moto de alta performance com motor 600cc.</p>
-                        <a href="#" class="btn btn-primary" onclick="addToCart('Moto Esportiva', 199.99, 'https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Moto Esportiva', 39999.99, 'https://www.despachantedok.com.br/blog/wp-content/uploads/2024/09/Yamaha-Fazer-250-.jpg',event)">Adicionar ao Carrinho</a>
                     </div>
                 </div>
             </div>
@@ -188,11 +213,83 @@
             <!-- Produto 6 -->
             <div class="col-6 col-md-3 mb-4 product-item Calças">
                 <div class="card">
-                    <img src="https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 6">
+                    <img src="https://recursos.sacramento.com.br/MediaCenter/2%20-%20Cal%C3%A7a%20Touring%20(2).png" class="card-img-top" alt="Produto 6">
                     <div class="card-body">
                         <h5 class="card-title">Calça Jeans</h5>
                         <p class="card-text">Calça jeans reforçada para motociclistas urbanos.</p>
-                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça Jeans', 79.99, 'https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça Jeans', 79.99, 'https://recursos.sacramento.com.br/MediaCenter/2%20-%20Cal%C3%A7a%20Touring%20(2).png',event)">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produto 7 -->
+            <div class="col-6 col-md-3 mb-4 product-item Calças">
+                <div class="card">
+                    <img src="https://recursos.sacramento.com.br/MediaCenter/3%20-%20Cal%C3%A7a%20Racing.png" class="card-img-top" alt="Produto 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Calça de couro</h5>
+                        <p class="card-text">Calça de proteção para motociclistas em tempo de chuva.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça de couro', 99.99, 'https://recursos.sacramento.com.br/MediaCenter/3%20-%20Cal%C3%A7a%20Racing.png',event)">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produto 8 -->
+            <div class="col-6 col-md-3 mb-4 product-item Capacetes">
+                <div class="card">
+                    <img src="https://images.tcdn.com.br/img/img_prod/879024/capacete_axxis_hummer_b_solid_a1_preto_fosco_3097_1_2d4a26ddcd9ac5dd7ea056804ec69352.jpg" class="card-img-top" alt="Produto 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Capacete de luxo</h5>
+                        <p class="card-text">Capacete com design aerodinâmico.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Capacete de luxo', 129.99, 'https://images.tcdn.com.br/img/img_prod/879024/capacete_axxis_hummer_b_solid_a1_preto_fosco_3097_1_2d4a26ddcd9ac5dd7ea056804ec69352.jpg',event)">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produto 9 -->
+            <div class="col-6 col-md-3 mb-4 product-item Luvas">
+                <div class="card">
+                    <img src="https://images.tcdn.com.br/img/img_prod/895069/luva_x11_nitro_4_motoqueiro_bike_motociclista_protecao_full_9767_1_2eb12320c215464c7e89cfc45f4e06dd.png" class="card-img-top" alt="Produto 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Luva de Couro sintético</h5>
+                        <p class="card-text">Luvas de couro genuíno.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Luva de Couro sintético', 89.99, 'https://images.tcdn.com.br/img/img_prod/895069/luva_x11_nitro_4_motoqueiro_bike_motociclista_protecao_full_9767_1_2eb12320c215464c7e89cfc45f4e06dd.png',event)">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produto 10 -->
+            <div class="col-6 col-md-3 mb-4 product-item Jaquetas">
+                <div class="card">
+                    <img src="https://nacar.vteximg.com.br/arquivos/ids/184049-1000-1000/JAQUETA-ALPINESTARS-andes-v3-drystar8.jpg?v=637716413018900000" class="card-img-top" alt="Produto 4">
+                    <div class="card-body">
+                        <h5 class="card-title">Jaqueta permeavel</h5>
+                        <p class="card-text">Jaqueta sem proteção contra chuva.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Jaqueta permeavel', 149.99, 'https://nacar.vteximg.com.br/arquivos/ids/184049-1000-1000/JAQUETA-ALPINESTARS-andes-v3-drystar8.jpg?v=637716413018900000',event)">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produto 11 -->
+            <div class="col-6 col-md-3 mb-4 product-item Motos">
+                <div class="card">
+                    <img src="https://www.despachantedok.com.br/blog/wp-content/uploads/2024/09/Yamaha-Fazer-250-.jpg" class="card-img-top" alt="Produto 5">
+                    <div class="card-body">
+                        <h5 class="card-title">Moto de corrida</h5>
+                        <p class="card-text">Moto de alta performance em corrida com motor 800cc.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Moto de corrida', 199.99, 'https://www.despachantedok.com.br/blog/wp-content/uploads/2024/09/Yamaha-Fazer-250-.jpg',event)">Adicionar ao Carrinho</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produto 12 -->
+            <div class="col-6 col-md-3 mb-4 product-item Calças">
+                <div class="card">
+                    <img src="https://recursos.sacramento.com.br/MediaCenter/2%20-%20Cal%C3%A7a%20Touring%20(2).png" class="card-img-top" alt="Produto 6">
+                    <div class="card-body">
+                        <h5 class="card-title">Calça de couro</h5>
+                        <p class="card-text">Calça jeans reforçada para motociclistas esportivos.</p>
+                        <a href="#" class="btn btn-primary" onclick="addToCart('Calça de couro', 79.99, 'https://recursos.sacramento.com.br/MediaCenter/2%20-%20Cal%C3%A7a%20Touring%20(2).png',event)">Adicionar ao Carrinho</a>
                     </div>
                 </div>
             </div>

@@ -192,3 +192,25 @@ function filterProducts(category) {
             }
         });
     }
+
+// ====Carrossel de produtos
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = new bootstrap.Carousel('#productCarousel', {
+        interval: 10000
+    });
+
+    // Sincroniza informações com o slide
+    document.getElementById('productCarousel').addEventListener('slid.bs.carousel', function(e) {
+        document.querySelectorAll('.info-content').forEach((el, index) => {
+            el.classList.toggle('active', index === e.to);
+        });
+    });
+
+    // Click nos indicadores
+    document.querySelectorAll('.carousel-indicators button').forEach(button => {
+        button.addEventListener('click', function() {
+            const slideTo = parseInt(this.getAttribute('data-bs-slide-to'));
+            carousel.to(slideTo);
+        });
+    });
+});
