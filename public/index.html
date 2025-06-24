@@ -2,52 +2,52 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Menu de Produtos</title>
 
-    <!-- Link para o CSS do Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./stylesheets/menu-superior.css">
-    <link rel="stylesheet" href="./stylesheets/index.css">
-
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="./stylesheets/menu-superior.css"/>
+    <link rel="stylesheet" href="./stylesheets/index.css"/>
 </head>
 
 <body>
-      
-    <!-- Menu Superior -->
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
-            <a class="navbar-brand" href="text.html">
-                <img src="images/logo.png" alt="Logomarca">
+            <a class="navbar-brand" href="/">
+                <img src="images/logo.png" alt="Logomarca" />
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
+                aria-label="Alternar navegação">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/">
-                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub">
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" />
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/perfil">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil"
-                                class="perfil-icon">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="perfil-icon"/>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/carrinho">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho"/>
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes" role="button" data-bs-toggle="dropdown" >
-                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png" alt="Opções" class="options-icon">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
+                            role="button" data-bs-toggle="dropdown">
+                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
+                                alt="Opções" class="options-icon"/>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownOpcoes">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
                             <li><a class="dropdown-item" href="#funcionalidade1">Opções</a></li>
                             <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
                             <li><a class="dropdown-item" href="#funcionalidade2">Contato</a></li>
@@ -62,209 +62,148 @@
         </div>
     </nav>
 
-    <!-- Contêiner Intermediário com Botões de Filtro -->
-    <div class="container-fluid custom-container">
-        <div class="text-center py-0">
-            <button class="filter-button" onclick="filterProducts('Todos')">Todos</button>
-            <button class="filter-button" onclick="filterProducts('Capacetes')">Capacetes</button>
-            <button class="filter-button" onclick="filterProducts('Luvas')">Luvas</button>
-            <button class="filter-button" onclick="filterProducts('Jaquetas')">Jaquetas</button>
-            <button class="filter-button" onclick="filterProducts('Calças')">Calças</button>
-            <button class="filter-button" onclick="filterProducts('Motos')">Motos</button>
+    <!-- Barra de Navegação com Filtros de Categorias -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="navbar2">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavCategorias" aria-controls="navbarNavCategorias" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavCategorias">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="btn btn-secondary" onclick="filterProducts('')">Mostrar Todos</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary" onclick="filterProducts('Calças')">Calças</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary" onclick="filterProducts('Capacetes')">Capacetes</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary" onclick="filterProducts('Luvas')">Luvas</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary" onclick="filterProducts('Jaquetas')">Jaquetas</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-secondary" onclick="filterProducts('Motos')">Motos</button>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
+
+    <!-- Carrossel Bootstrap -->
+    <div id="carouselProdutos" class="carousel slide mb-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="0" class="active" aria-current="true"></button>
+            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="2"></button>
+            <button type="button" data-bs-target="#carouselProdutos" data-bs-slide-to="3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://blog.autocompara.com.br/wp-content/uploads/2024/06/carros-esportivos.jpeg" class="d-block w-100" alt="Imagem 1">
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1704340142770-b52988e5b6eb?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxzZWFyY2h8MXx8Y2Fycm98ZW58MHx8MHx8fDA%3D" class="d-block w-100" alt="Imagem 2">
+            </div>
+            <div class="carousel-item">
+                <img src="https://cdn.motor1.com/images/mgl/lEmjGg/s3/chevrolet-tracker-rs-2024.jpg" class="d-block w-100" alt="Imagem 3">
+            </div>
+            <div class="carousel-item">
+                <img src="https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/02/221223090506-01-bugatti-chiron-profilee.jpg?w=1200&h=900&crop=1" class="d-block w-100" alt="Imagem 4">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselProdutos" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselProdutos" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
     </div>
 
-    <!--CARROSSEL-->
-    <div class="slider">
 
-        <div class="slides">
-
-            <input type="radio" name="radio-btn" id="radio1">
-            <input type="radio" name="radio-btn" id="radio2">
-            <input type="radio" name="radio-btn" id="radio3">
-            <input type="radio" name="radio-btn" id="radio4">
-
-
-            <div class="slide first">
-                <img src="https://blog.autocompara.com.br/wp-content/uploads/2024/06/carros-esportivos.jpeg" alt="Imagem 1"/>
+   <!-- Grid de Produtos -->
+<div id="produtos" class="container mt-5">
+    <div class="row">
+        <!-- Produto 1 -->
+        <div class="col-6 col-md-3 mb-4 product-item Calças">
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s" class="card-img-top" alt="Produto 1">
+                <div class="card-body">
+                    <h5 class="card-title">Produto 1</h5>
+                    <p class="card-text">Descrição do produto 1.</p>
+                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 1', 99.99, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0btj0HRbrIa7jxOlUT_RCTTRQvT8azz7zeg&s',event)">Adicionar ao Carrinho</a>
+                </div>
             </div>
-            
-            <div class="slide">
-                <img src="https://images.unsplash.com/photo-1704340142770-b52988e5b6eb?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxzZWFyY2h8MXx8Y2Fycm98ZW58MHx8MHx8fDA%3D" alt="Imagem 2"/>
-            </div>
-
-            <div class="slide">
-                <img src="https://cdn.motor1.com/images/mgl/lEmjGg/s3/chevrolet-tracker-rs-2024.jpg" alt="Imagem 3"/>
-            </div>
-
-            <div class="slide">
-                <img src="https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/02/221223090506-01-bugatti-chiron-profilee.jpg?w=1200&h=900&crop=1" alt="Imagem 4"/>
-            </div>
-
-
-            <div class="navigation-auto">
-                <div class="auto-btn1"></div>
-                <div class="auto-btn2"></div>
-                <div class="auto-btn3"></div>
-                <div class="auto-btn4"></div>
-            </div>
-            
         </div>
 
-        <div class="manual-navigation">
-            <label for="radio1" class="manual-btn"></label>
-            <label for="radio2" class="manual-btn"></label>
-            <label for="radio3" class="manual-btn"></label>
-            <label for="radio4" class="manual-btn"></label>
+        <!-- Produto 2 -->
+        <div class="col-6 col-md-3 mb-4 product-item Capacetes">
+            <div class="card">
+                <img src="https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png" class="card-img-top" alt="Produto 2">
+                <div class="card-body">
+                    <h5 class="card-title">Produto 2</h5>
+                    <p class="card-text">Descrição do produto 2.</p>
+                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 2', 129.99, 'https://png.pngtree.com/png-clipart/20231121/original/pngtree-colorful-car-white-background-png-image_13675914.png',event)">Adicionar ao Carrinho</a>
+                </div>
+            </div>
         </div>
 
-    </div>
+        <!-- Produto 3 -->
+        <div class="col-6 col-md-3 mb-4 product-item Luvas">
+            <div class="card">
+                <img src="https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png" class="card-img-top" alt="Produto 3">
+                <div class="card-body">
+                    <h5 class="card-title">Produto 3</h5>
+                    <p class="card-text">Descrição do produto 3.</p>
+                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 3', 89.99, 'https://png.pngtree.com/png-clipart/20241223/original/pngtree-car-with-colorful-design-png-image_18154239.png',event)">Adicionar ao Carrinho</a>
+                </div>
+            </div>
+        </div>
 
-    
-    <!-- Produtos -->
-    <div id="produtos" class="container mt-5">
-        
-        <div class="row">
-            <!-- Produto 1 -->
-            <div class="col-md-3 mb-4 product-item Capacetes">
-                <div class="card product-card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz4GMafLAlsJ_YSBGYm2nyRCMfKZwWRvsmzQ&s"
-                        alt="Parafuso de Madeira">
-                    <div class="card-body">
-                        <h5 class="card-title">Capacete1</h5>
-                        <p class="card-text text-success"><strong>R$ 1,50</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Capacete1', 1.50, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz4GMafLAlsJ_YSBGYm2nyRCMfKZwWRvsmzQ&s')">Adicionar
-                            ao Carrinho</button>
-                    </div>
+        <!-- Produto 4 -->
+        <div class="col-6 col-md-3 mb-4 product-item Jaquetas">
+            <div class="card">
+                <img src="https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png" class="card-img-top" alt="Produto 4">
+                <div class="card-body">
+                    <h5 class="card-title">Produto 4</h5>
+                    <p class="card-text">Descrição do produto 4.</p>
+                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 4', 149.99, 'https://static.vecteezy.com/system/resources/previews/015/738/494/non_2x/kids-colorful-cartoon-car-free-png.png',event)">Adicionar ao Carrinho</a>
                 </div>
             </div>
+        </div>
 
-            <!-- Produto 2 -->
-            <div class="col-md-3 mb-4 product-item Capacetes">
-                <div class="card product-card">
-                    <img src="https://motosprint.vteximg.com.br/arquivos/ids/175707-2400-2400/Capacete-Moto-NZI-Combi2-Duo-Branco-5-1-.jpg?v=637806984511100000"
-                        alt="Porca Santo Antônio">
-                    <div class="card-body">
-                        <h5 class="card-title">Capacete2</h5>
-                        <p class="card-text text-success"><strong>R$ 2,00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Capacete2', 2.00, 'https://motosprint.vteximg.com.br/arquivos/ids/175707-2400-2400/Capacete-Moto-NZI-Combi2-Duo-Branco-5-1-.jpg?v=637806984511100000')">Adicionar
-                            ao Carrinho</button>
-                    </div>
+        <!-- Produto 5 -->
+        <div class="col-6 col-md-3 mb-4 product-item Motos">
+            <div class="card">
+                <img src="https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 5">
+                <div class="card-body">
+                    <h5 class="card-title">Produto 5</h5>
+                    <p class="card-text">Descrição do produto 5.</p>
+                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 5', 199.99, 'https://img.freepik.com/vetores-gratis/carro-sedan-vermelho-em-estilo-cartoon-isolado-no-fundo-branco_1308-64900.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
                 </div>
             </div>
+        </div>
 
-            <!-- Produto 3 -->
-            <div class="col-md-3 mb-4 product-item Luvas">
-                <div class="card product-card">
-                    <img src="https://nacar.vteximg.com.br/arquivos/ids/174112-1000-1000/Luva-Tutto-Moto-Job-1.jpg?v=636746152351300000" alt="Fita Métrica">
-                    <div class="card-body">
-                        <h5 class="card-title">Luva1</h5>
-                        <p class="card-text text-success"><strong>R$ 10,00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Luva1', 10.00, 'https://nacar.vteximg.com.br/arquivos/ids/174112-1000-1000/Luva-Tutto-Moto-Job-1.jpg?v=636746152351300000')">Adicionar
-                            ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Produto 4 -->
-            <div class="col-md-3 mb-4 product-item Luvas">
-                <div class="card product-card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYYi5iKEYwGnAOVU-AZp4mcQPHptzFsRWkSQ&s" alt="Serra Circular">
-                    <div class="card-body">
-                        <h5 class="card-title">Luva2</h5>
-                        <p class="card-text text-success"><strong>R$ 50.00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Luva2', 50.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYYi5iKEYwGnAOVU-AZp4mcQPHptzFsRWkSQ&s')">Adicionar
-                            ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-            <!-- Produto 5 -->
-            <div class="col-md-3 mb-4 product-item Jaquetas">
-                <div class="card product-card">
-                    <img src="https://images.tcdn.com.br/img/img_prod/650541/jaqueta_x11_next_gen_masculina_impermeavel_motociclista_motoqueiro_1777_variacao_20995_1_e5b0f7b218a5f5e86f6f90fefefbeafc.jpg" alt="Serra Circular">
-                    <div class="card-body">
-                        <h5 class="card-title">Jaqueta1</h5>
-                        <p class="card-text text-success"><strong>R$ 199,99</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Jaqueta1', 199.99, 'https://images.tcdn.com.br/img/img_prod/650541/jaqueta_x11_next_gen_masculina_impermeavel_motociclista_motoqueiro_1777_variacao_20995_1_e5b0f7b218a5f5e86f6f90fefefbeafc.jpg')">Adicionar
-                            ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-            <!-- Produto 6 -->
-            <div class="col-md-3 mb-4 product-item Jaquetas">
-                <div class="card product-card">
-                    <img src="https://images.tcdn.com.br/img/img_prod/895069/jaqueta_motoqueiro_expedition_masculino_verde_militar_todos_tamanhos_18321_1_2acdf4820af047511bb7dc68c219bd0a.jpeg" alt="Boi top">
-                    <div class="card-body">
-                        <h5 class="card-title">Jaqueta2</h5>
-                        <p class="card-text text-success"><strong>R$ 1000.00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Jaqueta2', 1000.00, 'https://images.tcdn.com.br/img/img_prod/895069/jaqueta_motoqueiro_expedition_masculino_verde_militar_todos_tamanhos_18321_1_2acdf4820af047511bb7dc68c219bd0a.jpeg')">Adicionar
-                            ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-            <!-- Produto 7 -->
-            <div class="col-md-3 mb-4 product-item Calças">
-                <div class="card product-card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY0lt6MrzXDoW4oQuALCGI5cAM-2sEWksmdA&s" alt="Serra Circular">
-                    <div class="card-body">
-                        <h5 class="card-title">Calça1</h5>
-                        <p class="card-text text-success"><strong>R$ 123.00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Calça1', 123.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY0lt6MrzXDoW4oQuALCGI5cAM-2sEWksmdA&s')">Adicionar
-                            ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-            <!-- Produto 8  -->
-            <div class="col-md-3 mb-4 product-item Calças">
-                <div class="card product-card">
-                    <img src="https://nacar.vteximg.com.br/arquivos/ids/159655-1000-1000/3R0G4705-TITANIUM.jpg?v=635128466460130000" alt="Serra Circular">
-                    <div class="card-body">
-                        <h5 class="card-title">Calça2</h5>
-                        <p class="card-text text-success"><strong>R$ 400.00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Calça2', 400.00, 'https://nacar.vteximg.com.br/arquivos/ids/159655-1000-1000/3R0G4705-TITANIUM.jpg?v=635128466460130000')">Adicionar
-                            ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-             <!-- Produto 9  -->
-             <div class="col-md-3 mb-4 product-item Motos">
-                <div class="card product-card">
-                    <img src="https://s2-autoesporte.glbimg.com/Zfu_zYvG28j0IbRzpHWoss7xW24=/0x0:921x691/888x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_cf9d035bf26b4646b105bd958f32089d/internal_photos/bs/2022/y/4/lDfqbPTBW4RuE8iJbDAw/3ebfveyae5bldcygx5jyo2epzu.jpg" alt="Serra Circular">
-                    <div class="card-body">
-                        <h5 class="card-title">Moto1</h5>
-                        <p class="card-text text-success"><strong>R$ 10000.00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Moto1', 10000.00, 'https://s2-autoesporte.glbimg.com/Zfu_zYvG28j0IbRzpHWoss7xW24=/0x0:921x691/888x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_cf9d035bf26b4646b105bd958f32089d/internal_photos/bs/2022/y/4/lDfqbPTBW4RuE8iJbDAw/3ebfveyae5bldcygx5jyo2epzu.jpg')">Adicionar
-                            ao Carrinho</button>
-                    </div>
-                </div>
-            </div>
-             <!-- Produto 10  -->
-             <div class="col-md-3 mb-4 product-item Motos">
-                <div class="card product-card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy6NN097Z5w0QauWKmxSOyysEUXgrYtS-1xw&s" alt="Serra Circular">
-                    <div class="card-body">
-                        <h5 class="card-title">Moto2</h5>
-                        <p class="card-text text-success"><strong>R$ 14999.00</strong></p>
-                        <button class="btn"
-                            onclick="addToCart('Moto2', 14999.00, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy6NN097Z5w0QauWKmxSOyysEUXgrYtS-1xw&s')">Adicionar
-                            ao Carrinho</button>
-                    </div>
+        <!-- Produto 6 -->
+        <div class="col-6 col-md-3 mb-4 product-item Calças">
+            <div class="card">
+                <img src="https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740" class="card-img-top" alt="Produto 6">
+                <div class="card-body">
+                    <h5 class="card-title">Produto 6</h5>
+                    <p class="card-text">Descrição do produto 6.</p>
+                    <a href="#" class="btn btn-primary" onclick="addToCart('Produto 6', 79.99, 'https://img.freepik.com/vetores-gratis/carro-de-corrida-na-cor-laranja-em-fundo-isolado_1308-69652.jpg?semt=ais_hybrid&w=740',event)">Adicionar ao Carrinho</a>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-   
-    <!-- Scripts do Bootstrap -->
+<div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./javascripts/index.js"></script>
 </body>

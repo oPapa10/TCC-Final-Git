@@ -31,13 +31,11 @@ function renderCart() {
             <button class="remove-btn">Remover</button>
         `;
         
-        // Lógica de aumentar a quantidade
         cartItemDiv.querySelector('.increase-quantity').addEventListener('click', () => {
             item.quantity++;
             updateCart();
         });
         
-        // Lógica de diminuir a quantidade
         cartItemDiv.querySelector('.decrease-quantity').addEventListener('click', () => {
             if (item.quantity > 1) {
                 item.quantity--;
@@ -45,15 +43,22 @@ function renderCart() {
             }
         });
         
-        // Lógica para remover o item
-        cartItemDiv.querySelector('.remove-btn').addEventListener('click', () => {
-            cart.splice(index, 1);
-            updateCart();
-        });
-        
         cartContainer.appendChild(cartItemDiv);
     });
 }
+
+// Função para remover produto usando delegação de eventos
+cartContainer.addEventListener("click", (event) => {
+    if (event.target.classList.contains("remove-btn")) {
+        const itemDiv = event.target.closest(".cart-item");
+        const itemIndex = Array.from(cartContainer.children).indexOf(itemDiv);
+        
+        if (itemIndex !== -1) {
+            cart.splice(itemIndex, 1); // Remove o item do array cart
+            updateCart(); // Atualiza localStorage e interface
+        }
+    }
+});
 
 // Função para salvar o carrinho no localStorage
 function updateCart() {
@@ -62,5 +67,6 @@ function updateCart() {
     updateTotal();
 }
 
+// Inicializa o carrinho na página
 renderCart();
 updateTotal();

@@ -1,76 +1,69 @@
-
 .navbar-custom {
     background-color: #3064ff; /* Cor de fundo do menu */
     height: 90px; /* Altura do menu */
-    transform: translateY(-10px); /* Move o menu para cima */
     display: flex; /* Flexbox para organizar os itens */
     align-items: center; /* Alinha os itens verticalmente no centro */
+    z-index: 1000; /* Garante que o menu fique sobre outros elementos */
 }
 
 /* Garante que o body ocupe toda a largura da tela */
 body, html {
-    margin: 0; /* Remove qualquer margem padrão */
-    padding: 0; /* Remove qualquer padding padrão */
-    width: 100%; /* Garante que o body ocupe toda a largura da tela */
+    margin: 0;
+    padding: 0;
+    width: 100%;
     background-color: rgb(244, 244, 244);
 }
 
-
 /* Estilo da logo */
 .navbar-brand {
-    display: flex; /* Flexbox para a logo */
-    align-items: center; /* Alinha a logo verticalmente no centro */
-    position: absolute;
-    left: 5%;
-    top: -32%;
-    
+    display: flex;
+    align-items: center;
+    margin-left: 5%; /* Ajuste para alinhamento */
 }
 
 /* Estilo da imagem da marca (logo) */
 .navbar-brand img {
-    width: 150px; /* Tamanho da logo */
-    height: auto; /* Mantém a proporção da imagem */
+    width: 150px;
+    height: auto;
 }
 
 /*BOTÕES*/
 
 /* Estilo do botão de alternância (hamburger menu) para dispositivos móveis */
 .navbar-toggler {
-    border: none; /* Remove borda */
-    background: transparent; /* Fundo transparente */
+    border: none;
+    background: transparent;
 }
 
 /* Estilo dos itens de navegação (links) */
 .navbar-nav {
-    display: flex; /* Organiza os itens horizontalmente */
-    position: absolute;
-    right: 5%;
-    top: 32%;
-    
+    display: flex; /* Mantém os itens organizados */
+    justify-content: flex-end; /* Garante alinhamento correto */
+    width: 100%;
 }
 
 /* Estilo dos itens de navegação individuais */
 .nav-item {
-    margin-left: 3px; /* Espaçamento entre os itens */
+    margin-left: 3px;
 }
 
 /* Estilo das imagens dentro dos itens de navegação */
 .navbar-custom .nav-item .nav-link img {
-    width: 30px; /* Tamanho das imagens dos ícones */
-    vertical-align: middle; /* Alinha verticalmente as imagens */
-    transition: transform 0.3s ease, opacity 0.3s ease; /* Efeito de transição */
+    width: 30px;
+    vertical-align: middle;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 /* Efeito de hover nos ícones */
 .navbar-custom .nav-item .nav-link:hover img {
-    transform: scale(1.2); /* Aumenta o ícone */
-    opacity: 0.8; /* Tornando o ícone um pouco transparente */
+    transform: scale(1.2);
+    opacity: 0.8;
 }
 
+/* Estilo do dropdown */
 .nav-item.dropdown .dropdown-menu {
-    position: absolute;
-    left: -70px; /* Ajuste para mover mais para a esquerda */
-    right: auto; /* Evita alinhamento pela direita */
-    top: 126%; /* Mantém o menu abaixo do item de navegação */
-
+    left: -70px;
+    top: 140%;
+    min-width: 200px; /* Define um tamanho mínimo maior */
+    width: auto; /* Permite que ele se ajuste ao conteúdo */
 }
