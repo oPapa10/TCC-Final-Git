@@ -210,3 +210,24 @@ function loadCart() {
     cartItems = savedCart ? JSON.parse(savedCart) : [];
     updateCartCounter();
 }
+
+// Configura o clique nos produtos
+    document.querySelectorAll('.product-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const productCard = this.closest('.product-card');
+            const productData = {
+                name: productCard.dataset.productName,
+                price: productCard.dataset.productPrice,
+                originalPrice: productCard.dataset.productOriginalPrice || null,
+                image: productCard.dataset.productImage,
+                thumbnails: JSON.parse(productCard.dataset.productThumbnails || '[]'),
+                description: productCard.dataset.productDescription,
+                details: JSON.parse(productCard.dataset.productDetails)
+            };
+            
+            localStorage.setItem('currentProduct', JSON.stringify(productData));
+            window.location.href = '/product';
+        });
+    });
