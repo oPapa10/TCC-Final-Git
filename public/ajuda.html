@@ -107,34 +107,50 @@
         <section class="help-content" id="helpContent">
             <div class="welcome-message">
                 <h2>Como podemos ajudar você hoje?</h2>
-                <p>Selecione uma categoria acima ou busque por palavras-chave para encontrar respostas para suas
-                    dúvidas.</p>
-                <div class="popular-questions">
+                <p>Selecione uma categoria acima ou busque por palavras-chave para encontrar respostas para suas dúvidas.</p>
+                <div class="popular-questions mt-4">
                     <h3>Perguntas frequentes:</h3>
-                    <ul>
-                        <li onclick="showAnswer('como-rastrear')">Como rastrear meu pedido?</li>
-                        <li onclick="showAnswer('prazo-devolucao')">Qual o prazo para devolução?</li>
-                        <li onclick="showAnswer('seguranca-pagamento')">O pagamento é seguro?</li>
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-action" onclick="showAnswer('como-rastrear', 'home')">
+                            <i class="fas fa-shipping-fast me-2"></i>Como rastrear meu pedido?
+                        </li>
+                        <li class="list-group-item list-group-item-action" onclick="showAnswer('prazo-devolucao', 'home')">
+                            <i class="fas fa-undo-alt me-2"></i>Qual o prazo para devolução?
+                        </li>
+                        <li class="list-group-item list-group-item-action" onclick="showAnswer('seguranca-pagamento', 'home')">
+                            <i class="fas fa-lock me-2"></i>O pagamento é seguro?
+                        </li>
                     </ul>
                 </div>
             </div>
 
             <div class="questions-list" id="questionsList" style="display: none;">
-                <h2 id="categoryTitle"></h2>
-                <div class="questions-container" id="questionsContainer"></div>
+                <div class="d-flex align-items-center mb-3 position-relative">
+                    <button class="btn btn-link p-0 me-2 position-absolute start-0" style="z-index:2;" onclick="backToHome()">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </button>
+                    <h2 id="categoryTitle" class="flex-grow-1 text-center w-100 mb-0" style="margin-left: -40px;"></h2>
+                </div>
+                <div class="questions-container list-group" id="questionsContainer"></div>
             </div>
 
             <div class="answer-container" id="answerContainer" style="display: none;">
-                <button class="back-button" onclick="backToQuestions()">
+                <button class="btn btn-link back-button mb-3" onclick="backToQuestions()">
                     <i class="fas fa-arrow-left"></i> Voltar
                 </button>
-                <h2 id="questionTitle"></h2>
-                <div class="answer-content" id="answerContent"></div>
-                <div class="helpful-box">
-                    <p>Esta resposta foi útil?</p>
-                    <div>
-                        <button onclick="rateHelpful(true)"><i class="fas fa-thumbs-up"></i> Sim</button>
-                        <button onclick="rateHelpful(false)"><i class="fas fa-thumbs-down"></i> Não</button>
+                <div class="card">
+                    <div class="card-body">
+                        <h4 id="questionTitle" class="card-title"></h4>
+                        <div class="answer-content card-text" id="answerContent"></div>
+                        <div class="helpful-box mt-4">
+                            <p>Esta resposta foi útil?</p>
+                            <button class="btn btn-outline-success btn-sm me-2" onclick="rateHelpful(true)">
+                                <i class="fas fa-thumbs-up"></i> Sim
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="rateHelpful(false)">
+                                <i class="fas fa-thumbs-down"></i> Não
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -70,17 +70,22 @@ const faqDatabase = {
     ]
 };
 
+let lastOrigin = 'home'; // 'home' ou 'category'
+
 // Função para exibir perguntas de uma categoria
 function showQuestions(category) {
+    lastOrigin = 'category';
     const questionsContainer = document.getElementById('questionsContainer');
     const categoryTitle = document.getElementById('categoryTitle');
     const welcomeMessage = document.querySelector('.welcome-message');
     const questionsList = document.getElementById('questionsList');
-    
+    const answerContainer = document.getElementById('answerContainer');
+
     // Esconde mensagem de boas-vindas e mostra lista de perguntas
     welcomeMessage.style.display = 'none';
     questionsList.style.display = 'block';
-    
+    answerContainer.style.display = 'none';
+
     // Define o título da categoria
     let title = '';
     switch(category) {
@@ -90,26 +95,26 @@ function showQuestions(category) {
         case 'cadastro': title = 'Cadastro e Conta'; break;
     }
     categoryTitle.textContent = title;
-    
+
     // Limpa o container de perguntas
     questionsContainer.innerHTML = '';
-    
-    // Adiciona cada pergunta ao container
+
+    // Adiciona cada pergunta ao container como item do Bootstrap
     faqDatabase[category].forEach(item => {
-        const questionElement = document.createElement('div');
-        questionElement.className = 'question-item';
+        const questionElement = document.createElement('button');
+        questionElement.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2';
         questionElement.innerHTML = `
-            <h3 onclick="showAnswer('${item.id}')">
-                ${item.question}
-                <i class="fas fa-chevron-right"></i>
-            </h3>
+            <span>${item.question}</span>
+            <i class="fas fa-chevron-right"></i>
         `;
+        questionElement.onclick = () => showAnswer(item.id);
         questionsContainer.appendChild(questionElement);
     });
 }
 
 // Função para exibir uma resposta específica
-function showAnswer(questionId) {
+function showAnswer(questionId, origin = 'category') {
+    lastOrigin = origin;
     const questionsList = document.getElementById('questionsList');
     const answerContainer = document.getElementById('answerContainer');
     const questionTitle = document.getElementById('questionTitle');
@@ -136,7 +141,19 @@ function showAnswer(questionId) {
 // Função para voltar à lista de perguntas
 function backToQuestions() {
     document.getElementById('answerContainer').style.display = 'none';
-    document.getElementById('questionsList').style.display = 'block';
+    if (lastOrigin === 'home') {
+        document.querySelector('.welcome-message').style.display = 'block';
+        document.getElementById('questionsList').style.display = 'none';
+    } else {
+        document.getElementById('questionsList').style.display = 'block';
+    }
+}
+
+// Função para voltar ao início (perguntas frequentes)
+function backToHome() {
+    document.querySelector('.welcome-message').style.display = 'block';
+    document.getElementById('questionsList').style.display = 'none';
+    document.getElementById('answerContainer').style.display = 'none';
 }
 
 // Função para avaliar se a resposta foi útil
