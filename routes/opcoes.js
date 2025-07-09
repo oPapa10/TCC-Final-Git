@@ -4,7 +4,7 @@ const router = express.Router();
 
 //Rota para home
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'opcoes.html'));
+  res.render('opcoes');;
 });
 
 module.exports = router;

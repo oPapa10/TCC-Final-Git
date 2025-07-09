@@ -1,0 +1,230 @@
+<!-- filepath: views/index.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Menu de Produtos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/index.css"/>
+    <link rel="stylesheet" href="/stylesheets/menu-superior.css"/>
+    <link rel="stylesheet" href="/stylesheets/footer.css"/>
+</head>
+<body>
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="/">
+                <img src="/images/logo.png" alt="Logomarca" class="logo-img" />
+            </a>
+            <div class="search-container ms-md-3 mx-auto mx-md-0">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar produtos..." aria-label="Pesquisar produtos" aria-describedby="button-search">
+                    <button class="btn btn-outline-light" type="button" id="button-search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <!-- Botão do Administrador -->
+                    <a href="/adm" class="btn btn-outline-light ms-2" id="admin-button">
+                        <i class="fas fa-user-shield"></i> Admin
+                    </a>
+                </div>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
+                aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perfil">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carrinho">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
+                            <span id="cartCounter" class="cart-counter"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
+                            role="button" data-bs-toggle="dropdown">
+                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
+                                alt="Opções" class="nav-icon"/>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
+                            <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
+                            <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Navbar de Categorias -->
+    <nav class="navbar navbar-expand-lg navbar-dark" id="navbar2">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavCategorias">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavCategorias">
+                <div class="navbar-nav mx-auto">
+                    <button class="nav-link btn-category" onclick="filterProducts('', this)">Mostrar Todos</button>
+                    <% if (categorias && categorias.length > 0) { %>
+                        <% categorias.forEach(function(cat) { %>
+                            <button class="nav-link btn-category" onclick="filterProducts('<%= cat.nome %>', this)"><%= cat.nome %></button>
+                        <% }) %>
+                    <% } else { %>
+                        <!-- Categorias fixas caso não venha do banco -->
+                        <button class="nav-link btn-category" onclick="filterProducts('Calças', this)">Calças</button>
+                        <button class="nav-link btn-category" onclick="filterProducts('Capacetes', this)">Capacetes</button>
+                        <button class="nav-link btn-category" onclick="filterProducts('Luvas', this)">Luvas</button>
+                        <button class="nav-link btn-category" onclick="filterProducts('Jaquetas', this)">Jaquetas</button>
+                        <button class="nav-link btn-category" onclick="filterProducts('Motos', this)">Motos</button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Carrossel -->
+    <div class="carousel-container">
+        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://blog.sportbay.com.br/wp-content/uploads/2024/04/motos-mais-vendidas-no-brasil-CAPA.webp" class="d-block" alt="Moto esportiva">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://www.remaza.com.br/uploads/9ca6a0b4-91d3-41e8-9e87-5af18309b836/blog-header-motos-de-luxo-valem-a-pena-remaza_730x295.jpg" class="d-block" alt="Carro Moderno">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://www.tecfil.com.br/wp-content/uploads/2021/12/TECFIL_SEO_IMAGENS_M7-1.jpg" class="d-block" alt="Tracker RS">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </button>
+            <div class="carousel-indicators-container">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
+                </div>
+            </div>
+        </div>
+        <!-- Container de Informações -->
+        <div class="product-info">
+            <div class="info-content active">
+                <h3>Moto Esportiva</h3>
+                <p class="price">R$ 250.000,00</p>
+                <p class="description">Acelera de 0 a 100 km/h em apenas 5,2 segundos. Motor V6 potente, ideal para alta performance nas pistas.</p>
+            </div>
+            <div class="info-content">
+                <h3>Moto Moderna</h3>
+                <p class="price">R$ 180.000,00</p>
+                <p class="description">Design futurista com painel digital completo, conectividade Bluetooth e sistema de navegação integrado.</p>
+            </div>
+            <div class="info-content">
+                <h3>Moto SUV</h3>
+                <p class="price">R$ 150.000,00</p>
+                <p class="description">Versatilidade e conforto em qualquer terreno. Suspensão reforçada e espaço extra para longas viagens.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="searchMessage" class="container text-center my-3" style="display: none;">
+        <div class="alert alert-custom mb-0">Nenhum produto encontrado para sua pesquisa.</div>
+    </div>
+
+    <!-- Grid de Produtos (dinâmico) -->
+    <div id="produtos" class="container mt-5">
+        <div class="row">
+            <% if (produtos && produtos.length > 0) { %>
+                <% produtos.forEach(function(produto) { %>
+                    <div class="col-6 col-md-3 mb-4 product-item <%= produto.categoria %>">
+                        <div class="card product-card"
+                            data-product-name="<%= produto.nome %>"
+                            data-product-price="<%= produto.valor %>"
+                            data-product-image="<%= produto.imagem %>"
+                            data-product-thumbnails='<%= produto.thumbnails || "[]" %>'
+                            data-product-description="<%= produto.descricao %>"
+                            data-product-details='<%= produto.detalhes || "[]" %>'>
+                            <img src="<%= produto.imagem %>" class="card-img-top" alt="<%= produto.nome %>">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= produto.nome %></h5>
+                                <p class="card-text"><%= produto.descricao %></p>
+                                <p class="price">R$ <%= produto.valor ? produto.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : "0,00" %></p>
+                                <a href="/product/<%= produto.ID %>" class="stretched-link product-link"></a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="col-12 text-center">
+                    <p>Nenhum produto encontrado.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Mensagem do Carrinho -->
+    <div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Contato</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-whatsapp me-2"></i>(48) 99850-3648</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="https://www.instagram.com/center.motos1/" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-instagram me-2"></i>Instagram
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="https://www.facebook.com/centermotossombrio/" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-facebook me-2"></i>Facebook
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Informações</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Política de Privacidade</a></li>
+                        <li class="mb-2"><a href="#">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#">Sobre Nós</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright text-center">
+                <small>© <%= new Date().getFullYear() %> Todos os direitos reservados</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="/javascripts/index.js"></script>
+    <script src="/javascripts/cart.js"></script>
+</body>
+</html>

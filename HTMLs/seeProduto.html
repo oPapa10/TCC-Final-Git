@@ -1,0 +1,80 @@
+<h1>VISUALIZAR</h1>
+
+<h3>Cleber é o melhor!</h3>
+
+<!-- -- Tabela de usuários
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    telefone VARCHAR(20),
+    endereco VARCHAR(255),
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabela de categorias
+CREATE TABLE categorias (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    descricao VARCHAR(255)
+);
+
+-- Tabela de produtos
+CREATE TABLE produtos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    preco DECIMAL(10,2) NOT NULL,
+    quantidade INT DEFAULT 0,
+    categoria_id INT,
+    imagem_url VARCHAR(255),
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+);
+
+-- Tabela de pedidos
+CREATE TABLE pedidos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT,
+    data_pedido DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50),
+    total DECIMAL(10,2),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabela de itens do pedido
+CREATE TABLE itens_pedido (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    pedido_id INT,
+    produto_id INT,
+    quantidade INT NOT NULL,
+    preco_unitario DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+-- Tabela de carrinhos (opcional)
+CREATE TABLE carrinhos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT,
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabela de itens do carrinho (opcional)
+CREATE TABLE itens_carrinho (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    carrinho_id INT,
+    produto_id INT,
+    quantidade INT NOT NULL,
+    FOREIGN KEY (carrinho_id) REFERENCES carrinhos(id),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+-- Tabela de FAQ (opcional)
+CREATE TABLE faq (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    pergunta TEXT NOT NULL,
+    resposta TEXT NOT NULL,
+    categoria VARCHAR(100)
+); -->

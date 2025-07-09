@@ -4,7 +4,7 @@ const router = express.Router();
 
 //Rota para home
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'adm.html'));
+  res.render('adm');
 });
 
 

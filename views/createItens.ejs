@@ -1,0 +1,85 @@
+<!-- filepath: views/createItens.ejs -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Produtos - Loja de Motos</title>
+    <link rel="stylesheet" href="/stylesheets/createItens.css">
+    <link rel="stylesheet" href="/stylesheets/menu-superior.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="/">
+                <img src="/images/logo.png" alt="Logomarca" class="logo-img" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carrinho">Carrinho</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ajuda">Ajuda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cadastro">Cadastro</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-4">
+        <h1>Cadastro de Produtos</h1>
+        <form id="productForm" action="/produtos" method="POST" enctype="multipart/form-data">
+            <div class="form-group mb-3">
+                <label for="nome" class="required">Nome do Produto</label>
+                <input type="text" id="nome" name="nome" maxlength="40" class="form-control" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="valor" class="required">Valor (R$)</label>
+                <input type="number" step="0.01" id="valor" name="valor" class="form-control" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="descricao" class="required">Descrição</label>
+                <textarea id="descricao" name="descricao" maxlength="100" class="form-control" required></textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label for="categoria" class="required">Categoria</label>
+                <select id="categoria" name="categoria" class="form-select" required>
+                    <option value="">Selecione uma categoria</option>
+                    <% categorias.forEach(function(cat) { %>
+                        <option value="<%= cat.id %>"><%= cat.nome %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="quantidade" class="required">Quantidade em Estoque</label>
+                <input type="number" id="quantidade" name="quantidade" min="0" class="form-control" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="imagem" class="required">Imagem do Produto</label>
+                <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
+        </form>
+    </div>
+
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">&copy; <%= new Date().getFullYear() %> Center Motos. Todos os direitos reservados.</span>
+        </div>
+    </footer>
+    <script src="/javascripts/createItens.js"></script>
+</body>
+</html>

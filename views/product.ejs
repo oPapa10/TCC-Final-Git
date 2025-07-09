@@ -1,0 +1,105 @@
+<!-- filepath: views/product.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Detalhes do Produto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/index.css"/>
+    <link rel="stylesheet" href="/stylesheets/menu-superior.css"/>
+    <link rel="stylesheet" href="/stylesheets/footer.css"/>
+    <link rel="stylesheet" href="/stylesheets/product.css"/>
+</head>
+<body>
+    <!-- Navbar Superior -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand logo-container" href="/">
+                <img src="/images/logo.png" alt="Logomarca" class="logo-img" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carrinho">Carrinho</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ajuda">Ajuda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cadastro">Cadastro</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-5 pt-4">
+        <div class="row">
+            <!-- Galeria de Imagens -->
+            <div class="col-md-6">
+                <div class="main-image mb-3">
+                    <% if (produto) { %>
+                        <img id="mainProductImage" src="<%= produto.imagem %>" alt="Imagem do Produto" class="img-fluid rounded">
+                    <% } else { %>
+                        <p>Produto não encontrado.</p>
+                    <% } %>
+                </div>
+                <% if (produto) { %>
+                    <!-- Seu código de exibição do produto -->
+                    <div class="thumbnail-container d-flex">
+                        <% if (produto.thumbnails && produto.thumbnails.length > 0) { %>
+                            <% produto.thumbnails.forEach(function(thumb, idx) { %>
+                                <div class="thumbnail-item <%= idx === 0 ? 'active' : '' %> me-2">
+                                    <img src="<%= thumb %>" alt="Miniatura <%= idx+1 %>" class="img-thumbnail" style="width: 60px; height: 60px;">
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <p>Produto não encontrado.</p>
+                <% } %>
+            </div>
+            <!-- Informações do Produto -->
+            <div class="col-md-6">
+                <% if (produto) { %>
+                    <!-- Seu código de exibição do produto -->
+                    <h1 class="product-title"><%= produto.nome %></h1>
+                    <div class="price-container mb-3">
+                        <span class="current-price">R$ <%= produto.valor ? produto.valor.toFixed(2) : '0,00' %></span>
+                    </div>
+                    <div class="product-description mb-3">
+                        <%= produto.descricao %>
+                    </div>
+                    <form action="/carrinho/adicionar" method="POST" class="mb-3">
+                        <input type="hidden" name="produtoId" value="<%= produto.id %>">
+                        <div class="input-group mb-3" style="max-width: 200px;">
+                            <span class="input-group-text">Qtd</span>
+                            <input type="number" name="quantidade" class="form-control" value="1" min="1" max="<%= produto.quantidade %>">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                        </button>
+                    </form>
+                    <!-- Avaliações e outros detalhes podem ser adicionados aqui -->
+                <% } else { %>
+                    <div class="alert alert-danger mt-5">Produto não encontrado.</div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">&copy; <%= new Date().getFullYear() %> Center Motos. Todos os direitos reservados.</span>
+        </div>
+    </footer>
+    <script src="/javascripts/product.js"></script>
+</body>
+</html>

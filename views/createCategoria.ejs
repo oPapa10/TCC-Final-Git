@@ -1,0 +1,45 @@
+<!-- filepath: views/createCategoria.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Categorias - Azul</title>
+    <link rel="stylesheet" href="/stylesheets/createCategoria.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>Gerenciador de Categorias</h1>
+        </div>
+    </header>
+    <div class="container">
+        <div class="main-content">
+            <section class="form-section">
+                <h2>Criar Nova Categoria</h2>
+                <form id="categoryForm" action="/categorias" method="POST">
+                    <div class="form-group">
+                        <label for="categoryName">Nome da Categoria</label>
+                        <input type="text" id="categoryName" name="categoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryDescription">Descrição</label>
+                        <textarea id="categoryDescription" name="categoryDescription"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Criar Categoria</button>
+                </form>
+            </section>
+            <!-- Lista de categorias dinâmica -->
+            <section class="category-list-section">
+                <h2>Categorias Existentes</h2>
+                <ul id="categoryList">
+                    <% categorias.forEach(function(cat) { %>
+                        <li><%= cat.nome %> - <%= cat.descricao %></li>
+                    <% }) %>
+                </ul>
+            </section>
+        </div>
+    </div>
+    <script src="/javascripts/createCategoria.js"></script>
+</body>
+</html>
