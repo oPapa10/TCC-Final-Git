@@ -35,25 +35,25 @@ window.filterProducts = function(category, clickedButton) {
 };
 
     // Configura o clique nos produtos
-    document.querySelectorAll('.product-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
+    //document.querySelectorAll('.product-link').forEach(link => {
+      //  link.addEventListener('click', function(e) {
+        //    e.preventDefault();
             
-            const productCard = this.closest('.product-card');
-            const productData = {
-                name: productCard.dataset.productName,
-                price: productCard.dataset.productPrice,
-                originalPrice: productCard.dataset.productOriginalPrice || null,
-                image: productCard.dataset.productImage,
-                thumbnails: JSON.parse(productCard.dataset.productThumbnails || '[]'),
-                description: productCard.dataset.productDescription,
-                details: JSON.parse(productCard.dataset.productDetails || '[]')
-            };
+          //  const productCard = this.closest('.product-card');
+            //const productData = {
+              //  name: productCard.dataset.productName,
+              //  price: productCard.dataset.productPrice,
+              //  originalPrice: productCard.dataset.productOriginalPrice || null,
+              //  image: productCard.dataset.productImage,
+              //  thumbnails: JSON.parse(productCard.dataset.productThumbnails || '[]'),
+              //  description: productCard.dataset.productDescription,
+              //  details: JSON.parse(productCard.dataset.productDetails || '[]')
+          //  };
             
-            localStorage.setItem('currentProduct', JSON.stringify(productData));
-            window.location.href = '/product';
-        });
-    });
+          //  localStorage.setItem('currentProduct', JSON.stringify(productData));
+          //  window.location.href = '/product';
+      //  });
+  //  });
 
     // Função para rolar até os produtos
     function scrollToProducts() {

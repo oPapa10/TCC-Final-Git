@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
+const session = require('express-session');
 
 // Rotas
 const indexRouter = require('./routes/index');
@@ -20,6 +21,13 @@ const createItensRouter = require('./routes/createItens');
 const admRouter = require('./routes/adm');
 
 const app = express();
+
+// Configuração do express-session
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+}));
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));

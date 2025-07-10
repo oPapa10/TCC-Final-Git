@@ -19,87 +19,268 @@
             <a class="navbar-brand logo-container" href="/">
                 <img src="/images/logo.png" alt="Logomarca" class="logo-img" />
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
+                aria-label="Alternar navegação">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Início</a>
+                        <a class="nav-link" href="/">
+                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/carrinho">Carrinho</a>
+                        <a class="nav-link" href="/perfil">
+                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/ajuda">Ajuda</a>
+                    <li class="nav-item nav-item-cart">
+                        <a class="nav-link" href="/carrinho">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
+                            <span id="cartCounter" class="cart-counter"></span>
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cadastro">Cadastro</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
+                            role="button" data-bs-toggle="dropdown">
+                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
+                                alt="Opções" class="nav-icon"/>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
+                            <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
+                            <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
+                            <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
+    <!-- Conteúdo Principal -->
     <main class="container mt-5 pt-4">
+        <% if (produto) { %>
         <div class="row">
             <!-- Galeria de Imagens -->
             <div class="col-md-6">
                 <div class="main-image mb-3">
-                    <% if (produto) { %>
-                        <img id="mainProductImage" src="<%= produto.imagem %>" alt="Imagem do Produto" class="img-fluid rounded">
-                    <% } else { %>
-                        <p>Produto não encontrado.</p>
+                    <img id="mainProductImage" src="<%= produto.imagem %>" alt="Imagem do Produto" class="img-fluid rounded">
+                </div>
+                <div class="thumbnail-container d-flex">
+                    <% if (produto.thumbnails && produto.thumbnails.length > 0) { %>
+                        <% produto.thumbnails.forEach(function(thumb, idx) { %>
+                            <div class="thumbnail-item <%= idx === 0 ? 'active' : '' %> me-2">
+                                <img src="<%= thumb %>" alt="Miniatura <%= idx+1 %>" class="img-thumbnail" style="width: 60px; height: 60px;">
+                            </div>
+                        <% }) %>
                     <% } %>
                 </div>
-                <% if (produto) { %>
-                    <!-- Seu código de exibição do produto -->
-                    <div class="thumbnail-container d-flex">
-                        <% if (produto.thumbnails && produto.thumbnails.length > 0) { %>
-                            <% produto.thumbnails.forEach(function(thumb, idx) { %>
-                                <div class="thumbnail-item <%= idx === 0 ? 'active' : '' %> me-2">
-                                    <img src="<%= thumb %>" alt="Miniatura <%= idx+1 %>" class="img-thumbnail" style="width: 60px; height: 60px;">
-                                </div>
-                            <% }) %>
-                        <% } %>
-                    </div>
-                <% } else { %>
-                    <p>Produto não encontrado.</p>
-                <% } %>
             </div>
+            
             <!-- Informações do Produto -->
             <div class="col-md-6">
-                <% if (produto) { %>
-                    <!-- Seu código de exibição do produto -->
-                    <h1 class="product-title"><%= produto.nome %></h1>
-                    <div class="price-container mb-3">
-                        <span class="current-price">R$ <%= produto.valor ? produto.valor.toFixed(2) : '0,00' %></span>
+                <h1 class="product-title"><%= produto.nome %></h1>
+                <div class="rating mb-3">
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star-half-alt checked"></span>
+                    <span class="ms-2">4.5 (128 avaliações)</span>
+                </div>
+                <div class="price-container mb-3">
+                    <span class="current-price">R$ <%= produto.valor ? produto.valor.toFixed(2) : '0,00' %></span>
+                </div>
+                <p class="product-description"><%= produto.descricao %></p>
+                <div class="details-section mb-4">
+                    <h5 class="section-title">Detalhes do Produto</h5>
+                    <ul class="details-list">
+                        <% if (produto.cor) { %><li><strong>Cor:</strong> <%= produto.cor %></li><% } %>
+                        <% if (produto.tamanho) { %><li><strong>Tamanho:</strong> <%= produto.tamanho %></li><% } %>
+                        <% if (produto.peso) { %><li><strong>Peso:</strong> <%= produto.peso %> kg</li><% } %>
+                        <% if (produto.cilindrada) { %><li><strong>Cilindrada:</strong> <%= produto.cilindrada %></li><% } %>
+                        <% if (produto.potencia) { %><li><strong>Potência:</strong> <%= produto.potencia %></li><% } %>
+                        <% if (produto.tanque) { %><li><strong>Tanque:</strong> <%= produto.tanque %></li><% } %>
+                        <% if (produto.estoque) { %><li><strong>Estoque:</strong> <%= produto.estoque %></li><% } %>
+                        <% if (produto.material) { %><li><strong>Material:</strong> <%= produto.material %></li><% } %>
+                        <% if (produto.protecao) { %><li><strong>Proteção:</strong> <%= produto.protecao %></li><% } %>
+                    </ul>
+                </div>
+                <form action="/carrinho/adicionar" method="POST" class="mb-3">
+                    <input type="hidden" name="produtoId" value="<%= produto.ID || produto.id %>">
+                    <div class="input-group mb-3" style="max-width: 200px;">
+                        <span class="input-group-text">Qtd</span>
+                        <input type="number" name="quantidade" class="form-control" value="1" min="1" max="<%= produto.estoque || 99 %>">
                     </div>
-                    <div class="product-description mb-3">
-                        <%= produto.descricao %>
-                    </div>
-                    <form action="/carrinho/adicionar" method="POST" class="mb-3">
-                        <input type="hidden" name="produtoId" value="<%= produto.id %>">
-                        <div class="input-group mb-3" style="max-width: 200px;">
-                            <span class="input-group-text">Qtd</span>
-                            <input type="number" name="quantidade" class="form-control" value="1" min="1" max="<%= produto.quantidade %>">
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
-                        </button>
-                    </form>
-                    <!-- Avaliações e outros detalhes podem ser adicionados aqui -->
-                <% } else { %>
-                    <div class="alert alert-danger mt-5">Produto não encontrado.</div>
-                <% } %>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                    </button>
+                    <button type="button" class="btn btn-outline-primary mt-2 btn-buy-now">
+                        <i class="fas fa-bolt me-2"></i>Comprar Agora
+                    </button>
+                </form>
             </div>
         </div>
+
+        <!-- Avaliações e Comentários -->
+        <section class="reviews-section mt-5">
+            <h3 class="section-title mb-4">Avaliações dos Clientes</h3>
+            <div class="review-summary mb-4">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="average-rating">4.5</div>
+                        <div class="stars mb-2">
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star-half-alt checked"></span>
+                        </div>
+                        <div class="total-reviews">128 avaliações</div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="rating-progress">
+                            <div class="progress-item">
+                                <span>5 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 70%"></div>
+                                </div>
+                                <span>70%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>4 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 20%"></div>
+                                </div>
+                                <span>20%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>3 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 7%"></div>
+                                </div>
+                                <span>7%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>2 estrelas</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 2%"></div>
+                                </div>
+                                <span>2%</span>
+                            </div>
+                            <div class="progress-item">
+                                <span>1 estrela</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 1%"></div>
+                                </div>
+                                <span>1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-reviews">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="user-info">
+                            <span class="user-name">João Silva</span>
+                            <div class="rating">
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                            </div>
+                        </div>
+                        <span class="review-date">15/05/2024</span>
+                    </div>
+                    <h5 class="review-title">Excelente produto</h5>
+                    <p class="review-text">Produto de ótima qualidade, chegou rápido e bem embalado.</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="user-info">
+                            <span class="user-name">Maria Oliveira</span>
+                            <div class="rating">
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star"></span>
+                            </div>
+                        </div>
+                        <span class="review-date">10/05/2024</span>
+                    </div>
+                    <h5 class="review-title">Boa qualidade</h5>
+                    <p class="review-text">Gostei bastante, recomendo para quem procura custo-benefício.</p>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary mt-3">Ver todas as avaliações</button>
+        </section>
+
+        <!-- Produtos Relacionados (exemplo estático) -->
+        <section class="related-products mt-5">
+            <h3 class="section-title mb-4">Produtos Relacionados</h3>
+            <div class="row">
+                <!-- Exemplo de produto relacionado -->
+                <div class="col-6 col-md-3 mb-4">
+                    <div class="card product-card">
+                        <img src="https://recursos.sacramento.com.br/MediaCenter/3%20-%20Cal%C3%A7a%20Racing.png" class="card-img-top" alt="Produto Relacionado">
+                        <div class="card-body">
+                            <h5 class="card-title">Calça Motociclística</h5>
+                            <p class="card-text">Calça de proteção para motociclistas com tecnologia avançada.</p>
+                            <p class="price">R$ 99,99</p>
+                            <a href="/product/1" class="stretched-link product-link"></a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Adicione mais produtos relacionados conforme desejar -->
+            </div>
+        </section>
+        <% } else { %>
+            <div class="alert alert-danger mt-5">Produto não encontrado.</div>
+        <% } %>
     </main>
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container text-center">
-            <span class="text-muted">&copy; <%= new Date().getFullYear() %> Center Motos. Todos os direitos reservados.</span>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Contato</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-whatsapp me-2"></i>(48) 99850-3648</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-instagram me-2"></i>Instagram</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#"><i class="fab fa-facebook me-2"></i>Facebook</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="mb-3 border-bottom pb-2">Informações</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#">Política de Privacidade</a></li>
+                        <li class="mb-2"><a href="#">Termos de Uso</a></li>
+                        <li class="mb-2"><a href="#">Sobre Nós</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright text-center">
+                <small>© <%= new Date().getFullYear() %> Todos os direitos reservados</small>
+            </div>
         </div>
     </footer>
+
+    <!-- Mensagem do Carrinho -->
+    <div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/product.js"></script>
 </body>
 </html>

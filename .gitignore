@@ -121,3 +121,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Variáveis de ambiente
+.env
+.env.local
+.env*.local

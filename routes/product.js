@@ -8,6 +8,12 @@ router.get('/product/:id', (req, res) => {
   db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, results) => {
     if (err || results.length === 0) return res.render('product', { produto: null });
     let produto = results[0];
+
+    // Converta valor para número, se existir
+    if (produto.valor) {
+      produto.valor = Number(produto.valor);
+    }
+
     if (produto.thumbnails) {
       try {
         produto.thumbnails = JSON.parse(produto.thumbnails);
