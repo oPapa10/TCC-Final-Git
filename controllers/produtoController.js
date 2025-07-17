@@ -28,15 +28,20 @@ exports.formulario = (req, res) => {
 
 // Criar produto
 exports.criar = (req, res) => {
-  // Se usar upload de imagem, precisa do multer!
-  const { nome, valor, descricao, categoria, quantidade } = req.body;
+  const {
+    nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
+    estoque, material, protecao, thumbnails, categoria
+  } = req.body;
   let imagem = '';
   if (req.file) {
     imagem = '/uploads/' + req.file.filename;
   }
-  Produto.create({ nome, valor, descricao, categoria, quantidade, imagem }, (err) => {
+  Produto.create({
+    nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
+    estoque, material, protecao, imagem, thumbnails, categoria
+  }, (err) => {
     if (err) return res.status(500).send('Erro ao criar produto');
-    res.redirect('/createItens');
+    res.redirect('/seeProduto');
   });
 };
 

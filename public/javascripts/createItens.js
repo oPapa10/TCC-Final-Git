@@ -1,11 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Formatação do campo de valor
-    document.getElementById('valor').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        value = (value / 100).toFixed(2);
-        e.target.value = 'R$' + value;
-    });
-    
+    // NÃO coloque nenhuma formatação manual no campo 'valor'!
+    // O campo <input type="number" step="0.01" ...> já faz o trabalho corretamente.
+
     // Seleção múltipla de cores
     const colorOptions = document.querySelectorAll('.color-option');
     const coresInput = document.getElementById('cores');
@@ -122,75 +118,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    });
-    
-    // Validação do formulário
-    document.getElementById('productForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Campos obrigatórios (incluindo quantidade agora)
-        const requiredFields = ['nome', 'valor', 'descricao', 'categoria', 'quantidade'];
-        let isValid = true;
-        
-        requiredFields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (!field.value.trim()) {
-                alert(`O campo ${field.labels[0].textContent} é obrigatório!`);
-                isValid = false;
-                field.focus();
-                return false;
-            }
-        });
-        
-        if (isValid) {
-            // Coletar dados do formulário
-            const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-            
-            console.log('Dados do produto:', data);
-            alert('Produto cadastrado com sucesso!');
-            this.reset();
-            
-            // Resetar seleções visuais
-            document.querySelectorAll('.selected').forEach(el => {
-                el.classList.remove('selected');
-            });
-            coresSelecionadas = [];
-            tamanhosSelecionados = [];
-            
-            // Habilitar todos os campos opcionais novamente
-            document.querySelectorAll('[id^="use"]').forEach(checkbox => {
-                checkbox.checked = false;
-                const fieldId = checkbox.id.replace('use', '').toLowerCase();
-                let fields = [];
-                
-                if (fieldId === 'peso') {
-                    fields = [document.getElementById('peso_tipo'), document.getElementById('peso_valor')];
-                } else if (fieldId === 'cor') {
-                    fields = [document.getElementById('cores')];
-                    // Reativar visualmente as opções de cor
-                    colorOptions.forEach(option => {
-                        option.style.pointerEvents = 'auto';
-                        option.style.opacity = '1';
-                    });
-                } else if (fieldId === 'tamanho') {
-                    fields = [document.getElementById('tamanhos')];
-                    // Reativar visualmente as opções de tamanho
-                    sizeOptions.forEach(option => {
-                        option.style.pointerEvents = 'auto';
-                        option.style.opacity = '1';
-                    });
-                } else {
-                    fields = [document.getElementById(fieldId)];
-                }
-                
-                fields.forEach(field => {
-                    if (field) field.disabled = false;
-                });
-            });
-        }
     });
 });

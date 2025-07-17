@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Produtos Cadastrados</title>
+    <link rel="stylesheet" href="/stylesheets/createItens.css">
+</head>
+<body>
+    <h2>Produtos Cadastrados</h2>
+    <a href="/createItens" class="btn btn-success mb-3">Novo Produto</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Valor</th>
+                <th>Categoria</th>
+                <th>Estoque</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% produtos.forEach(function(produto) { %>
+                <tr>
+                    <td><%= produto.nome %></td>
+                    <td>R$ <%= produto.valor ? produto.valor.toFixed(2) : '0,00' %></td>
+                    <td><%= produto.Categoria_ID %></td>
+                    <td><%= produto.estoque %></td>
+                    <td>
+                        <a href="/produtos/editar/<%= produto.ID %>" class="btn btn-warning btn-sm">Editar</a>
+                        <form action="/produtos/excluir/<%= produto.ID %>" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <a href="/adm">Voltar ao ADM</a>
+</body>
+</html>

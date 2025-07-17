@@ -1,0 +1,17 @@
+<!-- filepath: c:\Users\borges\OneDrive\Desktop\ruan\TCC\views\editCategoria.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <title>Editar Categoria</title>
+    <link rel="stylesheet" href="/stylesheets/createCategoria.css">
+</head>
+<body>
+    <h2>Editar Categoria</h2>
+    <form action="/categorias/editar/<%= categoria.ID %>" method="POST">
+        <input type="text" name="categoryName" value="<%= categoria.nome %>" required>
+        <textarea name="categoryDescription"><%= categoria.descricao %></textarea>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+    <a href="/createCategoria">Voltar</a>
+</body>
+</html>

@@ -9,70 +9,113 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        .btn-voltar {
+            display: inline-block;
+            margin-right: 16px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 7px 14px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-voltar:hover {
+            background: #0056b3;
+            color: #fff;
+            text-decoration: none;
+        }
+        .form-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navbar Superior -->
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-        <div class="container">
-            <a class="navbar-brand logo-container" href="/">
-                <img src="/images/logo.png" alt="Logomarca" class="logo-img" />
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/carrinho">Carrinho</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/ajuda">Ajuda</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cadastro">Cadastro</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
     <div class="container mt-5 pt-4">
-        <h1>Cadastro de Produtos</h1>
-        <form id="productForm" action="/produtos" method="POST" enctype="multipart/form-data">
-            <div class="form-group mb-3">
-                <label for="nome" class="required">Nome do Produto</label>
-                <input type="text" id="nome" name="nome" maxlength="40" class="form-control" required>
+        <section class="form-section">
+            <div class="form-section-header">
+                <a href="/adm" class="btn-voltar" title="Voltar">&#8592; Voltar</a>
+                <h1>Cadastro de Produtos</h1>
             </div>
-            <div class="form-group mb-3">
-                <label for="valor" class="required">Valor (R$)</label>
-                <input type="number" step="0.01" id="valor" name="valor" class="form-control" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="descricao" class="required">Descrição</label>
-                <textarea id="descricao" name="descricao" maxlength="100" class="form-control" required></textarea>
-            </div>
-            <div class="form-group mb-3">
-                <label for="categoria" class="required">Categoria</label>
-                <select id="categoria" name="categoria" class="form-select" required>
-                    <option value="">Selecione uma categoria</option>
-                    <% categorias.forEach(function(cat) { %>
-                        <option value="<%= cat.id %>"><%= cat.nome %></option>
-                    <% }) %>
-                </select>
-            </div>
-            <div class="form-group mb-3">
-                <label for="quantidade" class="required">Quantidade em Estoque</label>
-                <input type="number" id="quantidade" name="quantidade" min="0" class="form-control" required>
-            </div>
-            <div class="form-group mb-3">
-                <label for="imagem" class="required">Imagem do Produto</label>
-                <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
-        </form>
+            <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+                <div class="alert alert-success">Produto cadastrado com sucesso!</div>
+            <% } %>
+            <form id="productForm" action="/createItens/produtos" method="POST" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                    <label for="nome" class="required">Nome do Produto</label>
+                    <input type="text" id="nome" name="nome" maxlength="100" class="form-control" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="cor">Cor</label>
+                    <input type="text" id="cor" name="cor" maxlength="25" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="tamanho">Tamanho</label>
+                    <input type="text" id="tamanho" name="tamanho" maxlength="15" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="peso">Peso (kg)</label>
+                    <input type="number" step="0.01" id="peso" name="peso" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="valor" class="required">Valor (R$)</label>
+                    <input type="number" step="0.01" id="valor" name="valor" class="form-control" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="cilindrada">Cilindrada</label>
+                    <input type="text" id="cilindrada" name="cilindrada" maxlength="50" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="descricao">Descrição</label>
+                    <textarea id="descricao" name="descricao" maxlength="255" class="form-control"></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="potencia">Potência</label>
+                    <input type="text" id="potencia" name="potencia" maxlength="50" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="tanque">Tanque</label>
+                    <input type="text" id="tanque" name="tanque" maxlength="50" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="estoque" class="required">Quantidade em Estoque</label>
+                    <input type="number" id="estoque" name="estoque" min="0" class="form-control" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="material">Material</label>
+                    <input type="text" id="material" name="material" maxlength="100" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="protecao">Proteção</label>
+                    <input type="text" id="protecao" name="protecao" maxlength="100" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="imagem" class="required">Imagem do Produto</label>
+                    <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="thumbnails">Thumbnails (URLs separadas por vírgula)</label>
+                    <input type="text" id="thumbnails" name="thumbnails" class="form-control">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="categoria" class="required">Categoria</label>
+                    <select id="categoria" name="categoria" class="form-select" required>
+                        <option value="">Selecione uma categoria</option>
+                        <% categorias.forEach(function(cat) { %>
+                            <option value="<%= cat.ID %>"><%= cat.nome %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
+            </form>
+        </section>
     </div>
 
     <footer class="footer mt-auto py-3 bg-light">
