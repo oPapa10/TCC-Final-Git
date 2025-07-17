@@ -1,39 +1,238 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <title>Produtos Cadastrados</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos Cadastrados | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/createItens.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --success-color: #4cc9f0;
+            --edit-color: #ffb703;
+            --delete-color: #f72585;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+            --bg-light: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin-top: 2rem;
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .btn-voltar {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+        
+        .btn-voltar:hover {
+            background-color: var(--primary-hover);
+            color: var(--text-light);
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .btn-novo {
+            background-color: var(--success-color);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-novo:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .table {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .table thead {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+        
+        .table th {
+            padding: 1rem;
+            font-weight: 600;
+        }
+        
+        .table td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            border: none;
+            border-radius: 50%;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn.edit {
+            background-color: rgba(var(--edit-color), 0.1);
+            color: var(--edit-color);
+        }
+        
+        .action-btn.delete {
+            background-color: rgba(var(--delete-color), 0.1);
+            color: var(--delete-color);
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .edit:hover {
+            background-color: var(--edit-color);
+            color: white;
+        }
+        
+        .delete:hover {
+            background-color: var(--delete-color);
+            color: white;
+        }
+        
+        .badge-categoria {
+            background-color: #e0fbfc;
+            color: #293241;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+        
+        .valor-cell {
+            font-weight: 600;
+            color: #2b9348;
+        }
+        
+        .estoque-cell {
+            font-weight: 500;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-    <h2>Produtos Cadastrados</h2>
-    <a href="/createItens" class="btn btn-success mb-3">Novo Produto</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Valor</th>
-                <th>Categoria</th>
-                <th>Estoque</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% produtos.forEach(function(produto) { %>
-                <tr>
-                    <td><%= produto.nome %></td>
-                    <td>R$ <%= produto.valor ? produto.valor.toFixed(2) : '0,00' %></td>
-                    <td><%= produto.Categoria_ID %></td>
-                    <td><%= produto.estoque %></td>
-                    <td>
-                        <a href="/produtos/editar/<%= produto.ID %>" class="btn btn-warning btn-sm">Editar</a>
-                        <form action="/produtos/excluir/<%= produto.ID %>" method="POST" style="display:inline;">
-                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                        </form>
-                    </td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
-    <a href="/adm">Voltar ao ADM</a>
+    <div class="container mt-4">
+        <div class="header-section">
+            <div class="d-flex align-items-center">
+                <a href="/adm" class="btn-voltar">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <h2 class="mb-0 ms-3">Produtos Cadastrados</h2>
+            </div>
+            <a href="/createItens" class="btn btn-novo">
+                <i class="fas fa-plus me-2"></i> Novo Produto
+            </a>
+        </div>
+
+        <% if (produtos.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Valor</th>
+                            <th>Categoria</th>
+                            <th>Estoque</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% produtos.forEach(function(produto) { %>
+                            <tr>
+                                <td><%= produto.nome %></td>
+                                <td class="valor-cell">R$ <%= produto.valor ? Number(produto.valor).toFixed(2).replace('.', ',') : '0,00' %></td>
+                                <td>
+                                    <span class="badge-categoria">
+                                        <% if (produto.categoria_nome) { %>
+                                            <%= produto.categoria_nome %>
+                                        <% } else { %>
+                                            <%= produto.Categoria_ID %>
+                                        <% } %>
+                                    </span>
+                                </td>
+                                <td class="estoque-cell"><%= produto.estoque %></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <a href="/produtos/editar/<%= produto.ID %>" class="action-btn edit" title="Editar">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <form action="/produtos/excluir/<%= produto.ID %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="action-btn delete" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <i class="fas fa-box-open fa-3x mb-3" style="color: #dee2e6;"></i>
+                <h4>Nenhum produto cadastrado</h4>
+                <p class="mb-4">Você ainda não possui produtos cadastrados no sistema.</p>
+                <a href="/createItens" class="btn btn-novo">
+                    <i class="fas fa-plus me-2"></i> Adicionar Primeiro Produto
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
