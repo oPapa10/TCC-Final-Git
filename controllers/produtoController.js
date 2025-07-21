@@ -3,6 +3,14 @@ const Categoria = require('../models/Categoria');
 const path = require('path');
 const fs = require('fs');
 
+function gerarSlug(nome) {
+  return nome
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // remove caracteres especiais
+    .replace(/\s+/g, '-')     // troca espaços por hífen
+    .replace(/-+/g, '-');     // evita múltiplos hífens
+}
+
 // Listar todos os produtos
 exports.listar = (req, res) => {
   Produto.findAll((err, produtos) => {
@@ -36,10 +44,13 @@ exports.criar = (req, res) => {
   if (req.file) {
     imagem = '/uploads/' + req.file.filename;
   }
+
+  // Cria o produto já com o slug correto
   Produto.create({
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-    estoque, material, protecao, imagem, thumbnails, categoria
-  }, (err) => {
+    estoque, material, protecao, imagem, thumbnails, categoria,
+    slug: gerarSlug(nome)
+  }, (err, result) => {
     if (err) return res.status(500).send('Erro ao criar produto');
     res.redirect('/seeProduto');
   });
@@ -58,5 +69,12 @@ exports.remover = (req, res) => {
   Produto.delete(req.params.id, (err, result) => {
     if (err) return res.status(500).send('Erro ao remover produto');
     res.redirect('/');
+  });
+};
+
+exports.detalharPorSlug = (req, res) => {
+  Produto.findBySlug(req.params.slug, (err, produto) => {
+    if (err || !produto) return res.status(404).send('Produto não encontrado');
+    res.render('product', { produto });
   });
 };

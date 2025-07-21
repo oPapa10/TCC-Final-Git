@@ -76,3 +76,7 @@ CREATE TABLE  Vende (
 
 -- Exemplo de categoria fictícia
 INSERT INTO Categoria (nome, descricao) VALUES ('Fictícia', 'Categoria de teste para funcionamento do site');
+
+ALTER TABLE Produto ADD COLUMN slug VARCHAR(150) UNIQUE;
+
+UPDATE Produto SET slug = REPLACE(LOWER(nome), ' ', '-') WHERE slug IS NOT NULL;

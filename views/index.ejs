@@ -168,7 +168,7 @@
                                 <h5 class="card-title"><%= produto.nome %></h5>
                                 <p class="card-text"><%= produto.descricao %></p>
                                 <p class="price">R$ <%= produto.valor ? produto.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : "0,00" %></p>
-                                <a href="/product/<%= produto.ID %>" class="stretched-link product-link"></a>
+                                <a href="/product/<%= produto.slug %>" class="stretched-link product-link"></a>
                             </div>
                         </div>
                     </div>
