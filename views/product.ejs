@@ -109,7 +109,7 @@
                     </ul>
                 </div>
                 <form action="/carrinho/adicionar" method="POST" class="mb-3">
-                    <input type="hidden" name="produtoId" value="<%= produto.ID || produto.id %>">
+                    <input type="hidden" name="produtoId" value="<%= produto.ID %>">
                     <div class="input-group mb-3" style="max-width: 200px;">
                         <span class="input-group-text">Qtd</span>
                         <input type="number" name="quantidade" class="form-control" value="1" min="1" max="<%= produto.estoque || 99 %>">
