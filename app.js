@@ -21,6 +21,8 @@ const createItensRouter = require('./routes/createItens');
 const admRouter = require('./routes/adm');
 const categoriaRoutes = require('./routes/categoria');
 const produtoRoutes = require('./routes/produto');
+const loginRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
 
 const app = express();
 
@@ -47,7 +49,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Rotas
 app.use('/', indexRouter);
-app.use('/perfil', perfilRouter);
 app.use('/carrinho', carrinhoRouter);
 app.use('/cadastro', cadastroRouter);
 app.use('/product', productRouter);
@@ -59,6 +60,9 @@ app.use('/createCategoria', createCategoriaRouter);
 app.use('/adm', admRouter);
 app.use(categoriaRoutes);
 app.use(produtoRoutes);
+app.use('/login', loginRouter);
+app.use('/perfil', perfilRouter);
+app.use('/logout', logoutRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

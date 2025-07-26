@@ -66,7 +66,10 @@
                     <h2 class="cadastro-title">Crie sua conta</h2>
                     <p class="cadastro-subtitle">Preencha os campos abaixo para se cadastrar</p>
                 </div>
-                <form class="cadastro-form" id="formCadastro" action="/usuarios" method="POST">
+                <% if (typeof mensagem !== 'undefined' && mensagem) { %>
+                  <div class="alert alert-danger text-center"><%= mensagem %></div>
+                <% } %>
+                <form class="cadastro-form" id="formCadastro" action="/cadastro" method="POST">
                     <div class="form-row">
                         <!-- Coluna 1 - Dados Pessoais -->
                         <div class="form-col">
