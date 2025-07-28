@@ -18,11 +18,6 @@ router.get('/carrinho', (req, res) => {
   res.render('carrinho', { carrinho: [] }); // Passe um array vazio ou os itens reais
 });
 
-// Rota para perfil
-router.get('/perfil', (req, res) => {
-  res.render('perfil', { usuario: null }); // Passe o usuário logado ou null
-});
-
 // Rota para produto
 router.get('/product', (req, res) => {
   res.render('product', { produto: null }); // Passe o produto selecionado ou null
@@ -30,7 +25,11 @@ router.get('/product', (req, res) => {
 
 // Rota para opções
 router.get('/opcoes', (req, res) => {
-  res.render('opcoes', { usuario: req.usuario || null, pagamentos: [] });
+  res.render('opcoes', {
+    usuario: req.session.usuario || null,
+    pagamentos: [],
+    query: req.query
+  });
 });
 
 // Rota para ajuda

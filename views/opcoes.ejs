@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="/stylesheets/opcoes.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body.light-theme {
+            background: #f8f9fa;
+            color: #222;
+        }
+        body.dark-theme {
+            background: #181818;
+            color: #eee;
+        }
+        /* Adapte outros elementos conforme seu layout */
+    </style>
 </head>
 <body>
     <!-- Navbar Superior -->
@@ -108,6 +119,12 @@
                     <!-- Seção Minha Conta -->
                     <section id="conta" class="option-section">
                         <h2 class="section-title"><i class="fas fa-user-circle me-2"></i>Minha Conta</h2>
+                        <% if (query && query.sucesso) { %>
+                          <div class="alert alert-success">Perfil atualizado com sucesso!</div>
+                        <% } %>
+                        <% if (query && query.erro) { %>
+                          <div class="alert alert-danger">Erro ao atualizar perfil.</div>
+                        <% } %>
                         <% if (usuario) { %>
                         <div class="card">
                             <div class="card-body">
@@ -254,23 +271,9 @@
                                                     <span>Tema Escuro</span>
                                                 </label>
                                             </div>
-                                            <div class="theme-option">
-                                                <input type="radio" id="tema-sistema" name="tema">
-                                                <label for="tema-sistema">
-                                                    <div class="theme-preview system-theme"></div>
-                                                    <span>Seguir Sistema</span>
-                                                </label>
-                                            </div>
                                         </div>
                                     </div>
-                                    <div class="mb-4">
-                                        <h5 class="mb-3">Tamanho da Fonte</h5>
-                                        <div class="font-size-options">
-                                            <button class="btn btn-outline-secondary btn-sm">Pequeno</button>
-                                            <button class="btn btn-primary btn-sm">Médio</button>
-                                            <button class="btn btn-outline-secondary btn-sm">Grande</button>
-                                        </div>
-                                    </div>
+                                
                                     <button type="button" class="btn btn-primary">Aplicar Configurações</button>
                                 </form>
                             </div>
@@ -386,6 +389,42 @@
         document.addEventListener('DOMContentLoaded', function() {
             showSection('conta');
         });
+/////
+
+        function applyTheme(theme) {
+    document.body.classList.remove('light-theme', 'dark-theme');
+    if (theme === 'claro') {
+        document.body.classList.add('light-theme');
+        localStorage.setItem('theme', 'claro');
+    } else if (theme === 'escuro') {
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'escuro');
+    } else {
+        document.body.classList.remove('light-theme', 'dark-theme');
+        localStorage.removeItem('theme');
+    }
+}
+
+document.getElementById('tema-claro').addEventListener('change', function() {
+    applyTheme('claro');
+});
+document.getElementById('tema-escuro').addEventListener('change', function() {
+    applyTheme('escuro');
+});
+document.getElementById('tema-sistema').addEventListener('change', function() {
+    applyTheme('sistema');
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'claro') {
+        document.getElementById('tema-claro').checked = true;
+        applyTheme('claro');
+    } else if (savedTheme === 'escuro') {
+        document.getElementById('tema-escuro').checked = true;
+        applyTheme('escuro');
+    }
+});
     </script>
 </body>
 </html>

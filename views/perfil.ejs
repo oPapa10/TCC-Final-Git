@@ -10,6 +10,17 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/perfil.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
+    <style>
+        body.light-theme {
+            background: #f8f9fa;
+            color: #222;
+        }
+        body.dark-theme {
+            background: #181818;
+            color: #eee;
+        }
+        /* Adapte outros elementos conforme seu layout */
+    </style>
 </head>
 <body>
     <!-- Navbar Superior -->
@@ -135,6 +146,10 @@
                         </button>
                     </div>
                 </form>
+                <% } %>
+                
+                <% if (mensagem) { %>
+                  <div class="alert alert-success text-center"><%= mensagem %></div>
                 <% } %>
             </div>
         </div>

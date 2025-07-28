@@ -24,8 +24,8 @@ router.post('/', async (req, res) => {
         }
         db.query('SELECT * FROM Cliente WHERE email = ?', [email], (err2, results) => {
           if (err2 || results.length === 0) return res.render('cadastro', { mensagem: 'Erro ao buscar usuário cadastrado.' });
-          // Não loga automaticamente após cadastro
-          res.redirect('/perfil');
+          req.session.usuario = results[0]; // loga automaticamente
+          res.redirect('/perfil?cadastro=ok');
         });
       }
     );
