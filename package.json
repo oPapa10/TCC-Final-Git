@@ -18,11 +18,14 @@
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-ejs-layouts": "^2.5.1",
-    "express-session": "^1.18.1",
+    "express-session": "^1.18.2",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
     "multer": "^2.0.1",
-    "mysql2": "^3.11.0"
+    "mysql2": "^3.11.0",
+    "passport": "^0.7.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

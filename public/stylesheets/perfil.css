@@ -186,6 +186,28 @@
     color: #fff;
 }
 
+/* Alerta de erro sobreposto */
+.alert-erro-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    pointer-events: auto;
+}
+.alert-erro-overlay .alert {
+    margin-top: 80px;
+    min-width: 320px;
+    max-width: 90vw;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
 /* Responsividade */
 @media (max-width: 576px) {
     .profile-card {

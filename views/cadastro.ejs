@@ -10,17 +10,7 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/cadastro.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
-    <style>
-        body.light-theme {
-            background: #f8f9fa;
-            color: #222;
-        }
-        body.dark-theme {
-            background: #181818;
-            color: #eee;
-        }
-        /* Adapte outros elementos conforme seu layout */
-    </style>
+   
 </head>
 <body>
     <!-- Navbar Superior -->
@@ -104,6 +94,9 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     <input type="password" class="form-control" id="senha" name="senha" placeholder="Crie uma senha" required>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('senha', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                                 <div class="invalid-feedback" id="senha-feedback">
                                     A senha deve conter pelo menos 8 caracteres
@@ -114,6 +107,9 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme a senha" required>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('confirmarSenha', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                                 <div class="invalid-feedback" id="confirmarSenha-feedback">
                                     As senhas não coincidem
@@ -236,6 +232,51 @@
             <small>© <%= new Date().getFullYear() %> Todos os direitos reservados</small>
         </div>
     </footer>
+
+    <script>
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function toggleAllPasswords(btn) {
+            // Seleciona todos os campos de senha visíveis no formulário
+            const form = btn.closest('form');
+            const passwordInputs = form.querySelectorAll('input[type="password"], input[type="text"]');
+            let show = false;
+            // Se algum campo está como password, vamos mostrar todos
+            passwordInputs.forEach(input => {
+                if (input.type === "password") show = true;
+            });
+            passwordInputs.forEach(input => {
+                if (show) {
+                    input.type = "text";
+                } else {
+                    input.type = "password";
+                }
+            });
+            // Troca todos os ícones juntos
+            const icons = form.querySelectorAll('.show-password-btn i');
+            icons.forEach(icon => {
+                if (show) {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        }
+    </script>
     <script src="/javascripts/cadastro.js"></script>
     <script src="/javascripts/cart.js"></script>
 </body>

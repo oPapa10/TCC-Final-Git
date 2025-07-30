@@ -10,17 +10,7 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/perfil.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
-    <style>
-        body.light-theme {
-            background: #f8f9fa;
-            color: #222;
-        }
-        body.dark-theme {
-            background: #181818;
-            color: #eee;
-        }
-        /* Adapte outros elementos conforme seu layout */
-    </style>
+    
 </head>
 <body>
     <!-- Navbar Superior -->
@@ -115,6 +105,9 @@
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
                             <input type="password" class="form-control" id="senha" name="senha" placeholder="Sua senha" required>
+                            <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('senha', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
                     </div>
                     
@@ -149,7 +142,11 @@
                 <% } %>
                 
                 <% if (mensagem) { %>
-                  <div class="alert alert-success text-center"><%= mensagem %></div>
+                  <div id="alerta-erro" class="alert-erro-overlay">
+                    <div class="alert alert-danger text-center shadow-lg">
+                      <%= mensagem %>
+                    </div>
+                  </div>
                 <% } %>
             </div>
         </div>
@@ -164,5 +161,38 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/cart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const alerta = document.getElementById('alerta-erro');
+        if (alerta) {
+            // Remove o alerta ao clicar em qualquer lugar da tela
+            document.addEventListener('click', function removerAlerta() {
+            alerta.remove();
+            document.removeEventListener('click', removerAlerta);
+            });
+        }
+        });
+
+        function togglePassword(senhaId, btn) {
+        const senhaInput = document.getElementById(senhaId);
+        const tipoAtual = senhaInput.getAttribute('type');
+        senhaInput.setAttribute('type', tipoAtual === 'password' ? 'text' : 'password');
+        btn.querySelector('i').classList.toggle('fa-eye-slash');
+        }
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+       }
+</script>
 </body>
 </html>
