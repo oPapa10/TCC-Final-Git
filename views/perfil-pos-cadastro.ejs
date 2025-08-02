@@ -316,12 +316,12 @@
                     <div class="profile-completion-card">
                         <!-- Banner de Boas-vindas -->
                         <% if (primeiroAcesso) { %>
-                          <div class="welcome-banner text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                          <div id="welcomeBanner" class="welcome-banner text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
                             <h2 class="mb-3"><i class="fas fa-check-circle me-2"></i>Cadastro Concluído!</h2>
                             <p class="mb-0 opacity-90">Bem-vindo à nossa comunidade, <%= usuario.nome %>!</p>
                           </div>
                         <% } else { %>
-                          <div class="welcome-banner text-center" style="background: linear-gradient(135deg, #007bff 0%, #00c6ff 100%);">
+                          <div id="welcomeBanner" class="welcome-banner text-center" style="background: linear-gradient(135deg, #007bff 0%, #00c6ff 100%);">
                             <h2 class="mb-3"><i class="fas fa-user-circle me-2"></i>Bem-vindo!</h2>
                             <p class="mb-0 opacity-90">Olá, <%= usuario.nome %>! Que bom te ver novamente.</p>
                           </div>
@@ -388,7 +388,15 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0">Endereço</h6>
-                                        <p class="mb-0 text-muted"><%= usuario.endereco %></p>
+                                        <p class="mb-0 text-muted">
+                                            <%= [
+                                                usuario.rua,
+                                                usuario.numero,
+                                                usuario.complemento,
+                                                usuario.cidade,
+                                                usuario.estado
+                                            ].filter(Boolean).join(', ') %>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -459,20 +467,23 @@
         if (e.target.files.length > 0) {
             const file = e.target.files[0];
             const reader = new FileReader();
-            
+
             reader.onload = function(event) {
                 const avatarImg = document.querySelector('.avatar-img') || document.querySelector('.avatar-placeholder');
-                
                 if (avatarImg.classList.contains('avatar-placeholder')) {
                     avatarImg.outerHTML = `<img src="${event.target.result}" alt="Imagem de Perfil" class="avatar-img">`;
                 } else {
                     avatarImg.src = event.target.result;
                 }
             };
-            
+
             reader.readAsDataURL(file);
+
+            // Envia o formulário automaticamente após selecionar a imagem
+            document.getElementById('avatarForm').submit();
         }
     });
+    
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/cart.js"></script>

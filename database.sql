@@ -1,5 +1,5 @@
 USE loja_motos;
-
+e
 -- Tabela ADM
 CREATE TABLE ADM (
     ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -22,10 +22,15 @@ CREATE TABLE CLIENTE (
     email VARCHAR(100) UNIQUE,
     CPF VARCHAR(14) UNIQUE,
     genero ENUM('Masculino', 'Feminino', 'Outro'),
-    endereco VARCHAR(255),
     senha VARCHAR(255) NOT NULL,
-    avatar VARCHAR(255)
+    avatar VARCHAR(255),
+    estado VARCHAR(50),
+    cidade VARCHAR(100),
+    rua VARCHAR(100),
+    numero VARCHAR(20),
+    complemento VARCHAR(100)
 );
+
 
 -- Tabela PRODUTO
 CREATE TABLE PRODUTO (

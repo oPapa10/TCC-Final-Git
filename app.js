@@ -24,6 +24,7 @@ const produtoRoutes = require('./routes/produto');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
 const usuariosRouter = require('./routes/usuarios');
+const perfilPosCadastroRouter = require('./routes/perfil-pos-cadastro');
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use('/login', loginRouter);
 app.use('/perfil', perfilRouter);
 app.use('/logout', logoutRouter);
 app.use('/usuarios', usuariosRouter);
+app.use('/', perfilPosCadastroRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

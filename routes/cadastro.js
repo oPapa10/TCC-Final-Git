@@ -14,8 +14,8 @@ router.post('/', async (req, res) => {
     const { nome, email, senha, cpf, telefone, genero, estado, cidade, rua, numero, complemento } = req.body;
     const hash = await bcrypt.hash(senha, 10);
     db.query(
-      'INSERT INTO Cliente (nome, email, senha, CPF, telefone, genero, endereco) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [nome, email, hash, cpf, telefone, genero, `${rua}, ${numero}, ${complemento}, ${cidade}, ${estado}`],
+      'INSERT INTO Cliente (nome, email, senha, CPF, telefone, genero, estado, cidade, rua, numero, complemento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [nome, email, hash, cpf, telefone, genero, estado, cidade, rua, numero, complemento],
       (err, result) => {
         if (err) {
           let msg = 'Erro ao cadastrar';

@@ -94,7 +94,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     <input type="password" class="form-control" id="senha" name="senha" placeholder="Crie uma senha" required>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('senha', this)">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="toggleAllPasswords(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -107,7 +107,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme a senha" required>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('confirmarSenha', this)">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="toggleAllPasswords(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -249,20 +249,16 @@
         }
 
         function toggleAllPasswords(btn) {
-            // Seleciona todos os campos de senha visíveis no formulário
             const form = btn.closest('form');
-            const passwordInputs = form.querySelectorAll('input[type="password"], input[type="text"]');
-            let show = false;
+            // Seleciona apenas os campos de senha e confirmação
+            const passwordInputs = [
+                form.querySelector('#senha'),
+                form.querySelector('#confirmarSenha')
+            ];
             // Se algum campo está como password, vamos mostrar todos
+            const show = passwordInputs.some(input => input && input.type === "password");
             passwordInputs.forEach(input => {
-                if (input.type === "password") show = true;
-            });
-            passwordInputs.forEach(input => {
-                if (show) {
-                    input.type = "text";
-                } else {
-                    input.type = "password";
-                }
+                if (input) input.type = show ? "text" : "password";
             });
             // Troca todos os ícones juntos
             const icons = form.querySelectorAll('.show-password-btn i');
