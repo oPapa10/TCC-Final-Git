@@ -4,7 +4,11 @@ const db = require('../config/db'); // ajuste o caminho conforme seu projeto
 
 // Rota para home
 router.get('/', (req, res) => {
-  db.query('SELECT * FROM Produto', (err, produtos) => {
+  db.query(`
+    SELECT Produto.*, Categoria.nome AS categoria_nome
+    FROM Produto
+    LEFT JOIN Categoria ON Produto.Categoria_ID = Categoria.ID
+  `, (err, produtos) => {
     if (err) return res.status(500).send('Erro no banco');
     db.query('SELECT * FROM Categoria', (err2, categorias) => {
       if (err2) return res.status(500).send('Erro ao buscar categorias');

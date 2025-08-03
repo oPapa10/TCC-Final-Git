@@ -19,24 +19,36 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/produtos', upload.single('imagem'), (req, res) => {
+router.post('/produtos', upload.fields([
+  { name: 'imagem', maxCount: 1 },
+  { name: 'thumbnailUpload', maxCount: 1 }
+]), (req, res) => {
   const {
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
     estoque, material, protecao, thumbnails, categoria
   } = req.body;
   let imagem = '';
-  if (req.file) {
-    imagem = '/uploads/' + req.file.filename;
+  let thumbnail = thumbnails || '';
+  if (req.files['imagem'] && req.files['imagem'][0]) {
+    imagem = '/uploads/' + req.files['imagem'][0].filename;
+  }
+  if (req.files['thumbnailUpload'] && req.files['thumbnailUpload'][0]) {
+    const uploadedPath = '/uploads/' + req.files['thumbnailUpload'][0].filename;
+    // Junta os links digitados e o arquivo enviado, separados por vírgula
+    thumbnail = thumbnail ? (thumbnail + ',' + uploadedPath) : uploadedPath;
+  }
+  console.log('Categoria recebida:', categoria);
+  if (!categoria || isNaN(parseInt(categoria, 10))) {
+    return res.status(400).send('Selecione uma categoria válida!');
   }
   Produto.create({
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-    estoque, material, protecao, imagem, thumbnails, categoria
+    estoque, material, protecao, imagem, thumbnails: thumbnail, Categoria_ID: parseInt(categoria, 10) || null
   }, (err) => {
     if (err) {
       console.error('Erro ao cadastrar produto:', err);
       return res.status(500).send('Erro ao criar produto');
     }
-    // Após cadastrar, busque as categorias novamente e renderize a página
     db.query('SELECT * FROM Categoria', (err, categorias) => {
       if (err) return res.status(500).send('Erro ao carregar categorias');
       res.render('createItens', { categorias, sucesso: true });

@@ -38,8 +38,8 @@ exports.create = (produto, callback) => {
     produto.protecao,
     produto.imagem,
     produto.thumbnails,
-    produto.categoria,
-    gerarSlug(produto.nome) // slug só com o nome
+    produto.Categoria_ID, // <-- CORRIGIDO!
+    gerarSlug(produto.nome)
   ];
   db.query(sql, values, callback);
 };

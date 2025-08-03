@@ -1,128 +1,408 @@
-<!-- filepath: views/createItens.ejs -->
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Produtos - Loja de Motos</title>
-    <link rel="stylesheet" href="/stylesheets/createItens.css">
+    <title>Cadastro de Produtos | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <style>
-        .btn-voltar {
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #4cc9f0;
+            --accent: #7209b7;
+            --success: #28a745;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #2b2d42;
+            --text-light: #8d99ae;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            position: relative;
             display: inline-block;
-            margin-right: 16px;
-            background: #007bff;
+        }
+
+        .header-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .btn-voltar {
+            background-color: var(--primary);
             color: #fff;
             border: none;
-            border-radius: 4px;
-            padding: 7px 14px;
-            font-size: 1rem;
-            cursor: pointer;
+            border-radius: 10px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             text-decoration: none;
-            transition: background 0.2s;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+            transition: all 0.3s ease;
         }
+
         .btn-voltar:hover {
-            background: #0056b3;
-            color: #fff;
-            text-decoration: none;
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
         }
-        .form-section-header {
+
+        .card-edit {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-edit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.15);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.7rem;
+            display: block;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            border: 2px solid #e0e3eb;
+            border-radius: 10px;
+            padding: 0.85rem 1.2rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            background-color: #fff;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn-salvar {
+            background: linear-gradient(to right, var(--success), #5cb85c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            justify-content: center;
+            gap: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            margin-top: 1rem;
+        }
+
+        .btn-salvar:hover {
+            background: linear-gradient(to right, #218838, #4cae4c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234361ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+
+        .file-input-container {
+            background-color: #f8f9fa;
+            border: 2px dashed #d1d7e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-container:hover {
+            border-color: var(--primary);
+            background-color: #f0f4ff;
+        }
+
+        .file-input-label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input-required::after {
+            content: ' *';
+            color: #dc3545;
+        }
+
+        .footer {
+            background: var(--card-bg);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 0;
+        }
+
+        .footer .text-muted {
+            color: var(--text-light) !important;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .card-edit {
+                padding: 1.5rem;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header-section">
+            <a href="/adm" class="btn-voltar" title="Voltar">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1 class="header-title">Cadastro de Produtos</h1>
+        </div>
 
-    <div class="container mt-5 pt-4">
-        <section class="form-section">
-            <div class="form-section-header">
-                <a href="/adm" class="btn-voltar" title="Voltar">&#8592; Voltar</a>
-                <h1>Cadastro de Produtos</h1>
-            </div>
+        <div class="card-edit">
             <% if (typeof sucesso !== 'undefined' && sucesso) { %>
-                <div class="alert alert-success">Produto cadastrado com sucesso!</div>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i> Produto cadastrado com sucesso!
+                </div>
             <% } %>
+
             <form id="productForm" action="/createItens/produtos" method="POST" enctype="multipart/form-data">
-                <div class="form-group mb-3">
-                    <label for="nome" class="required">Nome do Produto</label>
-                    <input type="text" id="nome" name="nome" maxlength="100" class="form-control" required>
+                <div class="row">
+                    <!-- Coluna Esquerda -->
+                    <div class="col-md-6">
+                        <!-- Inputs principais -->
+                        <div class="form-group">
+                            <label class="form-label" for="nome">Nome do Produto</label>
+                            <input type="text" class="form-control" id="nome" name="nome" maxlength="100" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="valor">Valor (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="categoria">Categoria</label>
+                            <select class="form-control" id="categoria" name="categoria" required>
+                                <option value="">Selecione uma categoria</option>
+                                <% categorias.forEach(function(cat) { %>
+                                    <option value="<%= cat.ID %>"><%= cat.nome %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="cor">Cor</label>
+                            <input type="text" class="form-control" id="cor" name="cor" maxlength="25">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="tamanho">Tamanho</label>
+                            <input type="text" class="form-control" id="tamanho" name="tamanho" maxlength="15">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="peso">Peso (kg)</label>
+                            <input type="number" step="0.01" class="form-control" id="peso" name="peso">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="cilindrada">Cilindrada</label>
+                            <input type="text" class="form-control" id="cilindrada" name="cilindrada" maxlength="50">
+                        </div>
+                    </div>
+
+                    <!-- Coluna Direita -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="potencia">Potência</label>
+                            <input type="text" class="form-control" id="potencia" name="potencia" maxlength="50">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="tanque">Tanque</label>
+                            <input type="text" class="form-control" id="tanque" name="tanque" maxlength="50">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="material">Material</label>
+                            <input type="text" class="form-control" id="material" name="material" maxlength="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="protecao">Proteção</label>
+                            <input type="text" class="form-control" id="protecao" name="protecao" maxlength="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="estoque">Quantidade em Estoque</label>
+                            <input type="number" class="form-control" id="estoque" name="estoque" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="descricao">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" maxlength="255"></textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="cor">Cor</label>
-                    <input type="text" id="cor" name="cor" maxlength="25" class="form-control">
+
+                <!-- Upload de Imagens -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label file-input-required" for="imagem">Imagem Principal</label>
+                            <div class="file-input-container">
+                                <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control" required style="display: none;">
+                                <label for="imagem" style="cursor: pointer;">
+                                    <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--primary);"></i>
+                                    <div class="file-input-label">Clique para selecionar a imagem principal</div>
+                                    <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="thumbnails">Thumbnails (URLs separadas por vírgula)</label>
+                            <input type="text" class="form-control" id="thumbnails" name="thumbnails" placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="thumbnailUpload">Ou selecione uma imagem para thumbnail</label>
+                            <input type="file" id="thumbnailUpload" name="thumbnailUpload" accept="image/*" class="form-control">
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="tamanho">Tamanho</label>
-                    <input type="text" id="tamanho" name="tamanho" maxlength="15" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="peso">Peso (kg)</label>
-                    <input type="number" step="0.01" id="peso" name="peso" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="valor" class="required">Valor (R$)</label>
-                    <input type="number" step="0.01" id="valor" name="valor" class="form-control" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="cilindrada">Cilindrada</label>
-                    <input type="text" id="cilindrada" name="cilindrada" maxlength="50" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="descricao">Descrição</label>
-                    <textarea id="descricao" name="descricao" maxlength="255" class="form-control"></textarea>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="potencia">Potência</label>
-                    <input type="text" id="potencia" name="potencia" maxlength="50" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="tanque">Tanque</label>
-                    <input type="text" id="tanque" name="tanque" maxlength="50" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="estoque" class="required">Quantidade em Estoque</label>
-                    <input type="number" id="estoque" name="estoque" min="0" class="form-control" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="material">Material</label>
-                    <input type="text" id="material" name="material" maxlength="100" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="protecao">Proteção</label>
-                    <input type="text" id="protecao" name="protecao" maxlength="100" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="imagem" class="required">Imagem do Produto</label>
-                    <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control" required>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="thumbnails">Thumbnails (URLs separadas por vírgula)</label>
-                    <input type="text" id="thumbnails" name="thumbnails" class="form-control">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="categoria" class="required">Categoria</label>
-                    <select id="categoria" name="categoria" class="form-select" required>
-                        <option value="">Selecione uma categoria</option>
-                        <% categorias.forEach(function(cat) { %>
-                            <option value="<%= cat.ID %>"><%= cat.nome %></option>
-                        <% }) %>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Cadastrar Produto</button>
+
+                <button type="submit" class="btn-salvar">
+                    <i class="fas fa-save"></i> Cadastrar Produto
+                </button>
             </form>
-        </section>
+        </div>
     </div>
 
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer mt-auto py-3">
         <div class="container text-center">
             <span class="text-muted">&copy; <%= new Date().getFullYear() %> Center Motos. Todos os direitos reservados.</span>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/createItens.js"></script>
+    <script>
+        // Mostra o nome do arquivo selecionado
+        document.getElementById('imagem').addEventListener('change', function (e) {
+            const fileName = e.target.files[0]?.name || 'Nenhum arquivo selecionado';
+            const fileLabel = document.querySelector('.file-input-label');
+            fileLabel.textContent = fileName;
+            fileLabel.style.fontWeight = '600';
+            fileLabel.style.color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+        });
+
+        // Validação do formulário
+        document.getElementById('productForm').addEventListener('submit', function (e) {
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.borderColor = '#dc3545';
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Por favor, preencha todos os campos obrigatórios!');
+            }
+        });
+    </script>
 </body>
 </html>

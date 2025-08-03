@@ -1,26 +1,331 @@
-<!-- filepath: c:\Users\borges\OneDrive\Desktop\ruan\TCC\views\editProduto.ejs -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <title>Editar Produto</title>
-    <link rel="stylesheet" href="/stylesheets/createItens.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Produto | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #4cc9f0;
+            --accent: #7209b7;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #2b2d42;
+            --text-light: #8d99ae;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+        .container {
+            max-width: 900px;
+            margin: 3rem auto;
+            padding: 0 20px;
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            position: relative;
+            display: inline-block;
+        }
+        .header-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+        .btn-voltar {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+        }
+        .btn-voltar:hover {
+            background-color: var(--primary-dark);
+        }
+        .card-edit {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-edit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.7rem;
+            display: block;
+            font-size: 0.95rem;
+        }
+        .form-control {
+            border: 2px solid #e0e3eb;
+            border-radius: 10px;
+            padding: 0.85rem 1.2rem;
+            font-size: 0.95rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            background-color: #f8fafc;
+        }
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .btn-salvar {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(76, 201, 240, 0.3);
+            margin-top: 1rem;
+        }
+        .btn-salvar:hover {
+            background: linear-gradient(to right, var(--primary-dark), #3fb5d8);
+        }
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .current-image {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid #fff;
+            background: #f8f9fa;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .no-image {
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+            border-radius: 12px;
+            color: #adb5bd;
+            font-size: 3.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 3px dashed #dee2e6;
+        }
+        .image-badge {
+            background-color: var(--accent);
+            color: white;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(114, 9, 183, 0.2);
+            margin-bottom: 1rem;
+        }
+        .file-input-label {
+            background-color: #f8f9fa;
+            border: 2px dashed #d1d7e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .file-input-label i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
+        .file-input-text {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234361ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+        /* Remove transição/efeito de entrada */
+        .container, .card-edit, .btn-voltar, .btn-salvar, .file-input-label, .current-image {
+            transition: none !important;
+            animation: none !important;
+        }
+    </style>
 </head>
 <body>
-    <h2>Editar Produto</h2>
-    <form action="/produtos/editar/<%= produto.ID %>" method="POST" enctype="multipart/form-data">
-        <input type="text" name="nome" value="<%= produto.nome %>" required>
-        <input type="number" step="0.01" name="valor" value="<%= produto.valor %>" required>
-        <textarea name="descricao"><%= produto.descricao %></textarea>
-        <select name="categoria" required>
-            <% categorias.forEach(function(cat) { %>
-                <option value="<%= cat.ID %>" <%= produto.Categoria_ID == cat.ID ? 'selected' : '' %>><%= cat.nome %></option>
-            <% }) %>
-        </select>
-        <input type="number" name="quantidade" value="<%= produto.estoque %>" required>
-        <input type="hidden" name="imagemAtual" value="<%= produto.imagem %>">
-        <input type="file" name="imagem">
-        <button type="submit" class="btn btn-primary">Salvar</button>
-    </form>
-    <a href="/seeProduto">Voltar</a>
+    <div class="container">
+        <div class="header-section">
+            <a href="/seeProduto" class="btn-voltar">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1 class="header-title ms-4">Editar Produto</h1>
+        </div>
+        <div class="card-edit">
+            <form action="/produtos/editar/<%= produto.ID %>" method="POST" enctype="multipart/form-data">
+                <!-- Imagem atual -->
+                <div class="image-container">
+                    <% if (produto.imagem) { %>
+                        <img src="<%= produto.imagem %>" alt="Imagem atual do produto" class="current-image">
+                        <span class="image-badge">IMAGEM ATUAL</span>
+                    <% } else { %>
+                        <div class="no-image">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <span class="image-badge">SEM IMAGEM</span>
+                    <% } %>
+                    <input type="hidden" name="imagemAtual" value="<%= produto.imagem %>">
+                </div>
+                <!-- Upload de nova imagem -->
+                <label class="file-input-label" for="imagem">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <div class="file-input-text">Clique para alterar a imagem ou arraste uma nova</div>
+                    <input type="file" id="imagem" name="imagem" accept="image/*" style="display: none;">
+                </label>
+                <!-- Campos do formulário -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="nome">NOME DO PRODUTO</label>
+                            <input type="text" class="form-control" id="nome" name="nome" value="<%= produto.nome %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="valor">VALOR (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" value="<%= produto.valor %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="categoria">CATEGORIA</label>
+                            <select class="form-control" id="categoria" name="categoria" required>
+                                <% categorias.forEach(function(cat) { %>
+                                    <option value="<%= cat.ID %>" <%= produto.Categoria_ID == cat.ID ? 'selected' : '' %>><%= cat.nome %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cor">COR</label>
+                            <input type="text" class="form-control" id="cor" name="cor" value="<%= produto.cor %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tamanho">TAMANHO</label>
+                            <input type="text" class="form-control" id="tamanho" name="tamanho" value="<%= produto.tamanho %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="peso">PESO</label>
+                            <input type="text" class="form-control" id="peso" name="peso" value="<%= produto.peso %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="cilindrada">CILINDRADA</label>
+                            <input type="text" class="form-control" id="cilindrada" name="cilindrada" value="<%= produto.cilindrada %>">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="potencia">POTÊNCIA</label>
+                            <input type="text" class="form-control" id="potencia" name="potencia" value="<%= produto.potencia %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="tanque">TANQUE</label>
+                            <input type="text" class="form-control" id="tanque" name="tanque" value="<%= produto.tanque %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="material">MATERIAL</label>
+                            <input type="text" class="form-control" id="material" name="material" value="<%= produto.material %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="protecao">PROTEÇÃO</label>
+                            <input type="text" class="form-control" id="protecao" name="protecao" value="<%= produto.protecao %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="thumbnails">THUMBNAILS (URLs separadas por vírgula)</label>
+                            <input type="text" class="form-control" id="thumbnails" name="thumbnails" value="<%= produto.thumbnails %>" placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="thumbnailUpload">Ou selecione uma imagem para thumbnail</label>
+                            <input type="file" id="thumbnailUpload" name="thumbnailUpload" accept="image/*" class="form-control">
+                        </div>
+                        <!-- ESTOQUE não editável aqui -->
+                        <div class="form-group">
+                            <label class="form-label" for="quantidade">QUANTIDADE EM ESTOQUE</label>
+                            <input type="number" class="form-control" id="quantidade" name="quantidade" value="<%= produto.estoque %>" readonly style="background:#f1f3f5;cursor:not-allowed;">
+                            <small class="text-muted">O estoque só pode ser alterado na tela de entrada de estoque.</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="descricao">DESCRIÇÃO</label>
+                            <textarea class="form-control" id="descricao" name="descricao"><%= produto.descricao %></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-salvar">
+                    <i class="fas fa-save"></i> SALVAR ALTERAÇÕES
+                </button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mostra o nome do arquivo selecionado com estilo
+        document.getElementById('imagem').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Nenhum arquivo selecionado';
+            const fileText = document.querySelector('.file-input-text');
+            fileText.textContent = fileName;
+            fileText.style.fontWeight = '600';
+            fileText.style.color = '#4361ee';
+            fileText.parentElement.style.borderColor = '#4361ee';
+            fileText.parentElement.style.backgroundColor = '#f0f4ff';
+            fileText.parentElement.querySelector('i').style.color = '#7209b7';
+        });
+    </script>
 </body>
 </html>

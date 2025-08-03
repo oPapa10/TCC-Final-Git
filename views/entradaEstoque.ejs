@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrada de Estoque | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/stylesheets/entradaEstoque.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="header-section d-flex justify-content-between align-items-center mb-4">
+            <a href="/adm" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <h2>Entrada e Saída de Estoque</h2>
+        </div>
+        <% if (sucesso) { %>
+            <div class="alert alert-success">Estoque atualizado com sucesso!</div>
+        <% } %>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <form id="estoqueForm" action="/entradaEstoque" method="POST" class="card p-4 mb-4">
+                    <h5 class="mb-3 text-success"><i class="fas fa-plus"></i> Adicionar ao Estoque</h5>
+                    <div class="mb-3">
+                        <label for="produto" class="form-label">Produto</label>
+                        <input type="text" class="form-control mb-2" id="searchProduto" placeholder="Pesquisar produto...">
+                        <select class="form-select" id="produto" name="produto" required>
+                            <option value="">Selecione o produto</option>
+                            <% produtos.forEach(function(produto) { %>
+                                <option value="<%= produto.ID %>"><%= produto.nome %> (Estoque atual: <%= produto.estoque %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantidade" class="form-label">Quantidade a adicionar</label>
+                        <input type="number" class="form-control" id="quantidade" name="quantidade" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100"><i class="fas fa-plus"></i> Adicionar</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form id="saidaForm" action="/entradaEstoque/saida" method="POST" class="card p-4 mb-4">
+                    <h5 class="mb-3 text-danger"><i class="fas fa-minus"></i> Retirar do Estoque</h5>
+                    <div class="mb-3">
+                        <label for="produtoSaida" class="form-label">Produto</label>
+                        <input type="text" class="form-control mb-2" id="searchProdutoSaida" placeholder="Pesquisar produto...">
+                        <select class="form-select" id="produtoSaida" name="produtoSaida" required>
+                            <option value="">Selecione o produto</option>
+                            <% produtos.forEach(function(produto) { %>
+                                <option value="<%= produto.ID %>"><%= produto.nome %> (Estoque atual: <%= produto.estoque %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantidadeSaida" class="form-label">Quantidade a retirar</label>
+                        <input type="number" class="form-control" id="quantidadeSaida" name="quantidadeSaida" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100"><i class="fas fa-minus"></i> Retirar</button>
+                </form>
+            </div>
+        </div>
+        <div class="card p-4 mt-4">
+            <h4 class="mb-3">Produtos e Estoque Atual</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Estoque</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% produtos.forEach(function(produto) { %>
+                        <tr>
+                            <td><%= produto.ID %></td>
+                            <td><%= produto.nome %></td>
+                            <td><%= produto.estoque %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="/javascripts/entradaEstoque.js"></script>
+    <script>
+    document.getElementById('searchProduto')?.addEventListener('input', function(e) {
+        const termo = e.target.value.toLowerCase();
+        const select = document.getElementById('produto');
+        Array.from(select.options).forEach(option => {
+            if (option.value === "") return;
+            option.style.display = option.text.toLowerCase().includes(termo) ? '' : 'none';
+        });
+    });
+    document.getElementById('searchProdutoSaida')?.addEventListener('input', function(e) {
+        const termo = e.target.value.toLowerCase();
+        const select = document.getElementById('produtoSaida');
+        Array.from(select.options).forEach(option => {
+            if (option.value === "") return;
+            option.style.display = option.text.toLowerCase().includes(termo) ? '' : 'none';
+        });
+    });
+    document.getElementById('estoqueForm')?.addEventListener('submit', function(e) {
+        const produto = document.getElementById('produto').value;
+        const quantidade = document.getElementById('quantidade').value;
+        if (!produto || !quantidade || quantidade <= 0) {
+            e.preventDefault();
+            alert('Selecione um produto e informe uma quantidade válida!');
+        }
+    });
+    document.getElementById('saidaForm')?.addEventListener('submit', function(e) {
+        const produto = document.getElementById('produtoSaida').value;
+        const quantidade = document.getElementById('quantidadeSaida').value;
+        if (!produto || !quantidade || quantidade <= 0) {
+            e.preventDefault();
+            alert('Selecione um produto e informe uma quantidade válida!');
+        }
+    });
+    </script>
+</body>
+</html>

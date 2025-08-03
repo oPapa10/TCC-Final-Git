@@ -70,13 +70,18 @@
                     <img id="mainProductImage" src="<%= produto.imagem %>" alt="Imagem do Produto" class="img-fluid rounded">
                 </div>
                 <div class="thumbnail-container d-flex">
-                    <% if (produto.thumbnails && produto.thumbnails.length > 0) { %>
-                        <% produto.thumbnails.forEach(function(thumb, idx) { %>
-                            <div class="thumbnail-item <%= idx === 0 ? 'active' : '' %> me-2">
-                                <img src="<%= thumb %>" alt="Miniatura <%= idx+1 %>" class="img-thumbnail" style="width: 60px; height: 60px;">
-                            </div>
-                        <% }) %>
+                    <% if (produto.imagem) { %>
+                        <img src="<%= produto.imagem %>" alt="Foto principal" class="img-thumbnail me-2" style="width: 60px; height: 60px;" onclick="showMainImage('<%= produto.imagem %>', this)">
                     <% } %>
+                    <% if (produto.thumbnails) { 
+                        let thumbs = Array.isArray(produto.thumbnails) ? produto.thumbnails : String(produto.thumbnails).split(',');
+                        thumbs.forEach(function(url) {
+                            url = url.trim();
+                            if (url && url !== produto.imagem) { %>
+                                <img src="<%= url %>" alt="Thumbnail" class="img-thumbnail me-2" style="width: 60px; height: 60px;" onclick="showMainImage('<%= url %>', this)">
+                    <%      }
+                        });
+                    } %>
                 </div>
             </div>
             
@@ -111,9 +116,22 @@
                 </div>
                 <form action="/carrinho/adicionar" method="POST" class="mb-3">
                     <input type="hidden" name="produtoId" value="<%= produto.ID %>">
-                    <div class="input-group mb-3" style="max-width: 200px;">
-                        <span class="input-group-text">Qtd</span>
-                        <input type="number" name="quantidade" class="form-control" value="1" min="1" max="<%= produto.estoque || 99 %>">
+                    <div class="d-flex align-items-center mb-3" style="max-width: 350px;">
+                        <div class="input-group" style="max-width: 200px;">
+                            <span class="input-group-text">Qtd</span>
+                            <input 
+                                type="number" 
+                                name="quantidade" 
+                                class="form-control" 
+                                value="1" 
+                                min="1" 
+                                max="<%= produto.estoque || 1 %>" 
+                                required
+                            >
+                        </div>
+                        <small class="text-muted ms-3">
+                            Estoque disponível: <%= produto.estoque %> unidade<%= produto.estoque == 1 ? '' : 's' %>
+                        </small>
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
@@ -283,5 +301,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/product.js"></script>
+    <script>
+    function showMainImage(url, thumb) {
+        document.getElementById('mainProductImage').src = url;
+    }
+    </script>
 </body>
 </html>

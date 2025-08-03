@@ -156,7 +156,7 @@
         <div class="row">
             <% if (produtos && produtos.length > 0) { %>
                 <% produtos.forEach(function(produto) { %>
-                    <div class="col-6 col-md-3 mb-4 product-item <%= produto.categoria %>">
+                    <div class="col-6 col-md-3 mb-4 product-item <%= (produto.categoria_nome ? produto.categoria_nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-').toLowerCase().trim() : 'sem-categoria') %>">
                         <div class="card product-card"
                             data-product-name="<%= produto.nome %>"
                             data-product-price="<%= produto.valor %>"
@@ -227,5 +227,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="/javascripts/index.js"></script>
     <script src="/javascripts/cart.js"></script>
+    <script>
+function filterProducts(categoria, btn) {
+    var categoriaClasse = categoria
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '-')
+        .toLowerCase()
+        .trim();
+    document.querySelectorAll('.product-item').forEach(function(item) {
+        if (!categoria || item.classList.contains(categoriaClasse)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    document.querySelectorAll('.btn-category').forEach(function(b) {
+        b.classList.remove('active');
+    });
+    if (btn) btn.classList.add('active');
+}
+</script>
 </body>
 </html>
