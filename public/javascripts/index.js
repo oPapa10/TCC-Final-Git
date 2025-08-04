@@ -114,6 +114,15 @@ window.filterProducts = function(category, clickedButton) {
         infoContents[e.to].classList.add('active');
     });
 
+    // Carrossel de promoções
+    const promoCarousel = document.getElementById('promoCarousel');
+    if (promoCarousel) {
+        new bootstrap.Carousel(promoCarousel, {
+            interval: 5000,
+            wrap: true
+        });
+    }
+
     // Função para atualizar o contador do carrinho
     function updateCartCounter() {
         const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -125,5 +134,18 @@ window.filterProducts = function(category, clickedButton) {
         } else {
             cartCounter.style.display = 'none';
         }
+    }
+});
+
+
+
+// Configuração do Carrossel de Promoções - Versão Otimizada
+document.addEventListener('DOMContentLoaded', function() {
+    const promoCarousel = document.getElementById('promoCarousel');
+    if (promoCarousel) {
+        new bootstrap.Carousel(promoCarousel, {
+            interval: 5000, 
+            wrap: true
+        });
     }
 });

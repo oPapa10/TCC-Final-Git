@@ -94,104 +94,7 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* ===== CARROSSEL ===== */
-/* Container Principal (não afeta o footer) */
-.carousel-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    gap: 20px;
-    padding: 20px 0;
-}
 
-/* Carrossel */
-#productCarousel {
-    width: 60%;
-    position: relative;
-}
-
-.carousel-inner {
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.carousel-item img {
-    width: 100%;
-    height: 400px;
-    object-fit: cover;
-}
-
-/* Setas de Navegação */
-.carousel-control-prev,
-.carousel-control-next {
-    width: 40px;
-    height: 40px;
-    background-color: rgba(0,0,0,0.7);
-    border-radius: 50%;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.carousel-control-prev {
-    left: 15px;
-}
-
-.carousel-control-next {
-    right: 15px;
-}
-
-/* Indicadores Centralizados */
-.carousel-indicators-container {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-}
-
-.carousel-indicators {
-    display: flex;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-}
-
-.carousel-indicators button {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: none;
-    background-color: rgba(255,255,255,0.5);
-    padding: 0;
-}
-
-.carousel-indicators button.active {
-    background-color: #000;
-}
-
-/* Informações do Produto */
-.product-info {
-    width: 40%;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.info-content {
-    display: none;
-    height: 100%;
-}
-
-.info-content.active {
-    display: block;
-}
-
-.price {
-    color: #dc3545;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
 /* ===== PRODUTOS ===== */
 .card {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -336,4 +239,181 @@
 
 .alert-custom {
     background-color: #f8f9fa;
+}
+
+/* ===== CARROSSEL DE PROMOÇÕES - VERSÃO SIMPLIFICADA ===== */
+.promo-carousel-container {
+    width: 100%;
+    margin: 0 auto 30px auto;
+    padding: 0;
+    max-width: 1200px; /* ajuste aqui */
+}
+
+#promoCarousel {
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    min-height: 340px;
+    height: 340px;
+}
+
+.promo-carousel-item {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.promo-image-container {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    padding: 0;
+}
+
+.promo-image {
+    max-width: 95%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.promo-info {
+    width: 50%;
+    padding: 40px 30px 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.promo-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.promo-price-container {
+    margin-bottom: 10px;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #888;
+    font-size: 1.1rem;
+    margin-right: 10px;
+}
+
+.discounted-price {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-right: 10px;
+}
+
+.discount-badge {
+    background: #ff5252;
+    color: #fff;
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.promo-description {
+    font-size: 1.1rem;
+    color: #444;
+    margin-bottom: 18px;
+}
+
+.promo-button {
+    background: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+    width: fit-content;
+}
+
+.promo-button:hover {
+    background: #084298;
+    color: #fff;
+}
+
+.carousel-inner {
+    width: 100%;
+    height: 340px;
+    min-height: 340px;
+}
+
+.carousel-item {
+    width: 100%;
+    height: 340px;
+    min-height: 340px;
+    transition: transform 0.6s cubic-bezier(.4,0,.2,1);
+    position: relative;
+}
+
+
+.carousel-control-prev,
+.carousel-control-next {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 5%;
+    min-width: 40px;
+    height: 100%;
+    opacity: 0.8;
+    z-index: 10;
+    background: none;
+    border: none;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 2rem;
+    height: 2rem;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 8 8'><path d='M5.854 1.146a.5.5 0 0 1 0 .708L3.707 4l2.147 2.146a.5.5 0 0 1-.708.708l-2.5-2.5a.5.5 0 0 1 0-.708l2.5-2.5a.5.5 0 0 1 .708 0z'/></svg>");
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 8 8'><path d='M2.146 1.146a.5.5 0 0 1 .708 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.708-.708L4.293 4 2.146 1.854a.5.5 0 0 1 0-.708z'/></svg>");
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+}
+
+.carousel-indicators {
+    bottom: -15px; /* ou 0, ou ajuste conforme o visual */
+    margin-top: 0;
+}
+
+.carousel-indicators [data-bs-target] {
+    background-color: #111 !important;
+    border: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.carousel-indicators .active {
+    opacity: 1;
+    background-color: #000 !important;
 }

@@ -305,6 +305,17 @@
     function showMainImage(url, thumb) {
         document.getElementById('mainProductImage').src = url;
     }
+
+    // Limita o campo de quantidade ao estoque disponível SOMENTE se ultrapassar o máximo
+    document.addEventListener('DOMContentLoaded', function() {
+        const qtdInput = document.querySelector('input[name="quantidade"]');
+        const estoqueMax = Number(qtdInput?.max) || 1;
+        qtdInput?.addEventListener('input', function() {
+            if (Number(this.value) > estoqueMax) {
+                this.value = estoqueMax;
+            }
+        });
+    });
     </script>
 </body>
 </html>

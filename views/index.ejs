@@ -99,53 +99,68 @@
         </div>
     </nav>
 
-    <!-- Carrossel -->
-    <div class="carousel-container">
-        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="https://blog.sportbay.com.br/wp-content/uploads/2024/04/motos-mais-vendidas-no-brasil-CAPA.webp" class="d-block" alt="Moto esportiva">
+ <!-- Carrossel de Promoções - Versão Consistente -->
+<% if (promocoes && promocoes.length > 0) { %>
+<div class="container-fluid px-0">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="promo-carousel-container">
+                <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <% promocoes.forEach(function(promo, idx) { %>
+                            <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
+                                <div class="promo-carousel-item">
+                                    <div class="promo-image-container">
+                                        <img src="<%= promo.imagem %>" class="promo-image" alt="<%= promo.produto_nome %>">
+                                    </div>
+                                    <div class="promo-info">
+                                        <h3 class="promo-title"><%= promo.produto_nome %></h3>
+                                        <div class="promo-price-container">
+                                            <span class="original-price">
+                                                R$ <%= Number(promo.valor_real).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                            </span>
+                                            <span class="discounted-price">
+                                                R$ <%= Number(promo.valor_promocional).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                            </span>
+                                            <% const discount = Math.round((1 - promo.valor_promocional/promo.valor_real)*100); %>
+                                            <% if (discount > 0) { %>
+                                                <span class="discount-badge"><%= discount %>% OFF</span>
+                                            <% } %>
+                                        </div>
+                                        <% if (promo.descricao) { %>
+                                            <p class="promo-description"><%= promo.descricao %></p>
+                                        <% } %>
+                                        <a href="/product/<%= promo.produto_id %>" class="btn promo-button">
+                                            Ver Oferta <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    <% if (promocoes.length > 1) { %>
+                        <!-- Setas -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Próximo</span>
+                        </button>
+                        <!-- Bolinhas -->
+                        <div class="carousel-indicators">
+                            <% promocoes.forEach(function(promo, idx) { %>
+                                <button type="button" data-bs-target="#promoCarousel" data-bs-slide-to="<%= idx %>" class="<%= idx === 0 ? 'active' : '' %>" aria-current="<%= idx === 0 ? 'true' : 'false' %>" aria-label="Slide <%= idx+1 %>"></button>
+                            <% }) %>
+                        </div>
+                    <% } %>
                 </div>
-                <div class="carousel-item">
-                    <img src="https://www.remaza.com.br/uploads/9ca6a0b4-91d3-41e8-9e87-5af18309b836/blog-header-motos-de-luxo-valem-a-pena-remaza_730x295.jpg" class="d-block" alt="Carro Moderno">
-                </div>
-                <div class="carousel-item">
-                    <img src="https://www.tecfil.com.br/wp-content/uploads/2021/12/TECFIL_SEO_IMAGENS_M7-1.jpg" class="d-block" alt="Tracker RS">
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            </button>
-            <div class="carousel-indicators-container">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" class="active"></button>
-                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
-                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
-                </div>
-            </div>
-        </div>
-        <!-- Container de Informações -->
-        <div class="product-info">
-            <div class="info-content active">
-                <h3>Moto Esportiva</h3>
-                <p class="price">R$ 250.000,00</p>
-                <p class="description">Acelera de 0 a 100 km/h em apenas 5,2 segundos. Motor V6 potente, ideal para alta performance nas pistas.</p>
-            </div>
-            <div class="info-content">
-                <h3>Moto Moderna</h3>
-                <p class="price">R$ 180.000,00</p>
-                <p class="description">Design futurista com painel digital completo, conectividade Bluetooth e sistema de navegação integrado.</p>
-            </div>
-            <div class="info-content">
-                <h3>Moto SUV</h3>
-                <p class="price">R$ 150.000,00</p>
-                <p class="description">Versatilidade e conforto em qualquer terreno. Suspensão reforçada e espaço extra para longas viagens.</p>
             </div>
         </div>
     </div>
+</div>
+<% } %>
 
     <div id="searchMessage" class="container text-center my-3" style="display: none;">
         <div class="alert alert-custom mb-0">Nenhum produto encontrado para sua pesquisa.</div>
