@@ -67,6 +67,13 @@ router.post('/adicionar', (req, res) => {
       });
     }
 
+    if (req.session.usuario) {
+      db.query(
+        'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = ?',
+        [req.session.usuario.ID, produto.ID, quantidade, req.session.carrinho[idx >= 0 ? idx : req.session.carrinho.length - 1].quantidade]
+      );
+    }
+
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
       return res.json({ success: true });
     }
@@ -80,7 +87,19 @@ router.post('/remover', (req, res) => {
   if (req.session.carrinho) {
     req.session.carrinho = req.session.carrinho.filter(item => item.produtoId != produtoId);
   }
-  res.redirect('/carrinho');
+  if (req.session.usuario) {
+    // Remove do banco também!
+    db.query(
+      'DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id = ?',
+      [req.session.usuario.ID, produtoId],
+      (err) => {
+        // Ignora erro, só redireciona
+        res.redirect('/carrinho');
+      }
+    );
+  } else {
+    res.redirect('/carrinho');
+  }
 });
 
 // Rota para contar itens no carrinho

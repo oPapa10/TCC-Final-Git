@@ -86,3 +86,11 @@ CREATE TABLE IF NOT EXISTS Promocao (
     imagem VARCHAR(255) NOT NULL,
     link VARCHAR(255)
 );
+
+CREATE TABLE CARRINHO (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    produto_id INT,
+    quantidade INT,
+    UNIQUE KEY (usuario_id, produto_id)
+);

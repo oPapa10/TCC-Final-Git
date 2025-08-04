@@ -16,15 +16,24 @@ const upload = multer({ storage: storage });
 
 //Rota para home
 router.get('/', (req, res) => {
-  let primeiroAcesso = false;
-  if (req.session.usuario) {
-    if (req.query.cadastro === 'ok') {
-      primeiroAcesso = true;
-    }
-    res.render('perfil-pos-cadastro', { usuario: req.session.usuario, primeiroAcesso });
-  } else {
-    res.render('perfil', { usuario: null, mensagem: null });
-  }
+  const mostrarModalCarrinho = req.session.pedirEscolhaCarrinho;
+  req.session.pedirEscolhaCarrinho = false; // Limpa o sinal após usar
+  res.render('perfil', {
+      usuario: req.session.usuario,
+      mostrarModalCarrinho,
+      mensagem: null // ou ''
+  });
+});
+
+router.get('/perfil', (req, res) => {
+  // ...busca usuário...
+  const mostrarModalCarrinho = req.session.pedirEscolhaCarrinho;
+  req.session.pedirEscolhaCarrinho = false;
+  res.render('perfil', {
+      usuario: req.session.usuario,
+      mostrarModalCarrinho,
+      mensagem: null // ou ''
+  });
 });
 
 router.post('/avatar', upload.single('avatar'), (req, res) => {
