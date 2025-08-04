@@ -22,6 +22,14 @@
     margin-bottom: 10px;
 }
 
+.cart-header span,
+.cart-item > div,
+.cart-item > form {
+    flex: 1 1 0;
+    text-align: center;
+    min-width: 0;
+}
+
 .header-product {
     flex: 2;
     transform: translateX(20px); /* Move apenas o texto para a direita */
@@ -29,14 +37,27 @@
 
 .header-quantity {
     flex: 1;
-    text-align: center;
-    transform: translateX(163px); /* Move apenas o texto para a direita */
+    text-align: left;
+    /* Removido o transform */
 }
 
 .header-action {
     flex: 1;
     text-align: center;
     transform: translateX(95px); /* Move apenas o texto para a direita */
+}
+
+.cart-header .header-product,
+.cart-item .item-details {
+    flex: 2 1 0;
+    text-align: left;
+}
+
+.cart-header .header-action,
+.cart-item form {
+    flex: 1 1 0;
+    text-align: center;
+    min-width: 120px;
 }
 
 /* ===== ITENS DO CARRINHO ===== */

@@ -124,16 +124,20 @@ window.filterProducts = function(category, clickedButton) {
     }
 
     // Função para atualizar o contador do carrinho
-    function updateCartCounter() {
-        const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
-        const cartCounter = document.getElementById('cartCounter');
-        
-        if (totalItems > 0) {
-            cartCounter.textContent = totalItems;
-            cartCounter.style.display = 'flex';
-        } else {
-            cartCounter.style.display = 'none';
-        }
+    window.updateCartCounter = function() {
+        fetch('/carrinho/contador')
+          .then(res => res.json())
+          .then(data => {
+            const cartCounter = document.getElementById('cartCounter');
+            if (cartCounter) {
+              if (data.total > 0) {
+                cartCounter.textContent = data.total;
+                cartCounter.style.display = 'flex';
+              } else {
+                cartCounter.style.display = 'none';
+              }
+            }
+          });
     }
 });
 

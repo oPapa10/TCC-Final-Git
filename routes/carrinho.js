@@ -42,24 +42,52 @@ router.get('/', (req, res) => {
 
 // Rota para adicionar item ao carrinho
 router.post('/adicionar', (req, res) => {
+    console.log('Dados recebidos:', req.body); // <-- Aqui!
   const { produtoId, quantidade } = req.body;
-  console.log('Dados recebidos:', req.body);
 
   if (!produtoId || !quantidade) {
     return res.status(400).send('ID do produto ou quantidade inválidos.');
   }
 
-  if (!req.session.carrinho) req.session.carrinho = [];
+  db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, results) => {
+    if (err || results.length === 0) return res.status(400).send('Produto não encontrado');
+    const produto = results[0];
 
-  const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
-  if (idx >= 0) {
-    req.session.carrinho[idx].quantidade += Number(quantidade);
-  } else {
-    req.session.carrinho.push({ produtoId, quantidade: Number(quantidade) });
+    if (!req.session.carrinho) req.session.carrinho = [];
+    const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
+    if (idx >= 0) {
+      req.session.carrinho[idx].quantidade += Number(quantidade);
+    } else {
+      req.session.carrinho.push({
+        produtoId: produto.ID,
+        nome: produto.nome,
+        preco: produto.valor,
+        imagem: produto.imagem,
+        quantidade: Number(quantidade)
+      });
+    }
+
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({ success: true });
+    }
+    res.redirect('/carrinho');
+  });
+});
+
+// Rota para remover item do carrinho
+router.post('/remover', (req, res) => {
+  const { produtoId } = req.body;
+  if (req.session.carrinho) {
+    req.session.carrinho = req.session.carrinho.filter(item => item.produtoId != produtoId);
   }
-
-  console.log('Carrinho após adicionar:', req.session.carrinho);
   res.redirect('/carrinho');
+});
+
+// Rota para contar itens no carrinho
+router.get('/contador', (req, res) => {
+  const carrinho = req.session.carrinho || [];
+  const total = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
+  res.json({ total });
 });
 
 module.exports = router;
