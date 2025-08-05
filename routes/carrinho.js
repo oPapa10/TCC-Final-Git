@@ -6,15 +6,18 @@ const router = express.Router();
 // Rota para exibir o carrinho
 router.get('/', (req, res) => {
   const carrinho = req.session.carrinho || [];
-  console.log('Carrinho na sessão:', carrinho);
-
   if (carrinho.length === 0) {
     return res.render('carrinho', { carrinho: [] });
   }
 
   const ids = carrinho.map(item => Number(item.produtoId));
   const placeholders = ids.map(() => '?').join(',');
-  const sql = `SELECT * FROM Produto WHERE ID IN (${placeholders})`;
+  const sql = `
+    SELECT p.*, pr.valor_promocional 
+    FROM Produto p
+    LEFT JOIN Promocao pr ON pr.produto_id = p.ID
+    WHERE p.ID IN (${placeholders})
+  `;
 
   db.query(sql, ids, (err, produtos) => {
     if (err) {
@@ -23,15 +26,18 @@ router.get('/', (req, res) => {
     }
 
     const produtosArray = Array.isArray(produtos) ? produtos : [produtos];
-    console.log('Produtos retornados:', produtosArray);
 
     const carrinhoCompleto = carrinho.map(item => {
       const produto = produtosArray.find(p => p.ID == item.produtoId);
+      const valorPromocional = produto && produto.valor_promocional ? Number(produto.valor_promocional) : null;
+      const valorOriginal = produto && produto.valor ? Number(produto.valor) : 0;
       return {
         id: item.produtoId,
         nome: produto ? produto.nome : 'Produto removido',
         imagem: produto ? produto.imagem : '',
-        preco: produto ? parseFloat(produto.valor) : 0,
+        preco: valorPromocional || valorOriginal,
+        valorOriginal: valorOriginal,
+        valorPromocional: valorPromocional,
         quantidade: item.quantidade
       };
     });
@@ -49,36 +55,44 @@ router.post('/adicionar', (req, res) => {
     return res.status(400).send('ID do produto ou quantidade inválidos.');
   }
 
-  db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, results) => {
-    if (err || results.length === 0) return res.status(400).send('Produto não encontrado');
-    const produto = results[0];
+  db.query(
+    `SELECT p.*, pr.valor_promocional 
+     FROM PRODUTO p 
+     LEFT JOIN Promocao pr ON pr.produto_id = p.ID 
+     WHERE p.ID = ?`, 
+    [produtoId], 
+    (err, results) => {
+      if (err || results.length === 0) return res.status(400).send('Produto não encontrado');
+      const produto = results[0];
+      const preco = produto.valor_promocional || produto.valor;
 
-    if (!req.session.carrinho) req.session.carrinho = [];
-    const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
-    if (idx >= 0) {
-      req.session.carrinho[idx].quantidade += Number(quantidade);
-    } else {
-      req.session.carrinho.push({
-        produtoId: produto.ID,
-        nome: produto.nome,
-        preco: produto.valor,
-        imagem: produto.imagem,
-        quantidade: Number(quantidade)
-      });
-    }
+      if (!req.session.carrinho) req.session.carrinho = [];
+      const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
+      if (idx >= 0) {
+        req.session.carrinho[idx].quantidade += Number(quantidade);
+      } else {
+        req.session.carrinho.push({
+          produtoId: produto.ID,
+          nome: produto.nome,
+          preco: preco,
+          imagem: produto.imagem,
+          quantidade: Number(quantidade)
+        });
+      }
 
-    if (req.session.usuario) {
-      db.query(
-        'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = ?',
-        [req.session.usuario.ID, produto.ID, quantidade, req.session.carrinho[idx >= 0 ? idx : req.session.carrinho.length - 1].quantidade]
-      );
-    }
+      if (req.session.usuario) {
+        db.query(
+          'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = ?',
+          [req.session.usuario.ID, produto.ID, quantidade, req.session.carrinho[idx >= 0 ? idx : req.session.carrinho.length - 1].quantidade]
+        );
+      }
 
-    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-      return res.json({ success: true });
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.json({ success: true });
+      }
+      res.redirect('/carrinho');
     }
-    res.redirect('/carrinho');
-  });
+  );
 });
 
 // Rota para remover item do carrinho

@@ -130,7 +130,7 @@
                                         <% if (promo.descricao) { %>
                                             <p class="promo-description"><%= promo.descricao %></p>
                                         <% } %>
-                                        <a href="/product/<%= promo.produto_id %>" class="btn promo-button">
+                                        <a href="/product/<%= promo.slug %>" class="btn promo-button">
                                             Ver Oferta <i class="fas fa-arrow-right ms-2"></i>
                                         </a>
                                     </div>
@@ -183,7 +183,20 @@
                             <div class="card-body">
                                 <h5 class="card-title"><%= produto.nome %></h5>
                                 <p class="card-text"><%= produto.descricao %></p>
-                                <p class="price">R$ <%= produto.valor ? produto.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2}) : "0,00" %></p>
+                                <% if (produto.valor_promocional) { %>
+                                    <p class="price">
+                                      <span class="text-muted text-decoration-line-through" style="margin-right:8px;">
+                                        R$ <%= Number(produto.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                      </span>
+                                      <span class="text-danger fw-bold">
+                                        R$ <%= Number(produto.valor_promocional).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                      </span>
+                                    </p>
+                                  <% } else { %>
+                                    <p class="price">
+                                      R$ <%= Number(produto.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                    </p>
+                                  <% } %>
                                 <a href="/product/<%= produto.slug %>" class="stretched-link product-link"></a>
                             </div>
                         </div>

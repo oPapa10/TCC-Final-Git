@@ -97,7 +97,18 @@
                     <span class="ms-2">4.5 (128 avaliações)</span>
                 </div>
                 <div class="price-container mb-3">
-                    <span class="current-price">R$ <%= produto.valor ? produto.valor.toFixed(2) : '0,00' %></span>
+                  <% if (produto.valor_promocional) { %>
+                    <span class="current-price text-danger">
+                      R$ <%= produto.valor_promocional.toFixed(2) %>
+                    </span>
+                    <span class="text-muted text-decoration-line-through ms-2">
+                      R$ <%= produto.valor.toFixed(2) %>
+                    </span>
+                  <% } else { %>
+                    <span class="current-price">
+                      R$ <%= produto.valor.toFixed(2) %>
+                    </span>
+                  <% } %>
                 </div>
                 <p class="product-description"><%= produto.descricao %></p>
                 <div class="details-section mb-4">

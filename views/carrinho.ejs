@@ -86,7 +86,18 @@
                             </div>
                         </div>
                         <div class="item-unit">
-                            R$ <%= item.preco.toFixed(2) %>
+                            <% if (item.valorPromocional) { %>
+                                <span class="text-danger fw-bold">
+                                    R$ <%= item.valorPromocional.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                </span>
+                                <span class="text-muted text-decoration-line-through ms-2">
+                                    R$ <%= item.valorOriginal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                </span>
+                            <% } else { %>
+                                <span>
+                                    R$ <%= item.valorOriginal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                </span>
+                            <% } %>
                         </div>
                         <div class="item-quantity">
                             <span><%= item.quantidade %></span>
