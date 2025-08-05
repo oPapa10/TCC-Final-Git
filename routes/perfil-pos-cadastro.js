@@ -16,10 +16,18 @@ const upload = multer({ storage: storage });
 
 // GET perfil-pos-cadastro
 router.get('/perfil-pos-cadastro', (req, res) => {
-    res.render('perfil-pos-cadastro', {
-        usuario: req.session.usuario || {}, // garante que sempre existe
-        primeiroAcesso: false // ou true, conforme sua lógica
-    });
+  let usuario = req.session.usuario || {};
+  usuario.endereco = [
+    usuario.rua,
+    usuario.numero,
+    usuario.complemento,
+    usuario.cidade,
+    usuario.estado
+  ].filter(Boolean).join(', ');
+  res.render('perfil-pos-cadastro', {
+    usuario,
+    primeiroAcesso: true
+  });
 });
 
 // POST avatar upload

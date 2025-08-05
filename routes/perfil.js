@@ -16,25 +16,29 @@ const upload = multer({ storage: storage });
 
 //Rota para home
 router.get('/', (req, res) => {
-  const mostrarModalCarrinho = req.session.pedirEscolhaCarrinho;
-  req.session.pedirEscolhaCarrinho = false; // Limpa o sinal após usar
-  res.render('perfil', {
-      usuario: req.session.usuario,
-      mostrarModalCarrinho,
-      mensagem: null // ou ''
-  });
-});
-
-router.get('/perfil', (req, res) => {
-  // ...busca usuário...
+  if (req.session.primeiroAcesso) {
+    req.session.primeiroAcesso = false;
+    return res.redirect('/perfil-pos-cadastro');
+  }
+  let usuario = req.session.usuario;
+  if (usuario) {
+    usuario.endereco = [
+      usuario.rua,
+      usuario.numero,
+      usuario.complemento,
+      usuario.cidade,
+      usuario.estado
+    ].filter(Boolean).join(', ');
+  }
   const mostrarModalCarrinho = req.session.pedirEscolhaCarrinho;
   req.session.pedirEscolhaCarrinho = false;
   res.render('perfil', {
-      usuario: req.session.usuario,
+      usuario,
       mostrarModalCarrinho,
-      mensagem: null // ou ''
+      mensagem: null
   });
 });
+
 
 router.post('/avatar', upload.single('avatar'), (req, res) => {
   if (!req.session.usuario) return res.redirect('/perfil');

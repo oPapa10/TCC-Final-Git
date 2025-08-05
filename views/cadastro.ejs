@@ -1,4 +1,3 @@
-<!-- filepath: views/cadastro.ejs -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,7 +9,24 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/cadastro.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
-   
+    <style>
+        /* Estilo adicional para centralizar o placeholder */
+        .password-placeholder-center::placeholder {
+            text-align: center;
+            opacity: 1; /* Garante que a opacidade seja total */
+            color: #6c757d; /* Cor do placeholder para melhor visibilidade */
+        }
+        
+        /* Ajuste para garantir que o texto digitado fique alinhado à esquerda */
+        .password-placeholder-center {
+            text-align: left;
+        }
+        
+        /* Ajuste para o grupo de input com botão de mostrar senha */
+        .input-group.password-group .form-control {
+            padding-right: 45px; /* Espaço para o botão de mostrar senha */
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar Superior -->
@@ -88,12 +104,13 @@
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu e-mail" required>
                                 </div>
+                                <div id="email-feedback" class="invalid-feedback"></div>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="senha" class="form-label">Senha</label>
-                                <div class="input-group">
+                                <div class="input-group password-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Crie uma senha" required>
+                                    <input type="password" class="form-control password-placeholder-center" id="senha" name="senha" placeholder="Mínimo 8 caracteres" required>
                                     <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="toggleAllPasswords(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -104,9 +121,9 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="confirmarSenha" class="form-label">Confirme a senha</label>
-                                <div class="input-group">
+                                <div class="input-group password-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="confirmarSenha" placeholder="Confirme a senha" required>
+                                    <input type="password" class="form-control password-placeholder-center" id="confirmarSenha" placeholder="Mínimo 8 caracteres" required>
                                     <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="toggleAllPasswords(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -119,8 +136,9 @@
                                 <label for="cpf" class="form-label">CPF</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite seu CPF" required>
+                                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite seu CPF" maxlength="11" pattern="\d{11}" required>
                                 </div>
+                                <div id="cpf-feedback" class="invalid-feedback"></div>
                             </div>
                         </div>
                         <!-- Coluna 2 - Contato -->
@@ -272,6 +290,44 @@
                 }
             });
         }
+
+document.getElementById('email').addEventListener('blur', function() {
+    const email = this.value.trim();
+    if (!email) return;
+    fetch(`/cadastro/verificar-email?email=${encodeURIComponent(email)}`)
+      .then(res => res.json())
+      .then(data => {
+        const feedback = document.getElementById('email-feedback');
+        if (data.existe) {
+          feedback.textContent = 'Este e-mail já está cadastrado!';
+          feedback.style.display = 'block';
+          this.classList.add('is-invalid');
+        } else {
+          feedback.textContent = '';
+          feedback.style.display = 'none';
+          this.classList.remove('is-invalid');
+        }
+      });
+});
+
+document.getElementById('cpf').addEventListener('blur', function() {
+    const cpf = this.value.trim();
+    if (!cpf) return;
+    fetch(`/cadastro/verificar-cpf?cpf=${encodeURIComponent(cpf)}`)
+      .then(res => res.json())
+      .then(data => {
+        const feedback = document.getElementById('cpf-feedback');
+        if (data.existe) {
+          feedback.textContent = 'Este CPF já está cadastrado!';
+          feedback.style.display = 'block';
+          this.classList.add('is-invalid');
+        } else {
+          feedback.textContent = '';
+          feedback.style.display = 'none';
+          this.classList.remove('is-invalid');
+        }
+      });
+});
     </script>
     <script src="/javascripts/cadastro.js"></script>
     <script src="/javascripts/cart.js"></script>
