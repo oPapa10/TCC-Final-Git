@@ -331,10 +331,6 @@
                                 </div>
                             <% } %>
                             
-                            <div class="avatar-upload-btn" onclick="event.stopPropagation(); toggleUploadForm()">
-                                <i class="fas fa-camera"></i>
-                            </div>
-                            
                             <form id="avatarForm" action="/perfil/avatar" method="POST" enctype="multipart/form-data" class="avatar-upload-form">
                                 <input type="file" name="avatar" id="avatarInput" accept="image/*" class="d-none" required>
                                 <label for="avatarInput" class="btn btn-outline-primary btn-sm w-100 mb-2" style="cursor: pointer;">

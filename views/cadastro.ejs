@@ -110,7 +110,7 @@
                                 <label for="senha" class="form-label">Senha</label>
                                 <div class="input-group password-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control password-placeholder-center" id="senha" name="senha" placeholder="Mínimo 8 caracteres" required>
+                                    <input type="password" class="form-control password-placeholder-center" id="senha" name="senha" placeholder="Mínimo 8 caracteres" required minlength="8" maxlength="8">
                                     <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="toggleAllPasswords(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -123,7 +123,7 @@
                                 <label for="confirmarSenha" class="form-label">Confirme a senha</label>
                                 <div class="input-group password-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control password-placeholder-center" id="confirmarSenha" placeholder="Mínimo 8 caracteres" required>
+                                    <input type="password" class="form-control password-placeholder-center" id="confirmarSenha" placeholder="Mínimo 8 caracteres" required minlength="8" maxlength="8">
                                     <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="toggleAllPasswords(this)">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -136,7 +136,7 @@
                                 <label for="cpf" class="form-label">CPF</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite seu CPF" maxlength="11" pattern="\d{11}" required>
+                                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="Digite seu CPF" maxlength="14" required>
                                 </div>
                                 <div id="cpf-feedback" class="invalid-feedback"></div>
                             </div>
@@ -327,6 +327,47 @@ document.getElementById('cpf').addEventListener('blur', function() {
           this.classList.remove('is-invalid');
         }
       });
+});
+
+    // Permite apenas letras, espaços e acentos
+function bloquearCaracteresEspeciais(event) {
+    const valor = event.target.value;
+    // Aceita letras (maiúsculas/minúsculas), acentos e espaço
+    event.target.value = valor.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+}
+
+// Lista de IDs dos campos de texto
+const camposTexto = [
+    'nome', 'rua', 'cidade', 'complemento'
+];
+
+// Aplica o filtro em cada campo
+camposTexto.forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) {
+        campo.addEventListener('input', bloquearCaracteresEspeciais);
+    }
+});
+
+// Permite apenas letras, números e @ no campo de e-mail
+document.getElementById('email').addEventListener('input', function(event) {
+    const valor = event.target.value;
+    // Aceita letras, números, @ e ponto
+    event.target.value = valor.replace(/[^A-Za-z0-9@.]/g, '');
+});
+
+// Máscara automática para CPF e bloqueio de caracteres especiais
+document.getElementById('cpf').addEventListener('input', function(e) {
+    // Remove tudo que não é dígito
+    let value = this.value.replace(/\D/g, '');
+
+    // Aplica a máscara: 000.000.000-00
+    if (value.length > 3) value = value.slice(0, 3) + '.' + value.slice(3);
+    if (value.length > 7) value = value.slice(0, 7) + '.' + value.slice(7);
+    if (value.length > 11) value = value.slice(0, 11) + '-' + value.slice(11, 13);
+    if (value.length > 14) value = value.slice(0, 14); // Limita a 14 caracteres (com máscara)
+
+    this.value = value;
 });
     </script>
     <script src="/javascripts/cadastro.js"></script>

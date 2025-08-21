@@ -41,13 +41,14 @@ router.get('/', (req, res) => {
 
 
 router.post('/avatar', upload.single('avatar'), (req, res) => {
-  if (!req.session.usuario) return res.redirect('/perfil');
-  if (!req.file) return res.redirect('/perfil-pos-cadastro?erro=1');
-  const avatarPath = '/uploads/avatars/' + req.file.filename;
-  db.query('UPDATE Cliente SET avatar = ? WHERE ID = ?', [avatarPath, req.session.usuario.ID], (err) => {
-    if (!err) req.session.usuario.avatar = avatarPath;
-    res.redirect('/perfil-pos-cadastro');
-  });
+    if (!req.session.usuario || !req.file) {
+        return res.redirect('/perfil');
+    }
+    const avatarPath = '/uploads/avatars/' + req.file.filename;
+    db.query('UPDATE Cliente SET avatar = ? WHERE ID = ?', [avatarPath, req.session.usuario.ID], (err) => {
+        if (!err) req.session.usuario.avatar = avatarPath;
+        res.redirect('/perfil'); // <-- Redireciona para perfil normal
+    });
 });
 
 module.exports = router;

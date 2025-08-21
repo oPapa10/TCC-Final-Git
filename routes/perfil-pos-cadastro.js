@@ -38,7 +38,7 @@ router.post('/avatar', upload.single('avatar'), (req, res) => {
     const avatarPath = '/uploads/avatars/' + req.file.filename;
     db.query('UPDATE Cliente SET avatar = ? WHERE ID = ?', [avatarPath, req.session.usuario.ID], (err) => {
         if (!err) req.session.usuario.avatar = avatarPath;
-        res.redirect('/perfil-pos-cadastro');
+        res.redirect('/perfil'); // <-- Redireciona para perfil normal
     });
 });
 

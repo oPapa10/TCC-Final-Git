@@ -14,6 +14,10 @@ router.post('/', async (req, res) => {
     let { nome, email, senha, cpf, telefone, genero, estado, cidade, rua, numero, complemento } = req.body;
     email = email.trim().toLowerCase();
     cpf = cpf.trim().replace(/\D/g, '').slice(0, 11); // <-- Limpa e limita o CPF
+    nome = nome.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+    rua = rua.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+    cidade = cidade.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
+    complemento = complemento.replace(/[^A-Za-zÀ-ÿ\s]/g, '');
     const hash = await bcrypt.hash(senha, 10);
     db.query(
       'INSERT INTO CLIENTE (nome, email, senha, CPF, telefone, genero, estado, cidade, rua, numero, complemento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
@@ -61,4 +65,4 @@ router.get('/verificar-cpf', (req, res) => {
   });
 });
 
-module.exports = router;  
+module.exports = router;
