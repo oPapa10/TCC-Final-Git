@@ -20,7 +20,7 @@ const createCategoriaRouter = require('./routes/createCategoria');
 const createItensRouter = require('./routes/createItens');
 const admRouter = require('./routes/adm');
 const categoriaRoutes = require('./routes/categoria');
-const produtoRoutes = require('./routes/produto');
+const produtoRoutes = require('./routes/produto'); // Corrigido para importar o router certo
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
 const usuariosRouter = require('./routes/usuarios');
@@ -52,6 +52,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Rotas
+
 app.use('/', indexRouter);
 app.use('/carrinho', carrinhoRouter);
 app.use('/cadastro', cadastroRouter);
@@ -62,8 +63,8 @@ app.use('/createItens', createItensRouter);
 app.use('/seeProduto', seeProdutoRouter);
 app.use('/createCategoria', createCategoriaRouter);
 app.use('/adm', admRouter);
-app.use(categoriaRoutes);
-app.use(produtoRoutes);
+app.use('/categorias', categoriaRoutes);   //  corrigido
+app.use('/produtos', produtoRoutes); // Corrigido: todas as rotas de produto ficam sob /produtos
 app.use('/login', loginRouter);
 app.use('/perfil', perfilRouter);
 app.use('/logout', logoutRouter);
@@ -71,6 +72,7 @@ app.use('/usuarios', usuariosRouter);
 app.use('/', perfilPosCadastroRouter);
 app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

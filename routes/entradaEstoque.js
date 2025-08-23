@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const Produto = require('../models/produtoModel');
 
 // Página de entrada/saída de estoque
 router.get('/', (req, res) => {
@@ -16,11 +17,18 @@ router.post('/', (req, res) => {
     if (!produto || !quantidade || quantidade <= 0) {
         return res.status(400).send('Dados inválidos');
     }
-    db.query('UPDATE Produto SET estoque = estoque + ? WHERE ID = ?', [quantidade, produto], (err) => {
-        if (err) return res.status(500).send('Erro ao atualizar estoque');
-        db.query('SELECT ID, nome, estoque FROM Produto', (err2, produtos) => {
-            if (err2) return res.status(500).send('Erro ao buscar produtos');
-            res.render('entradaEstoque', { produtos, sucesso: true });
+    // Busca todos os dados do produto
+    Produto.findById(produto, (err, prod) => {
+        if (err || !prod) return res.status(500).send('Produto não encontrado');
+        const estoqueAtual = prod.estoque ?? 0;
+        const novoEstoque = estoqueAtual + Number(quantidade);
+        // Atualiza todos os campos, mudando só o estoque
+        Produto.update(produto, { ...prod, estoque: novoEstoque }, (err2) => {
+            if (err2) return res.status(500).send('Erro ao atualizar estoque');
+            db.query('SELECT ID, nome, estoque FROM Produto', (err3, produtos) => {
+                if (err3) return res.status(500).send('Erro ao buscar produtos');
+                res.render('entradaEstoque', { produtos, sucesso: true });
+            });
         });
     });
 });
@@ -31,13 +39,26 @@ router.post('/saida', (req, res) => {
     if (!produtoSaida || !quantidadeSaida || quantidadeSaida <= 0) {
         return res.status(400).send('Dados inválidos');
     }
-    db.query('UPDATE Produto SET estoque = GREATEST(estoque - ?, 0) WHERE ID = ?', [quantidadeSaida, produtoSaida], (err) => {
-        if (err) return res.status(500).send('Erro ao atualizar estoque');
-        db.query('SELECT ID, nome, estoque FROM Produto', (err2, produtos) => {
-            if (err2) return res.status(500).send('Erro ao buscar produtos');
-            res.render('entradaEstoque', { produtos, sucesso: true });
+    Produto.findById(produtoSaida, (err, prod) => {
+        if (err || !prod) return res.status(500).send('Produto não encontrado');
+        const estoqueAtual = prod.estoque ?? 0;
+        const novoEstoque = Math.max(estoqueAtual - Number(quantidadeSaida), 0);
+        Produto.update(produtoSaida, { ...prod, estoque: novoEstoque }, (err2) => {
+            if (err2) return res.status(500).send('Erro ao atualizar estoque');
+            db.query('SELECT ID, nome, estoque FROM Produto', (err3, produtos) => {
+                if (err3) return res.status(500).send('Erro ao buscar produtos');
+                res.render('entradaEstoque', { produtos, sucesso: true });
+            });
         });
     });
+});
+
+router.post('/atualizar', (req, res) => {
+  const { produtoId, novoEstoque } = req.body;
+  Produto.update(produtoId, { estoque: Number(novoEstoque) }, (err) => {
+    if (err) return res.status(500).send('Erro ao atualizar estoque');
+    res.redirect('/seeProduto');
+  });
 });
 
 module.exports = router;

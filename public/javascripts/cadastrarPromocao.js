@@ -12,12 +12,12 @@ let produtos = [];
 let selecionado = null;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Buscar produtos via AJAX
-    fetch('/seeProduto/lista')
+    // Buscar produtos válidos para promoção
+    fetch('/cadastrarPromocao/produtos-disponiveis')
         .then(res => res.json())
         .then(data => {
             produtos = data;
-            mostrarLista(''); // Mostra todos ao carregar
+            mostrarLista('');
         });
 
     const busca = document.getElementById('produtoBusca');
@@ -81,12 +81,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Limita automaticamente para 1 real a menos que o valor real
             promoInput.addEventListener('input', function() {
+                // Permite apenas números e ponto
+                this.value = this.value.replace(/[^\d.]/g, '');
                 const valorReal = Number(selecionado.valor);
                 let valorPromo = Number(this.value);
+
+                // Limite: máximo até 1 centavo abaixo do valor real
                 if (valorPromo >= valorReal) {
-                    this.value = (valorReal - 1).toFixed(2);
+                    this.value = (valorReal - 0.01).toFixed(2);
                 }
-                if (valorPromo < 0) {
+                if (valorPromo <= 0) {
                     this.value = '';
                 }
             });
@@ -130,14 +134,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const valorReal = Number(selecionado.valor);
         const valorPromo = Number(promoInput.value);
 
-        if (!promoInput.value || valorPromo <= 0) {
+        // Só aceita números e ponto
+        if (!promoInput.value || valorPromo <= 0 || /[^\d.]/.test(promoInput.value)) {
             e.preventDefault();
-            alert('Informe o novo valor promocional!');
+            alert('Informe um valor promocional válido!');
             return;
         }
+        // Limite de 1 centavo abaixo do valor real
         if (valorPromo >= valorReal) {
             e.preventDefault();
-            alert('O valor promocional deve ser menor que o valor real do produto!');
+            alert('O valor promocional deve ser até 1 centavo abaixo do valor real do produto!');
+            promoInput.value = (valorReal - 0.01).toFixed(2);
             return;
         }
         let hidden = document.getElementById('produtosIds');
@@ -212,4 +219,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Chama ao carregar a página
     carregarPromocoes();
+
+    // Carregar produtos disponíveis para promoção
+    fetch('/cadastrarPromocao/produtos-disponiveis')
+        .then(res => res.json())
+        .then(produtos => {
+            // Monta o <select> ou lista de produtos válidos
+            const select = document.getElementById('produtosIds');
+            if (select) {
+                select.innerHTML = '';
+                produtos.forEach(produto => {
+                    const option = document.createElement('option');
+                    option.value = produto.ID;
+                    option.textContent = `${produto.nome} (R$${produto.valor})`;
+                    select.appendChild(option);
+                });
+            }
+            // Se usar busca personalizada, atualize a lista JS também!
+            window.produtos = produtos;
+        });
 });

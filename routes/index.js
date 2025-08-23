@@ -7,7 +7,8 @@ router.get('/', (req, res) => {
     `SELECT p.*, pr.valor_promocional, pr.id AS promocao_id, c.nome AS categoria_nome
      FROM Produto p
      LEFT JOIN Promocao pr ON pr.produto_id = p.ID
-     LEFT JOIN Categoria c ON p.Categoria_ID = c.ID`,
+     LEFT JOIN Categoria c ON p.Categoria_ID = c.ID
+     WHERE p.estoque > 0`, // <-- só produtos com estoque
     (err, produtos) => {
       if (err) return res.status(500).render('index', { produtos: [], categorias: [], promocoes: [] });
       db.query('SELECT * FROM Categoria', (err2, categorias) => {

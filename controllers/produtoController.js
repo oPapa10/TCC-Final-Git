@@ -1,21 +1,12 @@
 const Produto = require('../models/produtoModel');
+const { gerarSlug } = require('../models/produtoModel');
 const Categoria = require('../models/Categoria');
-const path = require('path');
-const fs = require('fs');
-
-function gerarSlug(nome) {
-  return nome
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '') // remove caracteres especiais
-    .replace(/\s+/g, '-')     // troca espaços por hífen
-    .replace(/-+/g, '-');     // evita múltiplos hífens
-}
 
 // Listar todos os produtos
 exports.listar = (req, res) => {
   Produto.findAll((err, produtos) => {
     if (err) return res.status(500).send('Erro ao buscar produtos');
-    res.render('index', { produtos });
+    res.render('seeProduto', { produtos });
   });
 };
 
@@ -40,35 +31,84 @@ exports.criar = (req, res) => {
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
     estoque, material, protecao, thumbnails, categoria
   } = req.body;
+
   let imagem = '';
   if (req.file) {
     imagem = '/uploads/' + req.file.filename;
   }
 
-  // Cria o produto já com o slug correto
+  // Se vier do form, use o valor, senão, defina como zero
+  const estoqueFinal = typeof estoque !== 'undefined' ? Number(estoque) : 0;
+
+  const slug = gerarSlug(nome || 'produto');
+
   Produto.create({
-    nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-    estoque, material, protecao, imagem, thumbnails, categoria,
-    slug: gerarSlug(nome)
-  }, (err, result) => {
-    if (err) return res.status(500).send('Erro ao criar produto');
+    nome: nome || '',
+    cor: cor || '',
+    tamanho: tamanho || '',
+    peso: peso ? Number(peso) : 0,
+    valor: valor ? Number(valor) : 0,
+    cilindrada: cilindrada || '',
+    descricao: descricao || '',
+    potencia: potencia || '',
+    tanque: tanque || '',
+    estoque: estoqueFinal,
+    material: material || '',
+    protecao: protecao || '',
+    imagem: imagem || '',
+    thumbnails: thumbnails || '',
+    Categoria_ID: categoria,
+    slug
+  }, (err) => {
+    if (err) return res.status(500).send('Erro ao criar produto: ' + (err.sqlMessage || err.message));
     res.redirect('/seeProduto');
   });
 };
 
 // Atualizar produto
 exports.atualizar = (req, res) => {
-  Produto.update(req.params.id, req.body, (err, result) => {
+  const {
+    nome, valor, descricao, categoria, estoque, quantidade, cor, tamanho, peso, cilindrada,
+    potencia, tanque, material, protecao, thumbnails
+  } = req.body;
+
+  let imagem = req.body.imagemAtual || '';
+  if (req.file) {
+    imagem = '/uploads/' + req.file.filename;
+  }
+
+  Produto.update(req.params.id, {
+    nome: nome || '',
+    valor: valor ? Number(valor) : 0,
+    descricao: descricao || '',
+    Categoria_ID: categoria,
+    estoque: typeof estoque !== 'undefined' ? Number(estoque) : (typeof quantidade !== 'undefined' ? Number(quantidade) : 0),
+    cor: cor || '',
+    tamanho: tamanho || '',
+    peso: peso ? Number(peso) : 0,
+    cilindrada: cilindrada || '',
+    potencia: potencia || '',
+    tanque: tanque || '',
+    material: material || '',
+    protecao: protecao || '',
+    imagem,
+    thumbnails: thumbnails || ''
+  }, (err) => {
     if (err) return res.status(500).send('Erro ao atualizar produto');
-    res.redirect('/');
+    res.redirect('/seeProduto');
   });
 };
 
 // Remover produto
 exports.remover = (req, res) => {
+  console.log('[CONTROLLER] Tentando apagar produto:', req.params.id);
   Produto.delete(req.params.id, (err, result) => {
-    if (err) return res.status(500).send('Erro ao remover produto');
-    res.redirect('/');
+    if (err) {
+      console.log('[CONTROLLER] Erro ao apagar produto:', err);
+      return res.status(500).send('Erro ao remover produto');
+    }
+    console.log('[CONTROLLER] Produto apagado com sucesso!');
+    res.redirect('/seeProduto');
   });
 };
 

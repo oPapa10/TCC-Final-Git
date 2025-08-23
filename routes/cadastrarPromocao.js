@@ -56,4 +56,15 @@ router.post('/remover/:id', (req, res) => {
     });
 });
 
+// Adicione esta rota para buscar produtos válidos para promoção
+router.get('/produtos-disponiveis', (req, res) => {
+    db.query(
+        'SELECT ID, nome, valor, estoque FROM Produto WHERE estoque > 0 AND valor > 0',
+        (err, produtos) => {
+            if (err) return res.status(500).json([]);
+            res.json(produtos);
+        }
+    );
+});
+
 module.exports = router;
