@@ -99,13 +99,23 @@
                                 </span>
                             <% } %>
                         </div>
-                        <div class="item-quantity">
-                            <span><%= item.quantidade %></span>
+                        <div class="item-quantity d-flex align-items-center justify-content-center">
+                            <form action="/carrinho/alterar" method="POST" style="display:inline;">
+                                <input type="hidden" name="produtoId" value="<%= item.id %>">
+                                <input type="hidden" name="acao" value="diminuir">
+                                <button type="submit" class="btn btn-outline-secondary btn-sm" <%= item.quantidade <= 1 ? 'disabled' : '' %>>-</button>
+                            </form>
+                            <span class="mx-2"><%= item.quantidade %></span>
+                            <form action="/carrinho/alterar" method="POST" style="display:inline;">
+                                <input type="hidden" name="produtoId" value="<%= item.id %>">
+                                <input type="hidden" name="acao" value="aumentar">
+                                <button type="submit" class="btn btn-outline-secondary btn-sm" <%= item.quantidade >= (item.estoque || 99) ? 'disabled' : '' %>>+</button>
+                            </form>
                         </div>
                         <div class="item-total">
-                            R$ <%= subtotal.toFixed(2) %>
+                            R$ <%= Number(subtotal).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
                         </div>
-                        <form action="/carrinho/remover" method="POST" class="mb-0">
+                        <form action="/carrinho/remover" method="POST" class="mb-0 ms-2">
                             <input type="hidden" name="produtoId" value="<%= item.id %>">
                             <button type="submit" class="remove-btn btn btn-danger btn-sm">Remover</button>
                         </form>
@@ -114,7 +124,7 @@
                 <div class="cart-summary mt-4">
                     <div class="cart-total d-flex justify-content-between align-items-center">
                         <span>Subtotal:</span>
-                        <span id="total">R$ <%= total.toFixed(2) %></span>
+                        <span id="total">R$ <%= Number(total).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></span>
                     </div>
                     <div class="cart-actions d-flex justify-content-between mt-3">
                         <a class="cart-continue-btn btn btn-outline-primary" href="/">Continuar Comprando</a>

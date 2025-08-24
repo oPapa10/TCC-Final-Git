@@ -68,25 +68,49 @@ document.addEventListener('DOMContentLoaded', function() {
             precoSpan.className = 'ms-md-3 text-muted';
             precoSpan.textContent = `Preço atual: R$ ${Number(selecionado.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
-            // Caixa para valor promocional (mais largo)
+            // Campo porcentagem
+            const porcentInput = document.createElement('input');
+            porcentInput.type = 'number';
+            porcentInput.step = '1';
+            porcentInput.min = '1';
+            porcentInput.max = '99';
+            porcentInput.className = 'form-control ms-md-3';
+            porcentInput.style.maxWidth = '120px';
+            porcentInput.placeholder = '% desconto';
+            porcentInput.name = 'porcentagemPromocao';
+            porcentInput.id = 'porcentagemPromocao';
+
+            // Campo valor promocional
             const promoInput = document.createElement('input');
             promoInput.type = 'number';
             promoInput.step = '0.01';
-            promoInput.min = '0';
+            promoInput.min = '0.01';
             promoInput.required = true;
             promoInput.className = 'form-control ms-md-3';
-            promoInput.style.maxWidth = '220px'; // Mais largo
+            promoInput.style.maxWidth = '120px';
             promoInput.placeholder = 'Novo valor';
             promoInput.name = 'valorPromocao';
+            promoInput.id = 'valorPromocao';
 
-            // Limita automaticamente para 1 real a menos que o valor real
+            // Alternância dos campos
+            porcentInput.addEventListener('input', function() {
+                if (this.value && Number(this.value) > 0) {
+                    promoInput.value = '';
+                    promoInput.disabled = true;
+                } else {
+                    promoInput.disabled = false;
+                }
+            });
             promoInput.addEventListener('input', function() {
-                // Permite apenas números e ponto
-                this.value = this.value.replace(/[^\d.]/g, '');
+                if (this.value && Number(this.value) > 0) {
+                    porcentInput.value = '';
+                    porcentInput.disabled = true;
+                } else {
+                    porcentInput.disabled = false;
+                }
+                // Limite: máximo até 1 centavo abaixo do valor real
                 const valorReal = Number(selecionado.valor);
                 let valorPromo = Number(this.value);
-
-                // Limite: máximo até 1 centavo abaixo do valor real
                 if (valorPromo >= valorReal) {
                     this.value = (valorReal - 0.01).toFixed(2);
                 }
@@ -106,9 +130,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 mostrarLista(busca.value);
             };
 
-            // Agrupando: joga input e botão para a direita
+            // Agrupando: joga inputs e botão para a direita
             const rightGroup = document.createElement('div');
             rightGroup.className = 'd-flex align-items-center ms-auto gap-2';
+            rightGroup.appendChild(porcentInput);
             rightGroup.appendChild(promoInput);
             rightGroup.appendChild(btn);
 
@@ -130,23 +155,35 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Selecione um produto para a promoção!');
             return;
         }
-        const promoInput = document.querySelector('input[name="valorPromocao"]');
+        const promoInput = document.getElementById('valorPromocao');
+        const porcentInput = document.getElementById('porcentagemPromocao');
         const valorReal = Number(selecionado.valor);
-        const valorPromo = Number(promoInput.value);
 
-        // Só aceita números e ponto
-        if (!promoInput.value || valorPromo <= 0 || /[^\d.]/.test(promoInput.value)) {
+        let valorPromo = promoInput.value ? Number(promoInput.value) : null;
+        let porcentagemPromo = porcentInput.value ? Number(porcentInput.value) : null;
+
+        if (!valorPromo && !porcentagemPromo) {
             e.preventDefault();
-            alert('Informe um valor promocional válido!');
+            alert('Informe o valor promocional ou a porcentagem de desconto!');
             return;
         }
-        // Limite de 1 centavo abaixo do valor real
-        if (valorPromo >= valorReal) {
-            e.preventDefault();
-            alert('O valor promocional deve ser até 1 centavo abaixo do valor real do produto!');
-            promoInput.value = (valorReal - 0.01).toFixed(2);
-            return;
+
+        if (valorPromo) {
+            if (valorPromo <= 0 || valorPromo >= valorReal) {
+                e.preventDefault();
+                alert('O valor promocional deve ser até 1 centavo abaixo do valor real do produto!');
+                promoInput.value = (valorReal - 0.01).toFixed(2);
+                return;
+            }
         }
+        if (porcentagemPromo) {
+            if (porcentagemPromo <= 0 || porcentagemPromo >= 100) {
+                e.preventDefault();
+                alert('Informe uma porcentagem válida!');
+                return;
+            }
+        }
+
         let hidden = document.getElementById('produtosIds');
         if (!hidden) {
             hidden = document.createElement('input');
@@ -166,7 +203,24 @@ document.addEventListener('DOMContentLoaded', function() {
             hiddenPromo.id = 'valorPromocaoHidden';
             this.appendChild(hiddenPromo);
         }
-        hiddenPromo.value = promoInput.value;
+        // Só envia se preenchido
+        hiddenPromo.value = promoInput.value ? promoInput.value : '';
+
+        // Adiciona a porcentagem em um campo oculto
+        let hiddenPorcent = document.getElementById('porcentagemPromocaoHidden');
+        if (!hiddenPorcent) {
+            hiddenPorcent = document.createElement('input');
+            hiddenPorcent.type = 'hidden';
+            hiddenPorcent.name = 'porcentagemPromocao';
+            hiddenPorcent.id = 'porcentagemPromocaoHidden';
+            this.appendChild(hiddenPorcent);
+        }
+        // Só envia se preenchido
+        hiddenPorcent.value = porcentInput.value ? porcentInput.value : '';
+
+        // Remova o campo oculto vazio antes de enviar
+        if (!promoInput.value) hiddenPromo.parentNode.removeChild(hiddenPromo);
+        if (!porcentInput.value) hiddenPorcent.parentNode.removeChild(hiddenPorcent);
     });
 
     function carregarPromocoes() {
@@ -238,4 +292,63 @@ document.addEventListener('DOMContentLoaded', function() {
             // Se usar busca personalizada, atualize a lista JS também!
             window.produtos = produtos;
         });
+});
+
+document.getElementById('porcentagemPromocao')?.addEventListener('input', function() {
+    const valorPromocao = document.getElementById('valorPromocao');
+    if (this.value && Number(this.value) > 0) {
+        valorPromocao.value = '';
+        valorPromocao.disabled = true;
+    } else {
+        valorPromocao.disabled = false;
+    }
+});
+document.getElementById('valorPromocao')?.addEventListener('input', function() {
+    const porcentagemPromocao = document.getElementById('porcentagemPromocao');
+    if (this.value && Number(this.value) > 0) {
+        porcentagemPromocao.value = '';
+        porcentagemPromocao.disabled = true;
+    } else {
+        porcentagemPromocao.disabled = false;
+    }
+});
+
+// Preview da imagem do upload
+document.getElementById('imagem')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const previewBg = document.getElementById('imagemPreviewBg');
+    const overlay = document.getElementById('imagemPreviewOverlay');
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            previewBg.style.backgroundImage = `url('${ev.target.result}')`;
+            overlay.style.background = 'rgba(255,255,255,0.5)';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        previewBg.style.backgroundImage = '';
+        overlay.style.background = 'rgba(255,255,255,0.7)';
+    }
+});
+
+// Usar imagem do produto selecionado
+document.getElementById('btnUsarImagemProduto')?.addEventListener('click', function() {
+    if (!selecionado || !selecionado.imagem) {
+        alert('Selecione um produto que tenha imagem cadastrada!');
+        return;
+    }
+    const previewBg = document.getElementById('imagemPreviewBg');
+    const overlay = document.getElementById('imagemPreviewOverlay');
+    previewBg.style.backgroundImage = `url('${selecionado.imagem}')`;
+    overlay.style.background = 'rgba(255,255,255,0.5)';
+    document.getElementById('imagem').value = '';
+    let hiddenImg = document.getElementById('imagemProdutoSelecionada');
+    if (!hiddenImg) {
+        hiddenImg = document.createElement('input');
+        hiddenImg.type = 'hidden';
+        hiddenImg.name = 'imagemProdutoSelecionada';
+        hiddenImg.id = 'imagemProdutoSelecionada';
+        document.getElementById('formPromocao').appendChild(hiddenImg);
+    }
+    hiddenImg.value = selecionado.imagem;
 });

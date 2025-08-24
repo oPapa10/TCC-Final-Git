@@ -15,22 +15,60 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', upload.single('imagem'), (req, res) => {
-    const { descricao, produtosIds, valorPromocao } = req.body;
-    const valorPromo = Array.isArray(valorPromocao) ? valorPromocao[0] : valorPromocao;
-    const imagem = req.file ? '/uploads/' + req.file.filename : '';
-    if (!produtosIds || !imagem || !valorPromocao) {
-        return res.status(400).send('Selecione um produto, envie a imagem e informe o valor promocional!');
+    const { descricao, produtosIds, valorPromocao, porcentagemPromocao } = req.body;
+    const imagem = req.file
+        ? '/uploads/' + req.file.filename
+        : (req.body.imagemProdutoSelecionada || '');
+    console.log('[PROMOCAO] Dados recebidos:', { descricao, produtosIds, valorPromocao, porcentagemPromocao, imagem });
+
+    if (!produtosIds || !imagem || (!valorPromocao && !porcentagemPromocao)) {
+        console.log('[PROMOCAO] Falta produto, imagem ou valor/promocao');
+        return res.status(400).send('Selecione um produto, envie a imagem e informe o valor ou porcentagem!');
     }
     const id = Number(produtosIds);
-    console.log({ id, descricao, imagem, valorPromo });
-    db.query(
-        'INSERT INTO Promocao (produto_id, descricao, imagem, valor_promocional) VALUES (?, ?, ?, ?)',
-        [id, descricao, imagem, valorPromo],
-        (err) => {
-            if (err) return res.status(500).send('Erro ao cadastrar promoção: ' + err.message);
-            res.redirect('/cadastrarPromocao');
+
+    db.query('SELECT valor FROM Produto WHERE ID = ?', [id], (err, results) => {
+        if (err || !results[0]) {
+            console.log('[PROMOCAO] Produto não encontrado:', err, results);
+            return res.status(500).send('Produto não encontrado');
         }
-    );
+
+        // Trate array
+        const valorPromocaoVal = Array.isArray(valorPromocao) ? valorPromocao[0] : valorPromocao;
+        const porcentagemPromocaoVal = Array.isArray(porcentagemPromocao) ? porcentagemPromocao[0] : porcentagemPromocao;
+
+        const valorPromocaoNum = valorPromocaoVal ? Number(valorPromocaoVal) : null;
+        const porcentagemPromocaoNum = porcentagemPromocaoVal ? Number(porcentagemPromocaoVal) : null;
+        console.log('[PROMOCAO] valorPromocaoNum:', valorPromocaoNum, 'porcentagemPromocaoNum:', porcentagemPromocaoNum);
+
+        let valorPromo = null;
+        if (porcentagemPromocaoNum && porcentagemPromocaoNum > 0) {
+            const valorOriginal = Number(results[0].valor);
+            valorPromo = (valorOriginal * (1 - porcentagemPromocaoNum / 100)).toFixed(2);
+            console.log('[PROMOCAO] Calculado valorPromo por porcentagem:', valorPromo);
+        } else if (valorPromocaoNum && valorPromocaoNum > 0) {
+            valorPromo = valorPromocaoNum.toFixed(2);
+            console.log('[PROMOCAO] Usando valorPromo direto:', valorPromo);
+        }
+
+        if (!valorPromo || isNaN(valorPromo)) {
+            console.log('[PROMOCAO] Valor promocional inválido:', valorPromo);
+            return res.status(400).send('Informe um valor promocional válido!');
+        }
+
+        db.query(
+            'INSERT INTO Promocao (produto_id, descricao, imagem, valor_promocional) VALUES (?, ?, ?, ?)',
+            [id, descricao, imagem, valorPromo],
+            (err2) => {
+                if (err2) {
+                    console.log('[PROMOCAO] Erro ao cadastrar promoção:', err2);
+                    return res.status(500).send('Erro ao cadastrar promoção: ' + err2.message);
+                }
+                console.log('[PROMOCAO] Promoção cadastrada com sucesso!');
+                res.redirect('/cadastrarPromocao');
+            }
+        );
+    });
 });
 
 // Listar promoções
@@ -59,7 +97,7 @@ router.post('/remover/:id', (req, res) => {
 // Adicione esta rota para buscar produtos válidos para promoção
 router.get('/produtos-disponiveis', (req, res) => {
     db.query(
-        'SELECT ID, nome, valor, estoque FROM Produto WHERE estoque > 0 AND valor > 0',
+        'SELECT ID, nome, valor, estoque, imagem FROM Produto WHERE estoque > 0 AND valor > 0',
         (err, produtos) => {
             if (err) return res.status(500).json([]);
             res.json(produtos);

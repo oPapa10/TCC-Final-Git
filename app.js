@@ -56,7 +56,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/carrinho', carrinhoRouter);
 app.use('/cadastro', cadastroRouter);
-app.use('/product', productRouter);
 app.use('/opcoes', opcoesRouter);
 app.use('/ajuda', ajudaRouter);
 app.use('/createItens', createItensRouter);
@@ -72,7 +71,7 @@ app.use('/usuarios', usuariosRouter);
 app.use('/', perfilPosCadastroRouter);
 app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
-
+app.use('/', productRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

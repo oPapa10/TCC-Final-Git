@@ -3,6 +3,19 @@ const router = express.Router();
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 
+function limitarCarrinhoPorEstoque(carrinho, produtos) {
+  const estoqueMap = {};
+  produtos.forEach(p => estoqueMap[p.ID] = p.estoque);
+
+  return carrinho.map(item => {
+    const estoque = estoqueMap[item.produtoId] ?? 0;
+    return {
+      ...item,
+      quantidade: Math.min(item.quantidade, estoque)
+    };
+  });
+}
+
 router.post('/', (req, res) => {
   const { email, senha } = req.body;
   db.query('SELECT * FROM Cliente WHERE email = ?', [email], async (err, results) => {
@@ -68,33 +81,67 @@ router.post('/mesclar-carrinho', (req, res) => {
 
     carrinhoBanco.forEach(item => mapa.set(item.produtoId, item.quantidade));
     carrinhoSessao.forEach(item => {
-      if (mapa.has(item.produtoId)) {
-        mapa.set(item.produtoId, mapa.get(item.produtoId) + item.quantidade);
-      } else {
-        mapa.set(item.produtoId, item.quantidade);
+        if (mapa.has(item.produtoId)) {
+            mapa.set(item.produtoId, mapa.get(item.produtoId) + item.quantidade);
+        } else {
+            mapa.set(item.produtoId, item.quantidade);
+        }
+    });
+
+    let carrinhoFinal = Array.from(mapa, ([produtoId, quantidade]) => ({ produtoId, quantidade }));
+
+    // Limite pelo estoque ANTES de salvar no banco
+    const ids = carrinhoFinal.map(item => item.produtoId);
+    db.query(
+      `SELECT ID, estoque FROM PRODUTO WHERE ID IN (${ids.join(',')})`,
+      (err, produtos) => {
+        if (err) {
+          req.session.carrinho = [];
+          return res.redirect('/perfil');
+        }
+        carrinhoFinal = limitarCarrinhoPorEstoque(carrinhoFinal, produtos);
+
+        // Salva no banco
+        carrinhoFinal.forEach(item => {
+          db.query(
+            'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = ?',
+            [usuarioId, item.produtoId, item.quantidade, item.quantidade]
+          );
+        });
+
+        req.session.carrinho = carrinhoFinal;
+        // Limpa temporários
+        delete req.session.carrinhoSessaoTemp;
+        delete req.session.carrinhoBancoTemp;
+
+        res.redirect('/perfil');
       }
-    });
-
-    carrinhoFinal = Array.from(mapa, ([produtoId, quantidade]) => ({ produtoId, quantidade }));
-
-    // Salva no banco
-    carrinhoFinal.forEach(item => {
-      db.query(
-        'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = ?',
-        [usuarioId, item.produtoId, item.quantidade, item.quantidade]
-      );
-    });
-  } else {
+    );
+} else {
     // Substituir: usa só o do banco
     carrinhoFinal = req.session.carrinhoBancoTemp || [];
-  }
+    req.session.carrinho = carrinhoFinal;
+    delete req.session.carrinhoSessaoTemp;
+    delete req.session.carrinhoBancoTemp;
+    res.redirect('/perfil');
+}
+});
 
-  req.session.carrinho = carrinhoFinal;
-  // Limpa temporários
-  delete req.session.carrinhoSessaoTemp;
-  delete req.session.carrinhoBancoTemp;
+router.get('/carrinho', (req, res) => {
+  const carrinhoCompleto = req.session.carrinho || [];
+  const produtosArray = carrinhoCompleto.map(item => item.produtoId);
 
-  res.redirect('/perfil');
+  db.query(
+    `SELECT ID, estoque FROM PRODUTO WHERE ID IN (${produtosArray.join(',')})`,
+    (err, produtos) => {
+      if (err) {
+        return res.status(500).send('Erro ao buscar produtos');
+      }
+
+      const carrinhoLimitado = limitarCarrinhoPorEstoque(carrinhoCompleto, produtos);
+      res.render('carrinho', { carrinho: carrinhoLimitado });
+    }
+  );
 });
 
 module.exports = router;

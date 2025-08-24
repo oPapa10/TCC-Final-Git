@@ -1,98 +1,100 @@
-<!-- filepath: views/createCategoria.ejs -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Categorias - Azul</title>
+    <title>Gerenciar Categorias | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/createCategoria.css">
-    <style>
-        .btn-voltar {
-            display: inline-block;
-            margin-right: 16px;
-            background: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 7px 14px;
-            font-size: 1rem;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background 0.2s;
-            margin-top: 30px;
-            margin-left: 40px;
-        }
-        .btn-voltar:hover {
-            background: #0056b3;
-            color: #fff;
-            text-decoration: none;
-        }
-        .form-section-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-    </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <h1>Gerenciador de Categorias</h1>
-        </div>
-    </header>
-<a href="/adm" class="btn-voltar" title="Voltar">&#8592; Voltar</a>
     <div class="container">
-        <div class="main-content">
-            <section class="form-section">
-                <div class="form-section-header">
-                    <h2>Criar Nova Categoria</h2>
-                </div>
-                <form id="categoryForm" action="/categorias" method="POST">
-                    <div class="form-group">
-                        <label for="categoryName">Nome da Categoria</label>
-                        <input type="text" id="categoryName" name="categoryName" required>
-                    </div>
-                    <button type="submit" class="btn">Salvar Categoria</button>
-                </form>
-                <% if (typeof sucesso !== 'undefined' && sucesso) { %>
-                  <div class="alert alert-success">Categoria cadastrada com sucesso!</div>
-                <% } %>
-            </section>
+        <div class="header-section">
+            <a href="/adm" class="btn-voltar">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1 class="header-title">Gerenciar Categorias</h1>
+        </div>
 
-            <section class="categories-section">
-                <h2>Suas Categorias</h2>
-                <ul class="category-list" id="categoryList">
-                    <% if (categorias.length === 0) { %>
-                        <div class="empty-state" id="emptyState">
-                            <p>Você ainda não criou nenhuma categoria.</p>
-                            <p>Comece criando sua primeira categoria usando o formulário ao lado.</p>
-                        </div>
-                    <% } else { %>
-                        <% categorias.forEach(function(cat) { %>
-                            <li class="category-item">
-                                <div>
-                                    <span class="category-name"><%= cat.nome %></span>
+        <div class="row g-4">
+            <!-- Formulário de criar categoria -->
+            <div class="col-12 col-lg-6">
+                <div class="card-categoria">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-plus-circle me-2"></i>Criar Nova Categoria
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="categoryForm" action="/createCategoria/categorias" method="POST">
+                            <div class="form-group">
+                                <label class="form-label" for="categoryName">NOME DA CATEGORIA</label>
+                                <input type="text" class="form-control" id="categoryName" name="categoryName" required 
+                                       placeholder="Digite o nome da categoria...">
+                            </div>
+                            <button type="submit" class="btn-salvar">
+                                <i class="fas fa-save"></i> SALVAR CATEGORIA
+                            </button>
+                        </form>
+                        <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+                            <div class="alert-success">
+                                <i class="fas fa-check-circle"></i> Categoria cadastrada com sucesso!
+                            </div>
+                        <% } %>
+                        <% if (typeof erro !== 'undefined' && erro) { %>
+                          <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i> <%= erro %>
+                          </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de categorias -->
+            <div class="col-12 col-lg-6">
+                <div class="card-categoria">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-list-alt me-2"></i>Suas Categorias
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="category-list" id="categoryList">
+                            <% if (categorias.length === 0) { %>
+                                <div class="empty-state">
+                                    <i class="fas fa-folder-open fa-3x mb-3"></i>
+                                    <h4>Nenhuma categoria criada</h4>
+                                    <p>Comece criando sua primeira categoria usando o formulário ao lado.</p>
                                 </div>
-                                <div class="category-actions">
-                                    <a href="/categorias/editar/<%= cat.ID %>" class="action-btn" title="Editar">✏️</a>
-                                    <form action="/categorias/excluir/<%= cat.ID %>" method="POST" style="display:inline;">
-                                        <button type="submit" class="action-btn" title="Excluir">🗑️</button>
-                                    </form>
-                                </div>
-                            </li>
-                        <% }) %>
-                    <% } %>
-                </ul>
-            </section>
+                            <% } else { %>
+                                <% categorias.forEach(function(cat) { %>
+                                    <li class="category-item">
+                                        <div class="category-info">
+                                            <span class="category-name"><%= cat.nome %></span>
+                                            <span class="category-id">ID: <%= cat.ID %></span>
+                                        </div>
+                                        <div class="category-actions">
+                                            <a href="/createCategoria/categorias/editar/<%= cat.ID %>" class="action-btn edit" title="Editar">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <form class="form-excluir-categoria" action="/createCategoria/categorias/excluir/<%= cat.ID %>" method="POST" data-categoria-id="<%= cat.ID %>">
+                                                <button type="submit" class="action-btn delete" title="Excluir">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p>Sistema de Gerenciamento de Categorias &copy; <%= new Date().getFullYear() %></p>
-        </div>
-    </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/createCategoria.js"></script>
 </body>
 </html>

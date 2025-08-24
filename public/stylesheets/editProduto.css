@@ -1,0 +1,182 @@
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #2b2d42;
+}
+.container {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 20px;
+}
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+.header-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2b2d42;
+    position: relative;
+    display: inline-block;
+}
+.header-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: #7209b7;
+    border-radius: 2px;
+}
+.btn-voltar {
+    background-color: #4361ee;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+}
+.btn-voltar:hover {
+    background-color: #3a56d4;
+}
+.card-edit {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+.card-edit::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(to bottom, #4361ee, #4cc9f0);
+}
+.form-label {
+    font-weight: 600;
+    color: #2b2d42;
+    margin-bottom: 0.7rem;
+    display: block;
+    font-size: 0.95rem;
+}
+.form-control {
+    border: 2px solid #e0e3eb;
+    border-radius: 10px;
+    padding: 0.85rem 1.2rem;
+    font-size: 0.95rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    background-color: #f8fafc;
+}
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+.btn-salvar {
+    background: linear-gradient(to right, #4361ee, #4cc9f0);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(76, 201, 240, 0.13);
+    margin-top: 1rem;
+    transition: background 0.2s;
+}
+.btn-salvar:hover {
+    background: linear-gradient(to right, #3a56d4, #3fb5d8);
+}
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+.current-image {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 3px solid #fff;
+    background: #f8f9fa;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.no-image {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f1f3f5 0%, #e9ecef 100%);
+    border-radius: 12px;
+    color: #adb5bd;
+    font-size: 3.5rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    border: 3px dashed #dee2e6;
+}
+.image-badge {
+    background-color: #7209b7;
+    color: white;
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(114, 9, 183, 0.2);
+    margin-bottom: 1rem;
+}
+.file-input-label {
+    background-color: #f8f9fa;
+    border: 2px dashed #d1d7e0;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.file-input-label i {
+    font-size: 2rem;
+    color: #4361ee;
+    margin-bottom: 0.8rem;
+}
+.file-input-text {
+    font-size: 0.95rem;
+    color: #8d99ae;
+    font-weight: 500;
+}
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234361ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+}

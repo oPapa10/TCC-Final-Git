@@ -36,13 +36,19 @@
 
                         <div class="form-group">
                             <label class="form-label file-input-required" for="imagem">IMAGEM DA PROMOÇÃO</label>
-                            <div class="file-input-container">
-                                <input type="file" id="imagem" name="imagem" accept="image/*" required style="display: none;">
-                                <label for="imagem" style="cursor: pointer;">
-                                    <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
-                                    <div class="file-input-label">Clique para selecionar a imagem</div>
-                                    <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
+                            <div class="file-input-container imagem-upload-box" id="fileInputPreview">
+                                <input type="file" id="imagem" name="imagem" accept="image/*" style="display:none;">
+                                <label for="imagem" id="imagemLabel" class="imagem-label">
+                                    <div id="imagemPreviewBg" class="imagem-preview-bg"></div>
+                                    <div id="imagemPreviewOverlay" class="imagem-preview-overlay">
+                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                                        <div class="file-input-label">Clique para selecionar a imagem</div>
+                                        <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
+                                    </div>
                                 </label>
+                                <button type="button" id="btnUsarImagemProduto" class="btn btn-outline-primary w-100 mt-2">
+                                    Usar imagem do produto selecionado
+                                </button>
                             </div>
                         </div>
 

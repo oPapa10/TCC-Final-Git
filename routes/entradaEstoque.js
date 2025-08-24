@@ -13,20 +13,39 @@ router.get('/', (req, res) => {
 
 // Adicionar ao estoque
 router.post('/', (req, res) => {
-    const { produto, quantidade } = req.body;
-    if (!produto || !quantidade || quantidade <= 0) {
-        return res.status(400).send('Dados inválidos');
+    const { produto, quantidade, novoEstoque } = req.body;
+    console.log('[POST /entradaEstoque] Dados recebidos:', { produto, quantidade, novoEstoque });
+    if (!produto) {
+        console.log('[POST /entradaEstoque] Produto não selecionado');
+        return res.status(400).send('Produto não selecionado');
     }
-    // Busca todos os dados do produto
     Produto.findById(produto, (err, prod) => {
-        if (err || !prod) return res.status(500).send('Produto não encontrado');
-        const estoqueAtual = prod.estoque ?? 0;
-        const novoEstoque = estoqueAtual + Number(quantidade);
-        // Atualiza todos os campos, mudando só o estoque
-        Produto.update(produto, { ...prod, estoque: novoEstoque }, (err2) => {
-            if (err2) return res.status(500).send('Erro ao atualizar estoque');
+        if (err || !prod) {
+            console.log('[POST /entradaEstoque] Produto não encontrado:', err, prod);
+            return res.status(500).send('Produto não encontrado');
+        }
+        let estoqueFinal;
+        // Só um campo pode ser usado
+        if (quantidade && Number(quantidade) > 0 && (!novoEstoque || novoEstoque === '')) {
+            estoqueFinal = prod.estoque + Number(quantidade);
+            console.log('[POST /entradaEstoque] Adicionando quantidade:', quantidade, 'Novo estoque:', estoqueFinal);
+        } else if ((novoEstoque !== undefined && novoEstoque !== '' && Number(novoEstoque) >= 0) && (!quantidade || quantidade === '')) {
+            estoqueFinal = Number(novoEstoque);
+            console.log('[POST /entradaEstoque] Alterando estoque diretamente para:', estoqueFinal);
+        } else {
+            console.log('[POST /entradaEstoque] Erro: ambos os campos preenchidos ou inválidos');
+            return res.status(400).send('Preencha apenas um campo: quantidade a adicionar OU novo estoque!');
+        }
+        Produto.update(produto, { ...prod, estoque: estoqueFinal }, (err2) => {
+            if (err2) {
+                console.log('[POST /entradaEstoque] Erro ao atualizar estoque:', err2);
+                return res.status(500).send('Erro ao atualizar estoque');
+            }
             db.query('SELECT ID, nome, estoque FROM Produto', (err3, produtos) => {
-                if (err3) return res.status(500).send('Erro ao buscar produtos');
+                if (err3) {
+                    console.log('[POST /entradaEstoque] Erro ao buscar produtos:', err3);
+                    return res.status(500).send('Erro ao buscar produtos');
+                }
                 res.render('entradaEstoque', { produtos, sucesso: true });
             });
         });

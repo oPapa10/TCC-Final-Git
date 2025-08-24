@@ -50,63 +50,33 @@ exports.create = (produto, callback) => {
 
 // ATUALIZAÇÃO COM REMOÇÃO DE PROMOÇÃO SE ESTOQUE = 0
 exports.update = (id, produto, callback) => {
-  // Busca o nome do produto se não vier no objeto
-  if (!produto.nome) {
-    db.query('SELECT nome FROM Produto WHERE ID = ?', [id], (err, results) => {
-      const nome = results && results[0] ? results[0].nome : 'produto';
-      updateProduto(id, produto, nome, callback);
-    });
-  } else {
-    updateProduto(id, produto, produto.nome, callback);
-  }
-};
+  // Primeiro, busque o produto atual
+  db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, results) => {
+    if (err || !results[0]) return callback(err || new Error('Produto não encontrado'));
+    const atual = results[0];
 
-function updateProduto(id, produto, nome, callback) {
-  const sql = `UPDATE Produto 
-               SET nome=?, valor=?, descricao=?, Categoria_ID=?, estoque=?, cor=?, tamanho=?, peso=?, cilindrada=?, potencia=?, tanque=?, material=?, protecao=?, imagem=?, thumbnails=?, slug=? 
-               WHERE ID=?`;
-
-  const values = [
-    produto.nome ?? nome,
-    produto.valor ?? 0,
-    produto.descricao ?? '',
-    produto.Categoria_ID ?? null,
-    produto.estoque ?? 0,
-    produto.cor ?? '',
-    produto.tamanho ?? '',
-    produto.peso ?? 0,
-    produto.cilindrada ?? '',
-    produto.potencia ?? '',
-    produto.tanque ?? '',
-    produto.material ?? '',
-    produto.protecao ?? '',
-    produto.imagem ?? '',
-    produto.thumbnails ?? '',
-    gerarSlug(nome),
-    id
-  ];
-
-  console.log('Atualizando produto:', { id, estoque: produto.estoque, values });
-
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.log('Erro ao atualizar produto:', err);
-      return callback(err);
-    }
-    // Se estoque ficou zero, remove promoção
-    if ((produto.estoque ?? 0) === 0) {
-      console.log(`Removendo promoção do produto ${id} porque estoque ficou zero`);
-      db.query('DELETE FROM Promocao WHERE produto_id = ?', [id], (err2) => {
-        if (err2) {
-          console.log('Erro ao remover promoção:', err2);
-        } else {
-          console.log('Promoção removida com sucesso!');
-        }
-        callback(null, result);
-      });
-    } else {
-      callback(null, result);
-    }
+    // Use o valor enviado ou mantenha o antigo
+    const sql = `UPDATE Produto SET 
+        nome = ?, valor = ?, Categoria_ID = ?, cor = ?, tamanho = ?, peso = ?, cilindrada = ?, potencia = ?, tanque = ?, material = ?, protecao = ?, thumbnails = ?, imagem = ?, descricao = ?
+        WHERE ID = ?`;
+    const values = [
+      produto.nome ?? atual.nome,
+      produto.valor ?? atual.valor,
+      produto.Categoria_ID ?? atual.Categoria_ID,
+      produto.cor ?? atual.cor,
+      produto.tamanho ?? atual.tamanho,
+      produto.peso ?? atual.peso,
+      produto.cilindrada ?? atual.cilindrada,
+      produto.potencia ?? atual.potencia,
+      produto.tanque ?? atual.tanque,
+      produto.material ?? atual.material,
+      produto.protecao ?? atual.protecao,
+      produto.thumbnails ?? atual.thumbnails,
+      produto.imagem ?? atual.imagem,
+      produto.descricao ?? atual.descricao,
+      id
+    ];
+    db.query(sql, values, callback);
   });
 };
 
