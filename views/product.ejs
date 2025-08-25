@@ -102,11 +102,11 @@
                       R$ <%= produto.valor_promocional.toFixed(2) %>
                     </span>
                     <span class="text-muted text-decoration-line-through ms-2">
-                      R$ <%= produto.valor.toFixed(2) %>
+                      R$ <%= Number(produto.valor).toFixed(2) %>
                     </span>
                   <% } else { %>
                     <span class="current-price">
-                      R$ <%= produto.valor.toFixed(2) %>
+                      R$ <%= produto.valor ? Number(produto.valor).toFixed(2) : '0,00' %>
                     </span>
                   <% } %>
                 </div>

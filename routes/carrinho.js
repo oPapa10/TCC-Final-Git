@@ -64,9 +64,16 @@ router.get('/', (req, res) => {
 
 // Rota para adicionar item ao carrinho
 router.post('/adicionar', (req, res) => {
+    console.log('--- INÍCIO /carrinho/adicionar ---');
+    console.log('req.body:', req.body);
+
     const { produtoId, quantidade } = req.body;
 
     if (!produtoId || !quantidade) {
+        console.log('FALHA: produtoId ou quantidade ausentes ou inválidos');
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.status(400).json({ success: false, message: 'ID do produto ou quantidade inválidos.' });
+        }
         return res.status(400).send('ID do produto ou quantidade inválidos.');
     }
 
@@ -77,7 +84,11 @@ router.post('/adicionar', (req, res) => {
          WHERE p.ID = ?`, 
         [produtoId], 
         (err, results) => {
-            if (err || results.length === 0) return res.status(400).send('Produto não encontrado');
+            console.log('Resultado do SELECT produto:', results);
+            if (err || results.length === 0) {
+                console.log('FALHA: Produto não encontrado');
+                return res.status(400).send('Produto não encontrado');
+            }
             const produto = results[0];
             const preco = produto.valor_promocional || produto.valor;
             const estoque = produto.estoque ?? 0;
@@ -85,11 +96,12 @@ router.post('/adicionar', (req, res) => {
             if (!req.session.carrinho) req.session.carrinho = [];
             const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
             const quantidadeAtual = idx >= 0 ? req.session.carrinho[idx].quantidade : 0;
-            const quantidadeTotal = quantidadeAtual + Number(quantidade);
-
+            let quantidadeTotal = quantidadeAtual + Number(quantidade);
             if (quantidadeTotal > estoque) {
-                return res.status(400).send('Quantidade solicitada excede o estoque disponível.');
+                quantidadeTotal = estoque;
             }
+
+            console.log('Estoque:', estoque, 'Quantidade solicitada:', quantidade, 'Quantidade total:', quantidadeTotal);
 
             if (idx >= 0) {
                 req.session.carrinho[idx].quantidade = quantidadeTotal;
@@ -99,19 +111,20 @@ router.post('/adicionar', (req, res) => {
                     nome: produto.nome,
                     preco: preco,
                     imagem: produto.imagem,
-                    quantidade: Number(quantidade)
+                    quantidade: Math.min(Number(quantidade), estoque)
                 });
             }
 
             if (req.session.usuario) {
                 db.query(
                     'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = ?',
-                    [req.session.usuario.ID, produto.ID, quantidade, quantidadeTotal]
+                    [req.session.usuario.ID, produto.ID, Math.min(Number(quantidade), estoque), quantidadeTotal]
                 );
             }
 
             if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-                return res.json({ success: true });
+                console.log('SUCESSO: Produto adicionado ao carrinho');
+                return res.json({ success: true, quantidade: quantidadeTotal, estoque });
             }
             res.redirect('/carrinho');
         }
