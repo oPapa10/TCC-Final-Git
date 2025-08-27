@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="/stylesheets/opcoes.css">
+    <link rel="stylesheet" href="/stylesheets/theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body.light-theme {
@@ -99,6 +100,7 @@
                                 <i class="fas fa-credit-card me-2"></i>Pagamentos
                             </a>
                         </li>
+                        <!-- Abas públicas -->
                         <li class="nav-item">
                             <a class="nav-link" href="#tema" onclick="showSection('tema')">
                                 <i class="fas fa-palette me-2"></i>Aparência
@@ -202,93 +204,99 @@
                     <!-- Seção Privacidade -->
                     <section id="privacidade" class="option-section" style="display: none;">
                         <h2 class="section-title"><i class="fas fa-lock me-2"></i>Privacidade</h2>
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="/usuarios/<%= usuario ? usuario.id : '' %>/privacidade?_method=PUT" method="POST">
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="perfil-publico" name="perfil_publico" <%= usuario && usuario.perfil_publico ? 'checked' : '' %>>
-                                        <label class="form-check-label" for="perfil-publico">Perfil Público</label>
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="mostrar-email" name="mostrar_email" <%= usuario && usuario.mostrar_email ? 'checked' : '' %>>
-                                        <label class="form-check-label" for="mostrar-email">Mostrar email publicamente</label>
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="mostrar-telefone" name="mostrar_telefone" <%= usuario && usuario.mostrar_telefone ? 'checked' : '' %>>
-                                        <label class="form-check-label" for="mostrar-telefone">Mostrar telefone para vendedores</label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="visibilidade-endereco" class="form-label">Visibilidade do Endereço</label>
-                                        <select class="form-select" id="visibilidade-endereco" name="visibilidade_endereco">
-                                            <option value="privado" <%= usuario && usuario.visibilidade_endereco === 'privado' ? 'selected' : '' %>>Privado</option>
-                                            <option value="vendedores" <%= usuario && usuario.visibilidade_endereco === 'vendedores' ? 'selected' : '' %>>Apenas para vendedores</option>
-                                            <option value="publico" <%= usuario && usuario.visibilidade_endereco === 'publico' ? 'selected' : '' %>>Público</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Atualizar Configurações</button>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
+                        <% if (usuario) { %>
+        <div class="card">
+            <div class="card-body">
+                <form action="/usuarios/<%= usuario ? usuario.id : '' %>/privacidade?_method=PUT" method="POST">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="perfil-publico" name="perfil_publico" <%= usuario && usuario.perfil_publico ? 'checked' : '' %>>
+                        <label class="form-check-label" for="perfil-publico">Perfil Público</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="mostrar-email" name="mostrar_email" <%= usuario && usuario.mostrar_email ? 'checked' : '' %>>
+                        <label class="form-check-label" for="mostrar-email">Mostrar email publicamente</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="mostrar-telefone" name="mostrar_telefone" <%= usuario && usuario.mostrar_telefone ? 'checked' : '' %>>
+                        <label class="form-check-label" for="mostrar-telefone">Mostrar telefone para vendedores</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="visibilidade-endereco" class="form-label">Visibilidade do Endereço</label>
+                        <select class="form-select" id="visibilidade-endereco" name="visibilidade_endereco">
+                            <option value="privado" <%= usuario && usuario.visibilidade_endereco === 'privado' ? 'selected' : '' %>>Privado</option>
+                            <option value="vendedores" <%= usuario && usuario.visibilidade_endereco === 'vendedores' ? 'selected' : '' %>>Apenas para vendedores</option>
+                            <option value="publico" <%= usuario && usuario.visibilidade_endereco === 'publico' ? 'selected' : '' %>>Público</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Atualizar Configurações</button>
+                </form>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning mt-3">Você precisa estar logado para ver suas opções.</div>
+    <% } %>
+</section>
 
                     <!-- Seção Notificações -->
                     <section id="notificacoes" class="option-section" style="display: none;">
                         <h2 class="section-title"><i class="fas fa-bell me-2"></i>Notificações</h2>
-                        <div class="card">
-                            <div class="card-body">
-                                <form action="/usuarios/<%= usuario ? usuario.id : '' %>/notificacoes?_method=PUT" method="POST">
-                                    <h5 class="card-subtitle mb-3">Preferências de Notificação</h5>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="notificacoes-email" name="notificacoes_email" <%= usuario && usuario.notificacoes_email ? 'checked' : '' %>>
-                                        <label class="form-check-label" for="notificacoes-email">Receber notificações por email</label>
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="notificacoes-sms" name="notificacoes_sms" <%= usuario && usuario.notificacoes_sms ? 'checked' : '' %>>
-                                        <label class="form-check-label" for="notificacoes-sms">Receber notificações por SMS</label>
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input" type="checkbox" id="promocoes" name="promocoes" <%= usuario && usuario.promocoes ? 'checked' : '' %>>
-                                        <label class="form-check-label" for="promocoes">Receber promoções e ofertas</label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary mt-3">Salvar Preferências</button>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
+                        <% if (usuario) { %>
+        <div class="card">
+            <div class="card-body">
+                <form action="/usuarios/<%= usuario ? usuario.id : '' %>/notificacoes?_method=PUT" method="POST">
+                    <h5 class="card-subtitle mb-3">Preferências de Notificação</h5>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="notificacoes-email" name="notificacoes_email" <%= usuario && usuario.notificacoes_email ? 'checked' : '' %>>
+                        <label class="form-check-label" for="notificacoes-email">Receber notificações por email</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="notificacoes-sms" name="notificacoes_sms" <%= usuario && usuario.notificacoes_sms ? 'checked' : '' %>>
+                        <label class="form-check-label" for="notificacoes-sms">Receber notificações por SMS</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="promocoes" name="promocoes" <%= usuario && usuario.promocoes ? 'checked' : '' %>>
+                        <label class="form-check-label" for="promocoes">Receber promoções e ofertas</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Salvar Preferências</button>
+                </form>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning mt-3">Você precisa estar logado para ver suas opções.</div>
+    <% } %>
+</section>
 
                     <!-- Seção Pagamentos -->
                     <section id="pagamento" class="option-section" style="display: none;">
-                        <h2 class="section-title"><i class="fas fa-credit-card me-2"></i>Métodos de Pagamento</h2>
-                        <div class="card">
-                            <div class="card-body">
-                                <% if (pagamentos && pagamentos.length > 0) { %>
-                                    <% pagamentos.forEach(function(pagamento) { %>
-                                        <div class="payment-method d-flex align-items-center justify-content-between mb-3">
-                                            <div class="method-icon">
-                                                <i class="fab fa-cc-<%= pagamento.tipo.toLowerCase() %>"></i>
-                                            </div>
-                                            <div class="method-info">
-                                                <h6><%= pagamento.tipo %></h6>
-                                                <p>Terminado em <%= pagamento.final %> · Expira em <%= pagamento.expira %></p>
-                                            </div>
-                                            <div class="method-actions">
-                                                <form action="/usuarios/<%= usuario.id %>/pagamentos/<%= pagamento.id %>?_method=DELETE" method="POST">
-                                                    <button class="btn btn-outline-danger btn-sm">Remover</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    <% }) %>
-                                <% } else { %>
-                                    <p>Nenhum método de pagamento cadastrado.</p>
-                                <% } %>
-                                <form action="/usuarios/<%= usuario ? usuario.id : '' %>/pagamentos" method="POST" class="mt-3">
-                                    <button class="btn btn-outline-primary" type="submit">
-                                        <i class="fas fa-plus me-2"></i>Adicionar Novo Método de Pagamento
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
+    <h2 class="section-title"><i class="fas fa-credit-card me-2"></i>Métodos de Pagamento</h2>
+    <% if (usuario) { %>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Seus Cartões Salvos</h5>
+                <ul class="list-group mb-4">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fab fa-cc-visa me-2"></i>Visa final 1234</span>
+                        <span class="badge bg-success">Principal</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fab fa-cc-mastercard me-2"></i>Mastercard final 5678</span>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-primary mb-3"><i class="fas fa-plus me-2"></i>Adicionar Novo Cartão</button>
+                <hr>
+                <h5 class="card-title mb-3">Outros Métodos</h5>
+                <div class="mb-2">
+                    <i class="fab fa-pix me-2"></i>PIX cadastrado: <span class="text-muted">seuemail@pix.com</span>
+                </div>
+                <div class="mb-2">
+                    <i class="fas fa-barcode me-2"></i>Boleto Bancário disponível
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="alert alert-warning mt-3">Você precisa estar logado para ver suas opções.</div>
+    <% } %>
+</section>
 
                     <!-- Seção Aparência -->
                     <section id="tema" class="option-section" style="display: none;">
@@ -300,7 +308,7 @@
                                         <h5 class="mb-3">Tema do Site</h5>
                                         <div class="theme-options">
                                             <div class="theme-option">
-                                                <input type="radio" id="tema-claro" name="tema" checked>
+                                                <input type="radio" id="tema-claro" name="tema">
                                                 <label for="tema-claro">
                                                     <div class="theme-preview light-theme"></div>
                                                     <span>Tema Claro</span>
@@ -315,8 +323,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                
-                                    <button type="button" class="btn btn-primary">Aplicar Configurações</button>
                                 </form>
                             </div>
                         </div>
@@ -434,16 +440,13 @@
 /////
 
         function applyTheme(theme) {
-    document.body.classList.remove('light-theme', 'dark-theme');
-    if (theme === 'claro') {
-        document.body.classList.add('light-theme');
-        localStorage.setItem('theme', 'claro');
-    } else if (theme === 'escuro') {
+    document.body.classList.remove('dark-theme');
+    if (theme === 'escuro') {
         document.body.classList.add('dark-theme');
         localStorage.setItem('theme', 'escuro');
     } else {
-        document.body.classList.remove('light-theme', 'dark-theme');
-        localStorage.removeItem('theme');
+        // Tema claro: remove a classe, usa o padrão do site
+        localStorage.setItem('theme', 'claro');
     }
 }
 
@@ -452,21 +455,35 @@ document.getElementById('tema-claro').addEventListener('change', function() {
 });
 document.getElementById('tema-escuro').addEventListener('change', function() {
     applyTheme('escuro');
-});
-document.getElementById('tema-sistema').addEventListener('change', function() {
-    applyTheme('sistema');
-});
+});(function() {
+  var theme = localStorage.getItem('theme');
+  if (theme === 'escuro') {
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+  }
+})();
 
 document.addEventListener('DOMContentLoaded', function() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'claro') {
-        document.getElementById('tema-claro').checked = true;
-        applyTheme('claro');
-    } else if (savedTheme === 'escuro') {
+    // Aplica o tema salvo ao body
+    var theme = localStorage.getItem('theme');
+    if (theme === 'escuro') {
+        document.body.classList.add('dark-theme');
         document.getElementById('tema-escuro').checked = true;
-        applyTheme('escuro');
+    } else {
+        document.body.classList.remove('dark-theme');
+        document.getElementById('tema-claro').checked = true;
     }
 });
+
+    (function() {
+  var theme = localStorage.getItem('theme');
+  if (theme === 'escuro') {
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+  }
+})();
     </script>
 </body>
 </html>

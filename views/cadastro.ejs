@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/cadastro.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="/stylesheets/theme.css">
     <style>
         /* Estilo adicional para centralizar o placeholder */
         .password-placeholder-center::placeholder {
@@ -369,6 +370,15 @@ document.getElementById('cpf').addEventListener('input', function(e) {
 
     this.value = value;
 });
+
+(function() {
+  var theme = localStorage.getItem('theme');
+  if (theme === 'escuro') {
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+  }
+})();
     </script>
     <script src="/javascripts/cadastro.js"></script>
     <script src="/javascripts/cart.js"></script>

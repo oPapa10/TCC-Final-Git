@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/perfil.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="/stylesheets/theme.css">
     <style>
         /* Estilos adicionais para embelezar */
         .profile-completion-card {
@@ -562,6 +563,15 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        (function() {
+  var theme = localStorage.getItem('theme');
+  if (theme === 'escuro') {
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+  }
+})();
     </script>
 
     <% if (typeof mostrarModalCarrinho !== 'undefined' && mostrarModalCarrinho) { %>

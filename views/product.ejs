@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/stylesheets/menu-superior.css"/>
     <link rel="stylesheet" href="/stylesheets/footer.css"/>
     <link rel="stylesheet" href="/stylesheets/product.css"/>
+    <link rel="stylesheet" href="/stylesheets/theme.css">
     
 </head>
 <body>
@@ -111,7 +112,7 @@
                   <% } %>
                 </div>
                 <p class="product-description"><%= produto.descricao %></p>
-                <div class="details-section mb-4">
+                <div class="details-section product-details mb-4">
                     <h5 class="section-title">Detalhes do Produto</h5>
                     <ul class="details-list">
                         <% if (produto.cor) { %><li><strong>Cor:</strong> <%= produto.cor %></li><% } %>
@@ -329,6 +330,15 @@
             }
         });
     });
+
+    (function() {
+  var theme = localStorage.getItem('theme');
+  if (theme === 'escuro') {
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+  }
+})();
     </script>
 </body>
 </html>

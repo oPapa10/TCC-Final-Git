@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/stylesheets/index.css"/>
     <link rel="stylesheet" href="/stylesheets/menu-superior.css"/>
     <link rel="stylesheet" href="/stylesheets/footer.css"/>
+    <link rel="stylesheet" href="/stylesheets/theme.css">
    
 </head>
 <body>
@@ -275,6 +276,15 @@ function filterProducts(categoria, btn) {
     });
     if (btn) btn.classList.add('active');
 }
+
+(function() {
+  var theme = localStorage.getItem('theme');
+  if (theme === 'escuro') {
+    document.body.classList.add('dark-theme');
+  } else {
+    document.body.classList.remove('dark-theme');
+  }
+})();
 </script>
 </body>
 </html>

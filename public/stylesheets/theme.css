@@ -1,0 +1,749 @@
+/* UNIVERSAL DARK THEME LIMPO E MODERNO */
+
+/* Fundo geral */
+body.dark-theme {
+    background: #20232a !important;
+    color: #e0e6ed !important;
+}
+
+/* Cards, sections, containers, listas */
+body.dark-theme .card,
+body.dark-theme .option-section,
+body.dark-theme .container,
+body.dark-theme .profile-completion-card,
+body.dark-theme .cadastro-card,
+body.dark-theme .cart-item,
+body.dark-theme .cart-summary,
+body.dark-theme .category-card,
+body.dark-theme .help-header,
+body.dark-theme .help-container,
+body.dark-theme .profile-card,
+body.dark-theme .cadastro-container,
+body.dark-theme .cadastro-form,
+body.dark-theme .profile-container,
+body.dark-theme .profile-form,
+body.dark-theme .list-group-item,
+body.dark-theme .accordion-body {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Carrossel */
+body.dark-theme .carousel,
+body.dark-theme .carousel-inner,
+body.dark-theme .carousel-item,
+body.dark-theme .promo-carousel-container,
+body.dark-theme .promo-carousel-item {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 10px;
+}
+body.dark-theme .carousel-control-prev-icon,
+body.dark-theme .carousel-control-next-icon {
+    filter: invert(1) brightness(1.2);
+}
+body.dark-theme .carousel-indicators [data-bs-target] {
+    background-color: #4cc9f0 !important;
+}
+body.dark-theme .carousel-indicators .active {
+    background-color: #4361ee !important;
+}
+
+/* Navbar e menu */
+body.dark-theme .navbar,
+body.dark-theme .navbar-custom,
+body.dark-theme .navbar-nav,
+body.dark-theme .dropdown-menu {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: none !important;
+}
+body.dark-theme .navbar-brand,
+body.dark-theme .navbar-nav .nav-link,
+body.dark-theme .dropdown-item {
+    color: #e0e6ed !important;
+}
+body.dark-theme .dropdown-menu {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 8px;
+}
+body.dark-theme .dropdown-item:hover,
+body.dark-theme .dropdown-item.active {
+    background: #2d3142 !important;
+    color: #4cc9f0 !important;
+}
+
+/* Footer */
+body.dark-theme .footer {
+    background: #20232a !important;
+    color: #b0b8c1 !important;
+    border: none !important;
+}
+
+/* Inputs, selects, forms */
+body.dark-theme .form-control,
+body.dark-theme .form-select,
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+}
+body.dark-theme .form-control:focus,
+body.dark-theme .form-select:focus {
+    background: #23272f !important;
+    color: #fff !important;
+    border-color: #4cc9f0 !important;
+    box-shadow: 0 0 0 2px #4361ee33 !important;
+}
+
+/* Botões */
+body.dark-theme .btn-primary,
+body.dark-theme .cart-checkout-btn,
+body.dark-theme .promo-button {
+    background: #4361ee !important;
+    border: none !important;
+    color: #fff !important;
+    box-shadow: none !important;
+}
+body.dark-theme .btn-primary:hover,
+body.dark-theme .cart-checkout-btn:hover,
+body.dark-theme .promo-button:hover {
+    background: #364fc7 !important;
+    color: #fff !important;
+}
+body.dark-theme .btn-outline-primary,
+body.dark-theme .cart-continue-btn {
+    color: #4cc9f0 !important;
+    border-color: #4cc9f0 !important;
+    background: transparent !important;
+}
+body.dark-theme .btn-outline-primary:hover,
+body.dark-theme .cart-continue-btn:hover {
+    background: #4cc9f0 !important;
+    color: #23272f !important;
+}
+body.dark-theme .btn-danger {
+    background: #dc3545 !important;
+    color: #fff !important;
+    border: none !important;
+}
+body.dark-theme .btn-danger:hover {
+    background: #a71d2a !important;
+}
+
+/* Alerts */
+body.dark-theme .alert {
+    background: #23272f !important;
+    color: #ffb703 !important;
+    border: none !important;
+}
+body.dark-theme .alert-danger {
+    color: #ff6b6b !important;
+    background: #2d3142 !important;
+    border: none !important;
+}
+body.dark-theme .alert-success {
+    color: #51fa7b !important;
+    background: #23272f !important;
+    border: none !important;
+}
+body.dark-theme .alert-info {
+    color: #4cc9f0 !important;
+    background: #23272f !important;
+    border: none !important;
+}
+body.dark-theme .alert-warning {
+    color: #ffb703 !important;
+    background: #23272f !important;
+    border: none !important;
+}
+
+/* Accordion */
+body.dark-theme .accordion-button {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: none !important;
+}
+body.dark-theme .accordion-button:not(.collapsed) {
+    background: #20232a !important;
+    color: #4cc9f0 !important;
+}
+body.dark-theme .accordion-body {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+}
+
+/* Títulos, seções, divisores */
+body.dark-theme .section-title,
+body.dark-theme .card-title,
+body.dark-theme .profile-title,
+body.dark-theme .cadastro-title,
+body.dark-theme .cart-header,
+body.dark-theme .divider span {
+    color: #4cc9f0 !important;
+}
+body.dark-theme .divider::before {
+    background: #2d3142 !important;
+}
+
+/* Pesquisa */
+body.dark-theme .search-container .form-control,
+body.dark-theme .search-box input {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #4cc9f0 !important;
+}
+body.dark-theme .search-container .btn,
+body.dark-theme .search-box button {
+    background: #4361ee !important;
+    color: #fff !important;
+    border: none !important;
+}
+body.dark-theme .search-container .btn:hover,
+body.dark-theme .search-box button:hover {
+    background: #4cc9f0 !important;
+    color: #23272f !important;
+}
+
+/* Placeholders */
+body.dark-theme ::placeholder {
+    color: #b0b8c1 !important;
+    opacity: 1 !important;
+}
+
+/* Scrollbar */
+body.dark-theme ::-webkit-scrollbar {
+    width: 10px;
+    background: #23272f;
+}
+body.dark-theme ::-webkit-scrollbar-thumb {
+    background: #4361ee;
+    border-radius: 5px;
+}
+
+/* Avatar, imagens, etc */
+body.dark-theme .avatar-placeholder {
+    background: #23272f !important;
+    color: #4cc9f0 !important;
+}
+body.dark-theme .avatar-img,
+body.dark-theme .item-image,
+body.dark-theme .card-img-top,
+body.dark-theme .promo-image {
+    background: #23272f !important;
+    border: 2px solid #4cc9f0 !important;
+}
+
+/* Botão de sair, upload, etc */
+body.dark-theme .logout-btn,
+body.dark-theme .btn-upload {
+    background: #dc3545 !important;
+    color: #fff !important;
+}
+body.dark-theme .logout-btn:hover,
+body.dark-theme .btn-upload:hover {
+    background: #a71d2a !important;
+    color: #fff !important;
+}
+
+/* Badge, status, etc */
+body.dark-theme .badge.bg-success {
+    background: #51fa7b !important;
+    color: #23272f !important;
+}
+body.dark-theme .badge.bg-danger {
+    background: #ff6b6b !important;
+    color: #23272f !important;
+}
+
+/* Outras melhorias */
+body.dark-theme .checked,
+body.dark-theme .fa-star.checked,
+body.dark-theme .fa-star-half-alt.checked {
+    color: #ffd700 !important;
+}
+body.dark-theme .progress-bar {
+    background: #4cc9f0 !important;
+}
+body.dark-theme .progress {
+    background: #2d3142 !important;
+}
+body.dark-theme .text-muted {
+    color: #b0b8c1 !important;
+}
+body.dark-theme .text-danger {
+    color: #ff6b6b !important;
+}
+body.dark-theme .text-success {
+    color: #51fa7b !important;
+}
+body.dark-theme .text-primary {
+    color: #4cc9f0 !important;
+}
+body.dark-theme .text-warning {
+    color: #ffb703 !important;
+}
+body.dark-theme .text-info {
+    color: #4cc9f0 !important;
+}
+body.dark-theme .text-secondary {
+    color: #b0b8c1 !important;
+}
+body.dark-theme .bg-success {
+    background: #51fa7b !important;
+    color: #23272f !important;
+}
+body.dark-theme .bg-danger {
+    background: #ff6b6b !important;
+    color: #23272f !important;
+}
+body.dark-theme .bg-primary {
+    background: #4361ee !important;
+    color: #fff !important;
+}
+body.dark-theme .bg-warning {
+    background: #ffb703 !important;
+    color: #23272f !important;
+}
+body.dark-theme .bg-info {
+    background: #4cc9f0 !important;
+    color: #23272f !important;
+}
+body.dark-theme .bg-secondary {
+    background: #2d3142 !important;
+    color: #e0e6ed !important;
+}
+
+/* Corrige fundo e cor do header do carrinho */
+body.dark-theme .cart-header {
+    background: #23272f !important;
+    color: #4cc9f0 !important;
+    border-radius: 8px;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Corrige fundo dos itens vazios do carrinho */
+body.dark-theme .cart-empty {
+    background: #23272f !important;
+    color: #b0b8c1 !important;
+    border-radius: 10px;
+    box-shadow: none !important;
+}
+
+/* Corrige fundo do container de ajuda */
+body.dark-theme .help-header,
+body.dark-theme .help-container {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 10px;
+    box-shadow: none !important;
+}
+
+/* Corrige cards de categoria da ajuda */
+body.dark-theme .category-card {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+    box-shadow: none !important;
+}
+body.dark-theme .category-card:hover {
+    background: #2d3142 !important;
+    color: #4cc9f0 !important;
+}
+
+/* Corrige fundo das abas laterais em Opções */
+body.dark-theme .options-sidebar {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 10px;
+    border: none !important;
+    box-shadow: none !important;
+}
+body.dark-theme .options-sidebar .nav-link {
+    color: #b0b8c1 !important;
+}
+body.dark-theme .options-sidebar .nav-link.active,
+body.dark-theme .options-sidebar .nav-link:hover {
+    background: #2d3142 !important;
+    color: #4cc9f0 !important;
+    border-radius: 6px;
+}
+
+/* Corrige fundo da área de conteúdo das opções */
+body.dark-theme .options-content {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 10px;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Corrige fundo dos forms e cards dentro das opções */
+body.dark-theme .option-section .card,
+body.dark-theme .option-section .card-body {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Corrige fundo dos forms de contato na ajuda */
+body.dark-theme .contact-card {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 10px;
+    border: 1px solid #2d3142 !important;
+    box-shadow: none !important;
+}
+
+/* Corrige fundo dos accordions */
+body.dark-theme .accordion-item,
+body.dark-theme .accordion {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: none !important;
+}
+
+/* Corrige fundo dos botões de remover do carrinho */
+body.dark-theme .remove-btn {
+    background: #dc3545 !important;
+    color: #fff !important;
+    border: none !important;
+}
+body.dark-theme .remove-btn:hover {
+    background: #a71d2a !important;
+}
+
+/* Corrige fundo dos botões outline-secondary */
+body.dark-theme .btn-outline-secondary {
+    color: #b0b8c1 !important;
+    border-color: #b0b8c1 !important;
+    background: transparent !important;
+}
+body.dark-theme .btn-outline-secondary:hover {
+    background: #b0b8c1 !important;
+    color: #23272f !important;
+}
+
+/* Corrige fundo dos botões de adicionar/menos quantidade no carrinho */
+body.dark-theme .btn-outline-secondary:disabled {
+    background: #2d3142 !important;
+    color: #888 !important;
+    border-color: #2d3142 !important;
+}
+
+/* Corrige fundo dos forms-switch */
+body.dark-theme .form-check-input:checked {
+    background-color: #4361ee !important;
+    border-color: #4361ee !important;
+}
+body.dark-theme .form-check-input {
+    background-color: #23272f !important;
+    border-color: #2d3142 !important;
+}
+
+/* Corrige fundo dos inputs dentro de accordions e cards */
+body.dark-theme .accordion-body input,
+body.dark-theme .accordion-body select,
+body.dark-theme .card-body input,
+body.dark-theme .card-body select {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+}
+
+/* Corrige fundo dos botões de contato na ajuda */
+body.dark-theme .contact-card button {
+    background: #4361ee !important;
+    color: #fff !important;
+    border: none !important;
+}
+body.dark-theme .contact-card button:hover {
+    background: #4cc9f0 !important;
+    color: #23272f !important;
+}
+
+/* Corrige fundo e cor do conteúdo da ajuda */
+body.dark-theme .help-content,
+body.dark-theme .faq-container {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 10px;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Corrige fundo das imagens do carrossel no tema escuro */
+body.dark-theme .promo-image-container,
+body.dark-theme .carousel-item .promo-image-container,
+body.dark-theme .carousel-item img,
+body.dark-theme .promo-image {
+    background: #23272f !important;
+    border-radius: 10px !important;
+}
+
+/* Fundo da área de detalhes do produto */
+body.dark-theme .product-details,
+body.dark-theme .product-info,
+body.dark-theme .product-main,
+body.dark-theme .product-section,
+body.dark-theme .detalhes-produto {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 10px;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Fundo dos comentários/avaliações */
+body.dark-theme .review-card,
+body.dark-theme .comentario,
+body.dark-theme .avaliacao,
+body.dark-theme .comentarios-container,
+body.dark-theme .reviews-container {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 8px;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Fundo dos inputs de avaliação */
+body.dark-theme .review-card input,
+body.dark-theme .comentario input,
+body.dark-theme .avaliacao input,
+body.dark-theme .review-card textarea,
+body.dark-theme .comentario textarea,
+body.dark-theme .avaliacao textarea {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+}
+
+/* Fundo dos detalhes do produto (dl, dt, dd, fieldset, legend) */
+body.dark-theme .product-details dl,
+body.dark-theme .product-details dt,
+body.dark-theme .product-details dd,
+body.dark-theme .product-details fieldset,
+body.dark-theme .product-details legend,
+body.dark-theme .product-details form,
+body.dark-theme .product-details .form-group,
+body.dark-theme .product-details .input-group,
+body.dark-theme .product-details .input-group-prepend,
+body.dark-theme .product-details .input-group-append,
+body.dark-theme .product-details .input-group-text {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: none !important;
+}
+
+/* Corrige fundo e cor do botão de quantidade */
+body.dark-theme .product-details .input-group .form-control,
+body.dark-theme .product-details .input-group .input-group-text,
+body.dark-theme .product-details .input-group .btn,
+body.dark-theme .product-details .input-group .btn-outline-secondary,
+body.dark-theme .input-group .form-control,
+body.dark-theme .input-group .input-group-text,
+body.dark-theme .input-group .btn,
+body.dark-theme .input-group .btn-outline-secondary {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+}
+
+body.dark-theme .input-group .btn-outline-secondary,
+body.dark-theme .product-details .input-group .btn-outline-secondary {
+    color: #b0b8c1 !important;
+    border-color: #b0b8c1 !important;
+    background: transparent !important;
+}
+body.dark-theme .input-group .btn-outline-secondary:hover,
+body.dark-theme .product-details .input-group .btn-outline-secondary:hover {
+    background: #b0b8c1 !important;
+    color: #23272f !important;
+}
+
+/* Corrige fundo dos forms e grupos de inputs em geral */
+body.dark-theme form,
+body.dark-theme .form-group,
+body.dark-theme .input-group {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: none !important;
+}
+
+/* Corrige fundo do banner de boas-vindas no perfil (dark theme) */
+body.dark-theme .welcome-banner {
+    background: linear-gradient(135deg, #23283b 0%, #4361ee 60%, #181c24 100%) !important;
+    color: #e0e6ed !important;
+    box-shadow: 0 4px 24px rgba(67,97,238,0.12) !important;
+    border-radius: 15px !important;
+    position: relative;
+    overflow: hidden;
+}
+body.dark-theme .welcome-banner::before,
+body.dark-theme .welcome-banner::after {
+    background: rgba(76,201,240,0.08) !important;
+}
+
+/* Corrige fundo dos cards de perfil */
+body.dark-theme .profile-completion-card,
+body.dark-theme .info-card,
+body.dark-theme .profile-card,
+body.dark-theme .profile-form,
+body.dark-theme .profile-container {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border-radius: 15px !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Corrige fundo dos ícones de info */
+body.dark-theme .info-icon {
+    background: #23283b !important;
+    color: #51fa7b !important;
+}
+
+/* Corrige fundo do divider */
+body.dark-theme .divider span {
+    background: #23272f !important;
+    color: #4cc9f0 !important;
+}
+body.dark-theme .divider::before {
+    background: linear-gradient(to right, transparent 0%, #4cc9f0 50%, transparent 100%) !important;
+}
+
+/* Corrige fundo dos botões sociais */
+body.dark-theme .btn-google,
+body.dark-theme .btn-facebook {
+    background: #23283b !important;
+    color: #e0e6ed !important;
+    border: 1px solid #4cc9f0 !important;
+}
+body.dark-theme .btn-google:hover,
+body.dark-theme .btn-facebook:hover {
+    background: #4cc9f0 !important;
+    color: #23283b !important;
+}
+
+/* Corrige fundo dos campos de formulário */
+body.dark-theme .profile-form .form-control,
+body.dark-theme .profile-form .input-group-text {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+}
+
+/* Banner padrão (login normal) - azul escuro */
+body.dark-theme .welcome-banner:not(.first-login) {
+    background: linear-gradient(135deg, #23283b 0%, #4361ee 60%, #181c24 100%) !important;
+    color: #e0e6ed !important;
+    box-shadow: 0 4px 24px rgba(67,97,238,0.12) !important;
+    border-radius: 15px !important;
+    position: relative;
+    overflow: hidden;
+}
+body.dark-theme .welcome-banner:not(.first-login)::before,
+body.dark-theme .welcome-banner:not(.first-login)::after {
+    background: rgba(76,201,240,0.08) !important;
+}
+
+/* Banner de primeiro login - verde escuro */
+body.dark-theme .welcome-banner.first-login {
+    background: linear-gradient(135deg, #20c997 0%, #28a745 60%, #23283b 100%) !important;
+    color: #e0e6ed !important;
+    box-shadow: 0 4px 24px rgba(40, 201, 151, 0.18) !important;
+    border-radius: 18px !important;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #20c997 !important;
+}
+body.dark-theme .welcome-banner.first-login::before,
+body.dark-theme .welcome-banner.first-login::after {
+    background: rgba(40, 201, 151, 0.08) !important;
+}
+
+/* Cards e blocos do primeiro login */
+body.dark-theme .first-login-card,
+body.dark-theme .first-login-info,
+body.dark-theme .first-login-form,
+body.dark-theme .first-login-container {
+    background: #23283b !important;
+    color: #e0e6ed !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    border: 1px solid #4361ee !important;
+}
+
+/* Ícones e botões do primeiro login */
+body.dark-theme .first-login-icon {
+    background: #4cc9f0 !important;
+    color: #23283b !important;
+    border-radius: 50%;
+}
+body.dark-theme .first-login-btn {
+    background: #4361ee !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+}
+body.dark-theme .first-login-btn:hover {
+    background: #4cc9f0 !important;
+    color: #23283b !important;
+}
+
+/* Inputs do primeiro login */
+body.dark-theme .first-login-form .form-control,
+body.dark-theme .first-login-form .input-group-text {
+    background: #23283b !important;
+    color: #e0e6ed !important;
+    border: 1px solid #4cc9f0 !important;
+}
+
+/* Divider especial do primeiro login */
+body.dark-theme .first-login-divider span {
+    background: #23283b !important;
+    color: #4cc9f0 !important;
+}
+body.dark-theme .first-login-divider::before {
+    background: linear-gradient(to right, transparent 0%, #4361ee 50%, transparent 100%) !important;
+}
+
+/* Estilo para barra de categorias no tema escuro */
+body.dark-theme #navbar2,
+body.dark-theme #navbarNavCategorias,
+body.dark-theme .navbar-nav {
+    background: #23283b !important;
+    border-radius: 10px;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+body.dark-theme .btn-category {
+    background: #23283b !important;
+    color: #e0e6ed !important;
+    border: none !important;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+}
+
+body.dark-theme .btn-category.active,
+body.dark-theme .btn-category:focus,
+body.dark-theme .btn-category:hover {
+    background: #364fc7 !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px #364fc733 !important;
+}
+
+body.dark-theme .navbar-toggler,
+body.dark-theme .navbar-toggler-icon {
+    background: #23283b !important;
+    border: none !important;
+}
