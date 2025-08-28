@@ -76,12 +76,20 @@ body.dark-theme .dropdown-item.active {
     color: #4cc9f0 !important;
 }
 
-/* Footer */
-body.dark-theme .footer {
-    background: #20232a !important;
-    color: #b0b8c1 !important;
+/* Apenas os botões da NAVBAR no modo escuro: fundo escuro */
+body.dark-theme .navbar-nav > .nav-item > .nav-link {
+    background: #23272f !important;
+    border-radius: 8px !important;
     border: none !important;
+    box-shadow: none !important;
+    transition: background 0.2s;
 }
+
+/* Deixa os botões da navbar quadrados no modo escuro para evitar cantos diferentes */
+body.dark-theme .navbar-nav > .nav-item > .nav-link {
+    border-radius: 0 !important;
+}
+
 
 /* Inputs, selects, forms */
 body.dark-theme .form-control,
@@ -359,9 +367,9 @@ body.dark-theme .category-card:hover {
 
 /* Corrige fundo das abas laterais em Opções */
 body.dark-theme .options-sidebar {
-    background: #23272f !important;
+    background: #181a20 !important;
     color: #e0e6ed !important;
-    border-radius: 10px;
+    border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
 }
@@ -370,7 +378,7 @@ body.dark-theme .options-sidebar .nav-link {
 }
 body.dark-theme .options-sidebar .nav-link.active,
 body.dark-theme .options-sidebar .nav-link:hover {
-    background: #2d3142 !important;
+    background: #23272f !important;
     color: #4cc9f0 !important;
     border-radius: 6px;
 }
@@ -746,4 +754,25 @@ body.dark-theme .navbar-toggler,
 body.dark-theme .navbar-toggler-icon {
     background: #23283b !important;
     border: none !important;
+}
+
+/* Ícones dos botões da navbar sempre brancos no modo escuro */
+body.dark-theme .navbar-nav > .nav-item > .nav-link > img.nav-icon,
+body.dark-theme .navbar-nav > .nav-item > .nav-link > .nav-icon {
+    filter: brightness(0) invert(1) !important;
+}
+
+/* Deixa o fundo da caixa do footer igual ao fundo do próprio footer no modo escuro */
+body.dark-theme .footer .container {
+    background: #20232a !important;
+}
+
+/* Deixa o footer inteiro com a cor do .container no modo escuro */
+body.dark-theme .footer {
+    background: #20232a !important;
+}
+
+/* Remove scroll horizontal da página */
+html, body {
+    overflow-x: hidden !important;
 }
