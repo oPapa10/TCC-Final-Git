@@ -186,16 +186,16 @@
                                 <p class="card-text"><%= produto.descricao %></p>
                                 <% if (produto.valor_promocional) { %>
                                     <p class="price">
-                                      <span class="text-muted text-decoration-line-through" style="margin-right:8px;">
-                                        R$ <%= Number(produto.valor).toFixed(2) %>
-                                      </span>
-                                      <span class="text-danger fw-bold">
+                                      <span class="text-danger fw-bold" style="margin-left:8px;">
                                         R$ <%= Number(produto.valor_promocional).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                      </span>
+                                      <span class="text-muted text-decoration-line-through" style="font-size:0.95em; color:#b0b0b0; font-weight:500;">
+                                        R$ <%= Number(produto.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
                                       </span>
                                     </p>
                                   <% } else { %>
                                     <p class="price">
-                                      R$ <%= Number(produto.valor).toFixed(2) %>
+                                      R$ <%= Number(produto.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
                                     </p>
                                   <% } %>
                                 <a href="/produtos/p/<%= produto.slug %>" class="stretched-link product-link"></a>

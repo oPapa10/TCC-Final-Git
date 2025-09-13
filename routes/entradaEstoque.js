@@ -36,7 +36,7 @@ router.post('/', (req, res) => {
             console.log('[POST /entradaEstoque] Erro: ambos os campos preenchidos ou inválidos');
             return res.status(400).send('Preencha apenas um campo: quantidade a adicionar OU novo estoque!');
         }
-        Produto.update(produto, { ...prod, estoque: estoqueFinal }, (err2) => {
+        Produto.updateEstoque(produto, estoqueFinal, (err2) => {
             if (err2) {
                 console.log('[POST /entradaEstoque] Erro ao atualizar estoque:', err2);
                 return res.status(500).send('Erro ao atualizar estoque');

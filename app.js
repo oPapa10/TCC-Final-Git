@@ -61,7 +61,7 @@ app.use('/seeProduto', seeProdutoRouter);
 app.use('/createCategoria', createCategoriaRouter);
 app.use('/adm', admRouter);
 app.use('/categorias', categoriaRoutes);   //  corrigido
-app.use('/produtos', produtoRoutes); // Corrigido: todas as rotas de produto ficam sob /produtos
+app.use('/produtos', require('./routes/produto'));
 app.use('/login', loginRouter);
 app.use('/perfil', perfilRouter);
 app.use('/logout', logoutRouter);
@@ -69,7 +69,6 @@ app.use('/usuarios', usuariosRouter);
 app.use('/', perfilPosCadastroRouter);
 app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
-app.use('/', productRouter);
 app.use('/editar-perfil', editarPerfilRouter);
 
 // catch 404 and forward to error handler

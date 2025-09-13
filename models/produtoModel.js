@@ -14,11 +14,12 @@ exports.findAll = (callback) => {
   db.query('SELECT * FROM Produto', callback);
 };
 
+// Busca produto por ID
 exports.findById = (id, callback) => {
-  db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, results) => {
-    if (err) return callback(err);
-    callback(null, results[0]);
-  });
+    db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, results) => {
+        if (err) return callback(err);
+        callback(null, results[0]);
+    });
 };
 
 exports.create = (produto, callback) => {
@@ -123,3 +124,28 @@ exports.remover = (req, res) => {
     res.redirect('/seeProduto');
   });
 };
+
+// Atualiza apenas o estoque do produto
+exports.updateEstoque = (id, estoque, callback) => {
+    db.query(
+        'UPDATE Produto SET estoque = ? WHERE ID = ?',
+        [estoque, id],
+        callback
+    );
+};
+
+// Atualiza produto
+exports.update = (id, dados, callback) => {
+    const campos = [
+        'nome', 'valor', 'valor_promocional', 'Categoria_ID', 'cor', 'tamanho', 'peso', 'cilindrada',
+        'potencia', 'tanque', 'material', 'protecao', 'thumbnails', 'imagem', 'descricao'
+    ];
+    const valores = campos.map(campo => dados[campo]);
+    valores.push(id);
+    db.query(
+        `UPDATE Produto SET ${campos.map(c => c + ' = ?').join(', ')} WHERE ID = ?`,
+        valores,
+        callback
+    );
+};
+

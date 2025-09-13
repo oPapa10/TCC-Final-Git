@@ -12,6 +12,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+function slugify(text) {
+    return text.toString().toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/\s+/g, '-')           // Espaços para hífen
+        .replace(/[^\w\-]+/g, '')       // Remove caracteres especiais
+        .replace(/\-\-+/g, '-')         // Hífens múltiplos para um só
+        .replace(/^-+/, '')             // Remove hífens do início
+        .replace(/-+$/, '');            // Remove hífens do fim
+}
+
 router.get('/', (req, res) => {
   db.query('SELECT * FROM Categoria', (err, categorias) => {
     if (err) return res.status(500).send('Erro ao carregar categorias');
@@ -22,28 +32,48 @@ router.get('/', (req, res) => {
 router.post('/produtos', upload.fields([
   { name: 'imagem', maxCount: 1 },
   { name: 'thumbnailUpload', maxCount: 1 }
-]), (req, res) => {
+]), async (req, res) => {
   const {
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
     estoque, material, protecao, thumbnails, categoria
   } = req.body;
   let imagem = '';
   let thumbnail = thumbnails || '';
+
   if (req.files['imagem'] && req.files['imagem'][0]) {
     imagem = '/uploads/' + req.files['imagem'][0].filename;
   }
+
+  // Corrige duplicidade de thumbnails
+  let thumbList = [];
+  if (thumbnail) {
+    thumbList = thumbnail.split(',').map(t => t.trim()).filter(t => t);
+  }
   if (req.files['thumbnailUpload'] && req.files['thumbnailUpload'][0]) {
     const uploadedPath = '/uploads/' + req.files['thumbnailUpload'][0].filename;
-    // Junta os links digitados e o arquivo enviado, separados por vírgula
-    thumbnail = thumbnail ? (thumbnail + ',' + uploadedPath) : uploadedPath;
+    if (!thumbList.includes(uploadedPath)) {
+        thumbList.push(uploadedPath);
+    }
   }
-  console.log('Categoria recebida:', categoria);
+  thumbnail = thumbList.join(',');
+
+  // Gera slug único
+  let baseSlug = slugify(nome);
+  let slug = baseSlug;
+  let count = 1;
+  const [rows] = await db.promise().query('SELECT COUNT(*) as total FROM Produto WHERE slug = ?', [slug]);
+  while (rows[0].total > 0) {
+    slug = `${baseSlug}-${count++}`;
+    const [rows2] = await db.promise().query('SELECT COUNT(*) as total FROM Produto WHERE slug = ?', [slug]);
+    if (rows2[0].total === 0) break;
+  }
+
   if (!categoria || isNaN(parseInt(categoria, 10))) {
     return res.status(400).send('Selecione uma categoria válida!');
   }
   Produto.create({
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-    estoque, material, protecao, imagem, thumbnails: thumbnail, Categoria_ID: parseInt(categoria, 10) || null
+    estoque, material, protecao, imagem, thumbnails: thumbnail, Categoria_ID: parseInt(categoria, 10) || null, slug
   }, (err) => {
     if (err) {
       console.error('Erro ao cadastrar produto:', err);

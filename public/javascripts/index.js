@@ -153,3 +153,60 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchMessage = document.getElementById('searchMessage');
+    const searchInput = document.getElementById('searchInput');
+    const buttonSearch = document.getElementById('button-search');
+
+    // Função para rolar até as categorias/produtos
+    function scrollToProducts() {
+        const categoriasSection = document.getElementById('categorias') || document.getElementById('produtos');
+        if (categoriasSection) {
+            categoriasSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Função de pesquisa dinâmica
+    function pesquisarProdutos() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const products = document.querySelectorAll('.product-item');
+        let hasResults = false;
+
+        searchMessage.style.display = 'none';
+
+        products.forEach(product => {
+            const card = product.querySelector('.product-card');
+            const title = card.querySelector('.card-title').textContent.toLowerCase();
+            const description = card.querySelector('.card-text').textContent.toLowerCase();
+
+            if (searchTerm === '' || title.includes(searchTerm) || description.includes(searchTerm)) {
+                product.style.display = 'block';
+                hasResults = true;
+            } else {
+                product.style.display = 'none';
+            }
+        });
+
+        if (!hasResults && searchTerm !== '') {
+            searchMessage.style.display = 'block';
+        }
+    }
+
+    // Pesquisa dinâmica enquanto digita
+    searchInput.addEventListener('input', pesquisarProdutos);
+
+    // Ao clicar na lupa, pesquisa e rola para categorias/produtos
+    buttonSearch.addEventListener('click', function() {
+        pesquisarProdutos();
+        scrollToProducts();
+    });
+
+    // Ao pressionar Enter, pesquisa e rola para categorias/produtos
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            pesquisarProdutos();
+            scrollToProducts();
+        }
+    });
+});

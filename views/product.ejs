@@ -98,16 +98,16 @@
                     <span class="ms-2">4.5 (128 avaliações)</span>
                 </div>
                 <div class="price-container mb-3">
-                  <% if (produto.valor_promocional) { %>
-                    <span class="current-price text-danger">
-                      R$ <%= produto.valor_promocional.toFixed(2) %>
+                  <% if (produto.valor_promocional && Number(produto.valor_promocional) > 0) { %>
+                    <span class="current-price text-danger fw-bold">
+                      R$ <%= Number(produto.valor_promocional).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
                     </span>
                     <span class="text-muted text-decoration-line-through ms-2">
-                      R$ <%= Number(produto.valor).toFixed(2) %>
+                      R$ <%= Number(produto.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
                     </span>
                   <% } else { %>
                     <span class="current-price">
-                      R$ <%= produto.valor ? Number(produto.valor).toFixed(2) : '0,00' %>
+                      R$ <%= produto.valor ? Number(produto.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00' %>
                     </span>
                   <% } %>
                 </div>
