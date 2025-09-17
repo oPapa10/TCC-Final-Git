@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const produtoController = require('../controllers/produtoController');
 const Produto = require('../models/produtoModel'); // <-- Adicione esta linha
+const multer = require('multer');
+const upload = multer({ dest: 'public/uploads/' });
 
 // Listar todos os produtos (ADM)
 router.get('/seeProduto', produtoController.listar);
@@ -20,7 +22,7 @@ router.get('/createItens', produtoController.formulario);
 router.post('/', produtoController.criar);
 
 // Atualizar produto
-router.post('/editar/:id', produtoController.atualizar);
+router.post('/editar/:id', upload.single('imagem'), produtoController.atualizar);
 
 // Excluir produto
 router.post('/excluir/:id', produtoController.remover);

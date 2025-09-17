@@ -51,12 +51,11 @@ exports.create = (produto, callback) => {
 
 // ATUALIZAÇÃO COM REMOÇÃO DE PROMOÇÃO SE ESTOQUE = 0
 exports.update = (id, produto, callback) => {
-  // Primeiro, busque o produto atual
+  console.log('[MODEL] update chamada:', id, produto);
   db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, results) => {
     if (err || !results[0]) return callback(err || new Error('Produto não encontrado'));
     const atual = results[0];
 
-    // Use o valor enviado ou mantenha o antigo
     const sql = `UPDATE Produto SET 
         nome = ?, valor = ?, Categoria_ID = ?, cor = ?, tamanho = ?, peso = ?, cilindrada = ?, potencia = ?, tanque = ?, material = ?, protecao = ?, thumbnails = ?, imagem = ?, descricao = ?
         WHERE ID = ?`;
@@ -77,6 +76,8 @@ exports.update = (id, produto, callback) => {
       produto.descricao ?? atual.descricao,
       id
     ];
+    console.log('[MODEL] update SQL:', sql);
+    console.log('[MODEL] update values:', values);
     db.query(sql, values, callback);
   });
 };
@@ -134,18 +135,4 @@ exports.updateEstoque = (id, estoque, callback) => {
     );
 };
 
-// Atualiza produto
-exports.update = (id, dados, callback) => {
-    const campos = [
-        'nome', 'valor', 'valor_promocional', 'Categoria_ID', 'cor', 'tamanho', 'peso', 'cilindrada',
-        'potencia', 'tanque', 'material', 'protecao', 'thumbnails', 'imagem', 'descricao'
-    ];
-    const valores = campos.map(campo => dados[campo]);
-    valores.push(id);
-    db.query(
-        `UPDATE Produto SET ${campos.map(c => c + ' = ?').join(', ')} WHERE ID = ?`,
-        valores,
-        callback
-    );
-};
 

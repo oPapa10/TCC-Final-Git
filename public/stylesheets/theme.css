@@ -802,3 +802,77 @@ body.dark-theme .footer {
 html, body {
     overflow-x: hidden !important;
 }
+
+/* Borda escura nas thumbnails no tema escuro */
+body.dark-theme .img-thumbnail,
+body.dark-theme img.img-thumbnail {
+    border: 2px solid #3a3f4b !important; /* cinza/azul escuro */
+    background: #23272f !important;        /* fundo escuro */
+}
+
+/* Fundo escuro para imagem principal do produto no tema dark */
+body.dark-theme #mainProductImage {
+    background: #23272f !important;
+    border: 2px solid #3a3f4b !important;
+    border-radius: 10px !important;
+    padding: 4px !important;
+}
+
+/* Fundo escuro para o container da imagem principal do produto no tema dark */
+body.dark-theme .main-image {
+    background: #23272f !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    border: 2px solid #23272f !important; /* Borda igual ao fundo, fica invisível */
+}
+
+/* Nome do produto */
+body.dark-theme .product-title {
+    color: #ffffff !important; /* branco puro */
+    text-shadow: 0 2px 8px #23272f88, 0 1px 0 #23272f;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Descrição do produto */
+body.dark-theme .product-description {
+    color: #fff !important;
+}
+
+/* Avaliação (estrelas e texto) */
+body.dark-theme .rating,
+body.dark-theme .rating .fa-star,
+body.dark-theme .rating .fa-star-half-alt,
+body.dark-theme .rating .ms-2 {
+    color: #fff !important;
+}
+
+/* Detalhes do produto e textos das avaliações mais claros no tema escuro */
+body.dark-theme .details-list li,
+body.dark-theme .review-text,
+body.dark-theme .review-title,
+body.dark-theme .user-name,
+body.dark-theme .review-date,
+body.dark-theme .total-reviews,
+body.dark-theme .average-rating,
+body.dark-theme .review-summary,
+body.dark-theme .review-card {
+    color: #f5f6fa !important;
+}
+
+/* Textos do carrinho mais claros no tema escuro */
+body.dark-theme .item-name,
+body.dark-theme .item-info,
+body.dark-theme .cart-header,
+body.dark-theme .cart-summary,
+body.dark-theme .cart-total,
+body.dark-theme .cart-empty p,
+body.dark-theme .cart-checkout-btn,
+body.dark-theme .cart-continue-btn {
+    color: #f5f6fa !important;
+}
+
+/* Labels do formulário de login com cor clara no tema escuro */
+body.dark-theme .profile-form .form-label {
+    color: #e0e6ed !important;
+}

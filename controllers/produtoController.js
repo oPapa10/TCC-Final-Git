@@ -99,13 +99,12 @@ exports.atualizar = (req, res) => {
       protecao: protecao !== undefined && protecao !== '' ? protecao : produtoOriginal.protecao,
       thumbnails: thumbnails !== undefined && thumbnails !== '' ? thumbnails : produtoOriginal.thumbnails,
       imagem
-    }, (err) => {
-      // LOG: Resultado do update
+    }, (err, result) => {
       if (err) {
         console.log('[EDIT PRODUTO] Erro ao atualizar:', err);
         return res.status(500).send('Erro ao atualizar produto');
       }
-      console.log('[EDIT PRODUTO] Produto atualizado com sucesso!');
+      console.log('[EDIT PRODUTO] Produto atualizado com sucesso! Result:', result);
       res.redirect('/seeProduto');
     });
   });

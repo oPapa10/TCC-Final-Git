@@ -17,7 +17,7 @@
             <h1 class="header-title ms-4">Editar Produto</h1>
         </div>
         <div class="card-edit">
-            <form action="/produtos/editar/<%= produto.ID %>" method="POST" enctype="multipart/form-data">
+            <form action="/produtos/editar/<%= produto.ID %>" method="POST">
                 <!-- Imagem atual -->
                 <div class="image-container">
                     <% if (produto.imagem) { %>
