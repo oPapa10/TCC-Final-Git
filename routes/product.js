@@ -9,6 +9,7 @@ const produtoController = require('../controllers/produtoController');
 
 // Página de detalhes do produto usando slug
 router.get('/p/:slug', (req, res) => {
+    console.log('Rota /p/:slug chamada com slug:', req.params.slug);
     const slug = req.params.slug;
     db.query(
         `SELECT p.*, pr.valor_promocional
@@ -22,10 +23,34 @@ router.get('/p/:slug', (req, res) => {
         [slug],
         (err, results) => {
             if (err || results.length === 0) {
-                return res.render('product', { produto: null });
+                return res.render('product', { produto: null, relacionados: [] });
             }
-            // Envia só a primeira linha
-            res.render('product', { produto: results[0] });
+            const produto = results[0];
+
+            const categoriaId = Number(produto.Categoria_ID);
+            const produtoId = Number(produto.ID);
+
+            db.query(
+                `SELECT * FROM Produto WHERE Categoria_ID = ? AND ID != ? LIMIT 4`,
+                [categoriaId, produtoId],
+                (err2, relacionados) => {
+                    if (err2 || !relacionados || relacionados.length === 0) {
+                        db.query(
+                            `SELECT * FROM Produto WHERE ID != ? LIMIT 4`,
+                            [produto.ID],
+                            (err3, outros) => {
+                                console.log('Produto atual:', produto);
+                                console.log('Relacionados:', outros || []);
+                                res.render('product', { produto, relacionados: outros || [] });
+                            }
+                        );
+                    } else {
+                        console.log('Produto atual:', produto);
+                        console.log('Relacionados:', relacionados);
+                        res.render('product', { produto, relacionados });
+                    }
+                }
+            );
         }
     );
 });
@@ -82,6 +107,7 @@ router.post('/produtos/editar/:id', upload.single('imagem'), (req, res) => {
     });
 });
 
+// Outras rotas que renderizam product.ejs devem SEMPRE passar relacionados: []
 router.get('/product/:id', (req, res) => {
     const id = req.params.id;
     db.query(
@@ -92,25 +118,22 @@ router.get('/product/:id', (req, res) => {
         [id],
         (err, results) => {
             if (err || results.length === 0) {
-                console.log('[PRODUCT] Produto não encontrado ou erro:', err);
-                return res.render('product', { produto: null });
+                return res.render('product', { produto: null, relacionados: [] });
             }
-            console.log('[PRODUCT] Produto retornado:', results[0]);
-            res.render('product', { produto: results[0] });
+            res.render('product', { produto: results[0], relacionados: [] });
         }
     );
 });
 
-// Se tiver rota por slug:
 router.get('/product/:slug', (req, res) => {
     const slug = req.params.slug;
     Produto.findBySlug(slug, (err, produto) => {
         if (err || !produto) {
-            console.log('[PRODUCT] Produto não encontrado por slug:', slug);
-            return res.status(404).send('Produto não encontrado');
+            return res.render('product', { produto: null, relacionados: [] });
         }
-        console.log('[PRODUCT] Produto retornado por slug:', produto);
-        res.render('product', { produto });
+        console.log('Produto encontrado:', produto);
+        console.log('Categoria_ID:', produto.Categoria_ID, 'ID:', produto.ID);
+        res.render('product', { produto, relacionados: [] });
     });
 });
 

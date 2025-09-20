@@ -15,8 +15,42 @@ exports.listar = (req, res) => {
 exports.detalhar = (req, res) => {
   Produto.findById(req.params.id, (err, produto) => {
     if (err || !produto) return res.status(404).send('Produto não encontrado');
-    res.render('product', { produto });
+    res.render('product', { produto, relacionados: [] });
   });
+};
+
+// Detalhar por slug
+exports.detalharPorSlug = (req, res) => {
+  const slug = req.params.slug;
+  db.query(
+      `SELECT p.*, pr.valor_promocional
+       FROM Produto p
+       LEFT JOIN (
+           SELECT produto_id, MAX(valor_promocional) AS valor_promocional
+           FROM Promocao
+           GROUP BY produto_id
+       ) pr ON pr.produto_id = p.ID
+       WHERE p.slug = ?`,
+      [slug],
+      (err, results) => {
+          if (err || results.length === 0) {
+              return res.render('product', { produto: null, relacionados: [] });
+          }
+          const produto = results[0];
+          produto.valor_promocional = produto.valor_promocional ? Number(produto.valor_promocional) : undefined;
+          produto.valor = produto.valor ? Number(produto.valor) : 0;
+          if (produto.thumbnails) {
+              try {
+                  produto.thumbnails = JSON.parse(produto.thumbnails);
+              } catch {
+                  produto.thumbnails = produto.thumbnails.split(',').map(s => s.trim());
+              }
+          } else {
+              produto.thumbnails = [];
+          }
+          res.render('product', { produto, relacionados: [] });
+      }
+  );
 };
 
 exports.formulario = (req, res) => {
@@ -38,16 +72,17 @@ exports.criar = (req, res) => {
     imagem = '/uploads/' + req.file.filename;
   }
 
-  // Se vier do form, use o valor, senão, defina como zero
   const estoqueFinal = typeof estoque !== 'undefined' ? Number(estoque) : 0;
-
   const slug = gerarSlug(nome || 'produto');
+
+  // Corrige peso: envia null se vazio
+  const pesoFinal = (peso && peso.trim() !== '') ? Number(peso) : null;
 
   Produto.create({
     nome: nome || '',
     cor: cor || '',
     tamanho: tamanho || '',
-    peso: peso ? Number(peso) : 0,
+    peso: pesoFinal,
     valor: valor ? Number(valor) : 0,
     cilindrada: cilindrada || '',
     descricao: descricao || '',
@@ -81,8 +116,8 @@ exports.atualizar = (req, res) => {
       imagem = '/uploads/' + req.file.filename;
     }
 
-    // LOG: Dados recebidos do form
-    console.log('[EDIT PRODUTO] Dados recebidos:', req.body);
+    // Corrige peso: envia null se vazio
+    const pesoFinal = (peso && peso.trim() !== '') ? Number(peso) : null;
 
     Produto.update(req.params.id, {
       nome: nome !== undefined && nome !== '' ? nome : produtoOriginal.nome,
@@ -91,7 +126,7 @@ exports.atualizar = (req, res) => {
       Categoria_ID: categoria !== undefined && categoria !== '' ? categoria : produtoOriginal.Categoria_ID,
       cor: cor !== undefined && cor !== '' ? cor : produtoOriginal.cor,
       tamanho: tamanho !== undefined && tamanho !== '' ? tamanho : produtoOriginal.tamanho,
-      peso: peso !== undefined && peso !== '' ? Number(peso) : produtoOriginal.peso,
+      peso: pesoFinal !== null ? pesoFinal : produtoOriginal.peso,
       cilindrada: cilindrada !== undefined && cilindrada !== '' ? cilindrada : produtoOriginal.cilindrada,
       potencia: potencia !== undefined && potencia !== '' ? potencia : produtoOriginal.potencia,
       tanque: tanque !== undefined && tanque !== '' ? tanque : produtoOriginal.tanque,
@@ -121,39 +156,6 @@ exports.remover = (req, res) => {
     console.log('[CONTROLLER] Produto apagado com sucesso!');
     res.redirect('/seeProduto');
   });
-};
-
-exports.detalharPorSlug = (req, res) => {
-  const slug = req.params.slug;
-  db.query(
-      `SELECT p.*, pr.valor_promocional
-       FROM Produto p
-       LEFT JOIN (
-           SELECT produto_id, MAX(valor_promocional) AS valor_promocional
-           FROM Promocao
-           GROUP BY produto_id
-       ) pr ON pr.produto_id = p.ID
-       WHERE p.slug = ?`,
-      [slug],
-      (err, results) => {
-          if (err || results.length === 0) {
-              return res.render('product', { produto: null });
-          }
-          const produto = results[0];
-          produto.valor_promocional = produto.valor_promocional ? Number(produto.valor_promocional) : undefined;
-          produto.valor = produto.valor ? Number(produto.valor) : 0;
-          if (produto.thumbnails) {
-              try {
-                  produto.thumbnails = JSON.parse(produto.thumbnails);
-              } catch {
-                  produto.thumbnails = produto.thumbnails.split(',').map(s => s.trim());
-              }
-          } else {
-              produto.thumbnails = [];
-          }
-          res.render('product', { produto });
-      }
-  );
 };
 
 exports.update = (id, produto, callback) => {

@@ -333,25 +333,35 @@
                         <div class="form-group">
                             <label class="form-label file-input-required" for="imagem">Imagem Principal</label>
                             <div class="file-input-container">
-                                <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control" required style="display: none;">
+                                <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control">
                                 <label for="imagem" style="cursor: pointer;">
                                     <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--primary);"></i>
                                     <div class="file-input-label">Clique para selecionar a imagem principal</div>
                                     <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
                                 </label>
+                                <div class="mt-3">
+                                    <label class="form-label" for="imagemLink">Ou informe o link da imagem principal</label>
+                                    <input type="url" id="imagemLink" name="imagemLink" class="form-control" placeholder="https://exemplo.com/imagem.jpg">
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label" for="thumbnails">Thumbnails (URLs separadas por vírgula)</label>
-                            <input type="text" class="form-control" id="thumbnails" name="thumbnails" placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="thumbnailUpload">Ou selecione uma imagem para thumbnail</label>
-                            <input type="file" id="thumbnailUpload" name="thumbnailUpload" accept="image/*" class="form-control">
+                            <label class="form-label file-input-required" for="thumbnails">Thumbnails (URLs separadas por vírgula)</label>
+                            <div class="file-input-container">
+                                <input type="text" class="form-control" id="thumbnails" name="thumbnails" placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg">
+                                <div class="mt-3">
+                                    <label class="form-label" for="thumbnailUpload">Ou selecione uma imagem para thumbnail</label>
+                                    <input type="file" id="thumbnailUpload" name="thumbnailUpload" accept="image/*" class="form-control">
+                                    <label for="thumbnailUpload" style="cursor: pointer;">
+                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--primary);"></i>
+                                        <div class="file-input-label">Clique para selecionar uma thumbnail</div>
+                                        <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -383,6 +393,7 @@
 
         // Validação do formulário
         document.getElementById('productForm').addEventListener('submit', function (e) {
+            // Validação dos campos obrigatórios normais
             const requiredFields = this.querySelectorAll('[required]');
             let isValid = true;
 
@@ -393,9 +404,45 @@
                 }
             });
 
+            // Validação customizada para imagem principal
+            const imagemInput = document.getElementById('imagem');
+            const imagemLinkInput = document.getElementById('imagemLink');
+            if (
+                (!imagemInput.value || imagemInput.disabled) &&
+                (!imagemLinkInput.value || imagemLinkInput.disabled)
+            ) {
+                isValid = false;
+                imagemInput.style.borderColor = '#dc3545';
+                imagemLinkInput.style.borderColor = '#dc3545';
+                alert('Selecione uma imagem principal ou informe o link!');
+            }
+
             if (!isValid) {
                 e.preventDefault();
                 alert('Por favor, preencha todos os campos obrigatórios!');
+            }
+        });
+
+        // Bloqueia upload se link for preenchido e vice-versa
+        const imagemInput = document.getElementById('imagem');
+        const imagemLinkInput = document.getElementById('imagemLink');
+
+        imagemInput.addEventListener('change', function () {
+            if (imagemInput.files.length > 0) {
+                imagemLinkInput.disabled = true;
+                imagemLinkInput.value = '';
+            } else {
+                imagemLinkInput.disabled = false;
+            }
+        });
+
+        imagemLinkInput.addEventListener('input', function () {
+            if (imagemLinkInput.value.trim() !== '') {
+                imagemInput.disabled = true;
+                imagemInput.value = '';
+                document.querySelector('.file-input-label').textContent = 'Clique para selecionar a imagem principal';
+            } else {
+                imagemInput.disabled = false;
             }
         });
     </script>

@@ -27,11 +27,14 @@ exports.create = (produto, callback) => {
     (nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque, estoque, material, protecao, imagem, thumbnails, Categoria_ID, slug)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
+  // Corrige peso: envia null se vazio
+  const pesoFinal = (produto.peso !== undefined && produto.peso !== '') ? produto.peso : null;
+
   const values = [
     produto.nome,
     produto.cor,
     produto.tamanho,
-    produto.peso,
+    pesoFinal,
     produto.valor,
     produto.cilindrada,
     produto.descricao,
@@ -51,10 +54,12 @@ exports.create = (produto, callback) => {
 
 // ATUALIZAÇÃO COM REMOÇÃO DE PROMOÇÃO SE ESTOQUE = 0
 exports.update = (id, produto, callback) => {
-  console.log('[MODEL] update chamada:', id, produto);
   db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, results) => {
     if (err || !results[0]) return callback(err || new Error('Produto não encontrado'));
     const atual = results[0];
+
+    // Corrige peso: envia null se vazio
+    const pesoFinal = (produto.peso !== undefined && produto.peso !== '') ? produto.peso : atual.peso;
 
     const sql = `UPDATE Produto SET 
         nome = ?, valor = ?, Categoria_ID = ?, cor = ?, tamanho = ?, peso = ?, cilindrada = ?, potencia = ?, tanque = ?, material = ?, protecao = ?, thumbnails = ?, imagem = ?, descricao = ?
@@ -65,7 +70,7 @@ exports.update = (id, produto, callback) => {
       produto.Categoria_ID ?? atual.Categoria_ID,
       produto.cor ?? atual.cor,
       produto.tamanho ?? atual.tamanho,
-      produto.peso ?? atual.peso,
+      pesoFinal,
       produto.cilindrada ?? atual.cilindrada,
       produto.potencia ?? atual.potencia,
       produto.tanque ?? atual.tanque,
@@ -76,8 +81,6 @@ exports.update = (id, produto, callback) => {
       produto.descricao ?? atual.descricao,
       id
     ];
-    console.log('[MODEL] update SQL:', sql);
-    console.log('[MODEL] update values:', values);
     db.query(sql, values, callback);
   });
 };

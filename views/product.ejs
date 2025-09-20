@@ -255,19 +255,25 @@
         <section class="related-products mt-5">
             <h3 class="section-title mb-4">Produtos Relacionados</h3>
             <div class="row">
-                <!-- Exemplo de produto relacionado -->
-                <div class="col-6 col-md-3 mb-4">
-                    <div class="card product-card">
-                        <img src="https://recursos.sacramento.com.br/MediaCenter/3%20-%20Cal%C3%A7a%20Racing.png" class="card-img-top" alt="Produto Relacionado">
-                        <div class="card-body">
-                            <h5 class="card-title">Calça Motociclística</h5>
-                            <p class="card-text">Calça de proteção para motociclistas com tecnologia avançada.</p>
-                            <p class="price">R$ 99,99</p>
-                            <a href="/product/1" class="stretched-link product-link"></a>
+                <% if (relacionados && relacionados.length > 0) { %>
+                    <% relacionados.forEach(function(rel) { %>
+                        <div class="col-6 col-md-3 mb-4">
+                            <div class="card product-card">
+                                <img src="<%= rel.imagem %>" class="card-img-top" alt="Produto Relacionado">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= rel.nome %></h5>
+                                    <p class="card-text"><%= rel.descricao %></p>
+                                    <p class="price">R$ <%= Number(rel.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %></p>
+                                    <a href="/p/<%= rel.slug %>" class="stretched-link product-link"></a>
+                                </div>
+                            </div>
                         </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="col-12">
+                        <p class="text-muted">Nenhum produto relacionado encontrado.</p>
                     </div>
-                </div>
-                <!-- Adicione mais produtos relacionados conforme desejar -->
+                <% } %>
             </div>
         </section>
         <% } else { %>

@@ -37,25 +37,24 @@ router.post('/produtos', upload.fields([
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
     estoque, material, protecao, thumbnails, categoria
   } = req.body;
+
+  // Imagem principal: upload ou link
   let imagem = '';
-  let thumbnail = thumbnails || '';
-
-  if (req.files['imagem'] && req.files['imagem'][0]) {
-    imagem = '/uploads/' + req.files['imagem'][0].filename;
+  if (req.body.imagemLink && req.body.imagemLink.trim() !== '') {
+      imagem = req.body.imagemLink.trim();
+  } else if (req.files['imagem'] && req.files['imagem'][0]) {
+      imagem = '/uploads/' + req.files['imagem'][0].filename;
   }
 
-  // Corrige duplicidade de thumbnails
-  let thumbList = [];
+  // Thumbnails: upload ou link
+  let thumbnail = '';
+  if (req.files && req.files['thumbnailUpload'] && req.files['thumbnailUpload'][0]) {
+      thumbnail = '/uploads/' + req.files['thumbnailUpload'][0].filename;
+  }
+  let thumbnailsFinal = req.body.thumbnails ? req.body.thumbnails.trim() : '';
   if (thumbnail) {
-    thumbList = thumbnail.split(',').map(t => t.trim()).filter(t => t);
+      thumbnailsFinal = thumbnail;
   }
-  if (req.files['thumbnailUpload'] && req.files['thumbnailUpload'][0]) {
-    const uploadedPath = '/uploads/' + req.files['thumbnailUpload'][0].filename;
-    if (!thumbList.includes(uploadedPath)) {
-        thumbList.push(uploadedPath);
-    }
-  }
-  thumbnail = thumbList.join(',');
 
   // Gera slug único
   let baseSlug = slugify(nome);
@@ -73,7 +72,7 @@ router.post('/produtos', upload.fields([
   }
   Produto.create({
     nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-    estoque, material, protecao, imagem, thumbnails: thumbnail, Categoria_ID: parseInt(categoria, 10) || null, slug
+    estoque, material, protecao, imagem, thumbnails: thumbnailsFinal, Categoria_ID: parseInt(categoria, 10) || null, slug
   }, (err) => {
     if (err) {
       console.error('Erro ao cadastrar produto:', err);
