@@ -75,6 +75,37 @@
     padding: 0 15px;
 }
 
+/* Barra de rolagem horizontal nas categorias */
+#navbarNavCategorias .navbar-nav.mx-auto {
+    max-width: 1000px;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    min-height: 44px;
+    height: 44px;
+    align-items: center !important;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #222;
+    margin-bottom: -8px;
+    padding-bottom: 0;
+    transition: height 0.2s;
+}
+
+/* Quando não houver barra de rolagem, remova o margin-bottom negativo */
+#navbarNavCategorias .navbar-nav.mx-auto:not(:has(::-webkit-scrollbar)) {
+    margin-bottom: 0;
+}
+
+#navbarNavCategorias .navbar-nav.mx-auto::-webkit-scrollbar {
+    height: 8px;
+    background: #222;
+    margin-bottom: -8px; /* barra colada embaixo */
+}
+#navbarNavCategorias .navbar-nav.mx-auto::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
 /* CORREÇÃO: Botões de categoria sempre visíveis no tema claro */
 .btn-category {
     padding: 8px 20px;
@@ -208,6 +239,19 @@
     .card img {
         height: 120px;
     }
+}
+
+/* Centraliza verticalmente as categorias quando não há barra de rolagem */
+#navbarNavCategorias .navbar-nav.mx-auto {
+    display: flex;
+    align-items: center; /* centraliza verticalmente */
+}
+
+@media (min-width: 0px) {
+  #navbarNavCategorias .navbar-nav.mx-auto {
+      min-height: 44px;
+      height: auto;
+  }
 }
 
 /* Contador do Carrinho - Estilizado */
@@ -514,6 +558,21 @@ body.dark-theme .btn-category:hover {
 body.dark-theme .btn-category.active {
     background: #0d6efd !important;
     color: #ffffff !important;
+}
+
+/* Limita a largura do container das categorias e centraliza */
+#navbarNavCategorias .navbar-nav.mx-auto {
+    max-width: 1000px;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    min-height: 44px;
+    height: 44px;
+    align-items: center !important;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #222;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 /* Carrossel de Promoções - Tema Escuro */

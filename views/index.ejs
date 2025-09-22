@@ -259,6 +259,20 @@ function filterProducts(categoria, btn) {
         .replace(/\s+/g, '-')
         .toLowerCase()
         .trim();
+
+    // Se já está selecionada, desativa tudo e mostra todos sem hover
+    if (btn && btn.classList.contains('active')) {
+        document.querySelectorAll('.product-item').forEach(function(item) {
+            item.style.display = '';
+        });
+        document.querySelectorAll('.btn-category').forEach(function(b) {
+            b.classList.remove('active');
+        });
+        // Não ativa nenhum botão (nem o "Mostrar Todos")
+        return;
+    }
+
+    // Filtra normalmente
     document.querySelectorAll('.product-item').forEach(function(item) {
         if (!categoria || item.classList.contains(categoriaClasse)) {
             item.style.display = '';
