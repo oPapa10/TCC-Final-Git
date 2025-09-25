@@ -49,6 +49,12 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Middleware para disponibilizar o usuário na resposta
+app.use((req, res, next) => {
+    res.locals.usuario = req.session.usuario || null;
+    next();
+});
+
 // Rotas
 
 app.use('/', indexRouter);

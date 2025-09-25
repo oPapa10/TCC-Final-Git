@@ -27,6 +27,20 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
                 <ul class="navbar-nav ms-auto">
+                    <% if (typeof usuario !== 'undefined' && usuario) { %>
+                        <li class="nav-item d-flex align-items-center">
+                            <a href="/perfil" class="nav-link d-flex align-items-center" style="cursor:pointer;">
+                                <span class="me-2">Bem-vindo, <%= usuario.nome.split(' ')[0] %></span>
+                                <% if (usuario.avatar && usuario.avatar.match(/\.(jpg|jpeg|png|gif)$/i)) { %>
+                                    <img src="<%= usuario.avatar %>" alt="Avatar" class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
+                                <% } else { %>
+                                    <span class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width:32px; height:32px;">
+                                        <i class="fas fa-user" style="font-size: 1.3rem; color: #888;"></i>
+                                    </span>
+                                <% } %>
+                            </a>
+                        </li>
+                    <% } %>
                     <li class="nav-item">
                         <a class="nav-link" href="/">
                             <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>

@@ -9,7 +9,6 @@ const produtoController = require('../controllers/produtoController');
 
 // Página de detalhes do produto usando slug
 router.get('/p/:slug', (req, res) => {
-    console.log('Rota /p/:slug chamada com slug:', req.params.slug);
     const slug = req.params.slug;
     db.query(
         `SELECT p.*, pr.valor_promocional
@@ -26,29 +25,16 @@ router.get('/p/:slug', (req, res) => {
                 return res.render('product', { produto: null, relacionados: [] });
             }
             const produto = results[0];
-
             const categoriaId = Number(produto.Categoria_ID);
             const produtoId = Number(produto.ID);
 
+            // Busca produtos da mesma categoria, exceto o atual
             db.query(
                 `SELECT * FROM Produto WHERE Categoria_ID = ? AND ID != ? LIMIT 4`,
                 [categoriaId, produtoId],
                 (err2, relacionados) => {
-                    if (err2 || !relacionados || relacionados.length === 0) {
-                        db.query(
-                            `SELECT * FROM Produto WHERE ID != ? LIMIT 4`,
-                            [produto.ID],
-                            (err3, outros) => {
-                                console.log('Produto atual:', produto);
-                                console.log('Relacionados:', outros || []);
-                                res.render('product', { produto, relacionados: outros || [] });
-                            }
-                        );
-                    } else {
-                        console.log('Produto atual:', produto);
-                        console.log('Relacionados:', relacionados);
-                        res.render('product', { produto, relacionados });
-                    }
+                    if (err2 || !relacionados) relacionados = [];
+                    res.render('product', { produto, relacionados });
                 }
             );
         }
