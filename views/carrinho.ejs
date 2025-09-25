@@ -157,7 +157,7 @@
                     </div>
                     <div class="cart-actions d-flex justify-content-between mt-3">
                         <a class="cart-continue-btn btn btn-outline-primary" href="/">Continuar Comprando</a>
-                        <form action="/pedido/finalizar" method="POST" class="mb-0">
+                        <form action="/carrinho/pedido/finalizar" method="POST" class="mb-0" id="formFinalizarCompra">
                             <button type="submit" class="cart-checkout-btn btn btn-success">Finalizar Compra</button>
                         </form>
                     </div>
@@ -245,6 +245,12 @@ function ativarFormAlterar() {
 
 ativarFormOcultarMostrar();
 ativarFormAlterar();
+
+document.getElementById('formFinalizarCompra').addEventListener('submit', function(e) {
+    setTimeout(function() {
+        alert('Compra efetuada com sucesso!');
+    }, 100); // Pequeno delay para garantir que o submit ocorra
+});
 </script>
 
 </body>

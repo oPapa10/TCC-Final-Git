@@ -147,10 +147,21 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
                     </button>
-                    <button type="button" class="btn btn-outline-primary mt-2 btn-buy-now">
+                </form>
+
+                <form action="/comprar-agora" method="POST" id="formComprarAgora" class="mt-2">
+                    <input type="hidden" name="produtoId" value="<%= produto.ID %>">
+                    <input type="hidden" name="quantidade" id="quantidadeComprarAgora" value="1">
+                    <button type="submit" class="btn btn-outline-primary btn-buy-now">
                         <i class="fas fa-bolt me-2"></i>Comprar Agora
                     </button>
                 </form>
+                <script>
+                document.getElementById('formComprarAgora').addEventListener('submit', function(e) {
+                    var qtd = document.querySelector('input[name="quantidade"]').value;
+                    document.getElementById('quantidadeComprarAgora').value = qtd;
+                });
+                </script>
             </div>
         </div>
 

@@ -128,4 +128,22 @@ const campos = [
     'potencia', 'tanque', 'material', 'protecao', 'thumbnails', 'imagem', 'descricao'
 ];
 
+router.post('/comprar-agora', (req, res) => {
+    const { produtoId, quantidade } = req.body;
+    if (!produtoId || !quantidade) return res.redirect('/');
+
+    db.query(
+        'UPDATE Produto SET estoque = estoque - ? WHERE ID = ? AND estoque >= ?',
+        [quantidade, produtoId, quantidade],
+        (err, result) => {
+            if (err) {
+                console.error('Erro ao comprar agora:', err);
+                return res.status(500).send('Erro ao comprar produto');
+            }
+            // Redireciona para a página inicial após comprar
+            res.redirect('/');
+        }
+    );
+});
+
 module.exports = router;

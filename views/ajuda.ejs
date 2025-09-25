@@ -78,8 +78,10 @@
         <div class="container">
             <h1><i class="fas fa-question-circle"></i> Central de Ajuda</h1>
             <div class="search-box">
-                <input type="text" placeholder="Digite sua dúvida...">
-                <button><i class="fas fa-search"></i></button>
+                <input type="text" id="searchInput" placeholder="Digite sua dúvida...">
+                <button onclick="buscarPerguntas(document.getElementById('searchInput').value)">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -117,6 +119,11 @@
                     <div class="category-icon"><i class="fas fa-user-cog"></i></div>
                     <h3>Cadastro e Conta</h3>
                     <p>Acesso e gerenciamento</p>
+                </div>
+                <div class="category-card" onclick="showQuestions('novidades')">
+                    <div class="category-icon"><i class="fas fa-lightbulb"></i></div>
+                    <h3>Novidades</h3>
+                    <p>Veja as últimas funcionalidades e dicas</p>
                 </div>
             <% } %>
         </section>

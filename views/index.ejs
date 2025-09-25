@@ -308,6 +308,10 @@ function filterProducts(categoria, btn) {
     document.body.classList.remove('dark-theme');
   }
 })();
+
+if (window.location.search.includes('sucesso=1')) {
+    alert('Compra efetuada com sucesso!');
+}
 </script>
 </body>
 </html>

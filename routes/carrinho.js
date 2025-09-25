@@ -97,7 +97,8 @@ router.post('/adicionar', (req, res) => {
             if (!req.session.carrinho) req.session.carrinho = [];
             const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
             const quantidadeAtual = idx >= 0 ? req.session.carrinho[idx].quantidade : 0;
-            let quantidadeTotal = quantidadeAtual + Number(quantidade);
+            let quantidadeTotal = quantidadeAtual + Number(quantidade); // Soma a quantidade
+
             if (quantidadeTotal > estoque) {
                 quantidadeTotal = estoque;
             }
@@ -221,6 +222,43 @@ router.post('/mostrar', (req, res) => {
     console.log('[MOSTRAR] Carrinho não existe na sessão!');
   }
   res.json({ success: true });
+});
+
+router.post('/pedido/finalizar', (req, res) => {
+    const carrinho = req.session.carrinho || [];
+    if (carrinho.length === 0) {
+        return res.redirect('/carrinho');
+    }
+
+    // Para cada item, diminui o estoque
+    const promises = carrinho.map(item => {
+        return new Promise((resolve, reject) => {
+            db.query(
+                'UPDATE Produto SET estoque = estoque - ? WHERE ID = ? AND estoque >= ?',
+                [item.quantidade, item.produtoId, item.quantidade],
+                (err, result) => {
+                    if (err) return reject(err);
+                    resolve();
+                }
+            );
+        });
+    });
+
+    Promise.all(promises)
+        .then(() => {
+            // Limpa o carrinho da sessão
+            req.session.carrinho = [];
+            // Opcional: Limpa o carrinho do banco se usar usuário logado
+            if (req.session.usuario) {
+                db.query('DELETE FROM CARRINHO WHERE usuario_id = ?', [req.session.usuario.ID]);
+            }
+            // Redireciona para a página inicial após finalizar
+            res.redirect('/');
+        })
+        .catch(err => {
+            console.error('Erro ao finalizar pedido:', err);
+            res.status(500).send('Erro ao finalizar pedido');
+        });
 });
 
 module.exports = router;

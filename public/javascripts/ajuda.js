@@ -67,6 +67,25 @@ const faqDatabase = {
             question: 'Como excluir minha conta?',
             answer: 'Para excluir sua conta permanentemente, envie uma solicitação para nosso atendimento através do formulário de contato. Todos os seus dados pessoais serão removidos de nossos sistemas em até 72 horas, conforme nossa Política de Privacidade.'
         }
+    ],
+    garantia: [
+        {
+            id: 'tempo-garantia',
+            question: 'Qual o tempo de garantia dos produtos?',
+            answer: 'Todos os produtos possuem garantia de 12 meses contra defeitos de fabricação.'
+        }
+    ],
+    novidades: [
+        {
+            id: 'novidade-1',
+            question: 'Como funciona a nova funcionalidade?',
+            answer: 'A nova funcionalidade permite que você...'
+        },
+        {
+            id: 'novidade-2',
+            question: 'Posso usar a novidade no app?',
+            answer: 'Sim, basta acessar o menu e selecionar...'
+        }
     ]
 };
 
@@ -93,6 +112,8 @@ function showQuestions(category) {
         case 'pagamentos': title = 'Pagamentos'; break;
         case 'trocas': title = 'Trocas e Devoluções'; break;
         case 'cadastro': title = 'Cadastro e Conta'; break;
+        case 'garantia': title = 'Garantia'; break;
+        case 'novidades': title = 'Novidades'; break;
     }
     categoryTitle.textContent = title;
 
@@ -173,6 +194,39 @@ function openChat() {
 
 function showEmailForm() {
     alert('Redirecionando para o formulário de contato por e-mail...');
+}
+
+// Função para buscar perguntas
+function buscarPerguntas(texto) {
+    texto = texto.toLowerCase();
+    let resultados = [];
+    for (const categoria in faqDatabase) {
+        faqDatabase[categoria].forEach(item => {
+            if (item.question.toLowerCase().includes(texto) || item.answer.toLowerCase().includes(texto)) {
+                resultados.push(item);
+            }
+        });
+    }
+    // Exemplo: mostrar resultados em um modal ou lista
+    mostrarResultadosBusca(resultados);
+}
+
+function mostrarResultadosBusca(resultados) {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+    resultados.forEach(item => {
+        const questionElement = document.createElement('button');
+        questionElement.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center mb-2';
+        questionElement.innerHTML = `
+            <span>${item.question}</span>
+            <i class="fas fa-chevron-right"></i>
+        `;
+        questionElement.onclick = () => showAnswer(item.id);
+        container.appendChild(questionElement);
+    });
+    document.querySelector('.welcome-message').style.display = 'none';
+    document.getElementById('questionsList').style.display = 'block';
+    document.getElementById('answerContainer').style.display = 'none';
 }
 
 // Inicialização
