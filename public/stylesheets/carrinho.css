@@ -316,3 +316,10 @@
         font-size: 1.1rem;
     }
 }
+
+.item-actions {
+    min-width: 120px;
+}
+.item-actions .btn {
+    width: 100%;
+}

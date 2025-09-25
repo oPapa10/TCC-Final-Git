@@ -42,22 +42,23 @@ router.get('/', (req, res) => {
 
     const produtosArray = Array.isArray(produtos) ? produtos : [produtos];
 
+    // Ao montar o carrinhoCompleto:
     const carrinhoCompleto = carrinho.map(item => {
       const produto = produtosArray.find(p => p.ID == item.produtoId);
       const valorPromocional = produto && produto.valor_promocional ? Number(produto.valor_promocional) : null;
       const valorOriginal = produto && produto.valor ? Number(produto.valor) : 0;
       return {
-        id: item.produtoId,
+        ...item, // <-- mantém produtoId, oculto, quantidade, etc!
         nome: produto ? produto.nome : 'Produto removido',
         imagem: produto ? produto.imagem : '',
         preco: valorPromocional || valorOriginal,
         valorOriginal: valorOriginal,
         valorPromocional: valorPromocional,
-        quantidade: item.quantidade,
-        estoque: produto ? produto.estoque : 0 // <-- Adicione esta linha!
+        estoque: produto ? produto.estoque : 0
       };
     });
 
+    carrinhoCompleto.sort((a, b) => a.produtoId - b.produtoId); // ou pela ordem que preferir
     res.render('carrinho', { carrinho: carrinhoCompleto });
   });
 });
@@ -188,6 +189,38 @@ router.post('/alterar', (req, res) => {
         }
         res.redirect('/carrinho');
     });
+});
+
+// Ocultar item
+router.post('/ocultar', (req, res) => {
+  const { produtoId } = req.body;
+  console.log('[OCULTAR] produtoId recebido:', produtoId);
+  if (req.session.carrinho) {
+    console.log('[OCULTAR] Carrinho antes:', JSON.stringify(req.session.carrinho));
+    req.session.carrinho = req.session.carrinho.map(item =>
+      item.produtoId == produtoId ? { ...item, oculto: true } : item
+    );
+    console.log('[OCULTAR] Carrinho depois:', JSON.stringify(req.session.carrinho));
+  } else {
+    console.log('[OCULTAR] Carrinho não existe na sessão!');
+  }
+  res.json({ success: true });
+});
+
+// Mostrar item novamente
+router.post('/mostrar', (req, res) => {
+  const { produtoId } = req.body;
+  console.log('[MOSTRAR] produtoId recebido:', produtoId);
+  if (req.session.carrinho) {
+    console.log('[MOSTRAR] Carrinho antes:', JSON.stringify(req.session.carrinho));
+    req.session.carrinho = req.session.carrinho.map(item =>
+      item.produtoId == produtoId ? { ...item, oculto: false } : item
+    );
+    console.log('[MOSTRAR] Carrinho depois:', JSON.stringify(req.session.carrinho));
+  } else {
+    console.log('[MOSTRAR] Carrinho não existe na sessão!');
+  }
+  res.json({ success: true });
 });
 
 module.exports = router;
