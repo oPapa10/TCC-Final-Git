@@ -99,6 +99,14 @@
                             <img src="<%= item.imagem %>" class="item-image me-3" alt="<%= item.nome %>">
                             <div class="item-info">
                                 <div class="item-name"><%= item.nome %></div>
+                                <% if (item.semEstoque) { %>
+                                    <div class="text-danger fw-bold mt-2">Produto indisponível no momento</div>
+                                <% } %>
+                                <% if (item.mudancaPromocao) { %>
+                                    <div class="alert alert-warning mt-2 mudanca-promocao-msg" style="padding: 6px 12px;">
+                                        O valor deste produto foi alterado recentemente.
+                                    </div>
+                                <% } %>
                             </div>
                         </div>
                         <div class="item-unit">
@@ -136,17 +144,18 @@
                                 <input type="hidden" name="produtoId" value="<%= item.produtoId %>">
                                 <button type="submit" class="remove-btn btn btn-danger btn-sm">Remover</button>
                             </form>
-                            <% if (!item.oculto) { %>
+                            <% if (!item.oculto && !item.semEstoque) { %>
                                 <form action="/carrinho/ocultar" method="POST" class="mb-0 form-ocultar">
                                     <input type="hidden" name="produtoId" value="<%= item.produtoId %>">
                                     <button type="submit" class="btn btn-outline-secondary btn-sm">Ocultar</button>
                                 </form>
-                            <% } else { %>
+                            <% } else if (item.oculto && !item.semEstoque) { %>
                                 <form action="/carrinho/mostrar" method="POST" class="mb-0 form-mostrar">
                                     <input type="hidden" name="produtoId" value="<%= item.produtoId %>">
                                     <button type="submit" class="btn btn-outline-primary btn-sm">Reativar</button>
                                 </form>
                             <% } %>
+                            <!-- Se estiver sem estoque, não mostra botão de reativar nem de ocultar -->
                         </div>
                     </div>
                 <% }) %>
@@ -250,6 +259,14 @@ document.getElementById('formFinalizarCompra').addEventListener('submit', functi
     setTimeout(function() {
         alert('Compra efetuada com sucesso!');
     }, 100); // Pequeno delay para garantir que o submit ocorra
+});
+
+window.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        document.querySelectorAll('.mudanca-promocao-msg').forEach(function(el) {
+            el.style.display = 'none';
+        });
+    }, 30000); // 30 segundos
 });
 </script>
 

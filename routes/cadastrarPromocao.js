@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', upload.single('imagem'), (req, res) => {
-    const { descricao, produtosIds, valorPromocao, porcentagemPromocao } = req.body;
+    const { descricao, produtosIds, valorPromocao, porcentagemPromocao, dataFim, horaFim, minutoFim } = req.body;
     const imagem = req.file
         ? '/uploads/' + req.file.filename
         : (req.body.imagemProdutoSelecionada || '');
@@ -44,10 +44,16 @@ router.post('/', upload.single('imagem'), (req, res) => {
         let valorPromo = null;
         if (porcentagemPromocaoNum && porcentagemPromocaoNum > 0) {
             const valorOriginal = Number(results[0].valor);
-            valorPromo = (valorOriginal * (1 - porcentagemPromocaoNum / 100)).toFixed(2);
+            valorPromo = (valorOriginal * (1 - porcentagemPromocaoNum / 100));
+            // Limite: mínimo R$1,00 abaixo do valor real
+            if (valorPromo > (valorOriginal - 1)) valorPromo = valorOriginal - 1;
+            valorPromo = valorPromo.toFixed(2);
             console.log('[PROMOCAO] Calculado valorPromo por porcentagem:', valorPromo);
         } else if (valorPromocaoNum && valorPromocaoNum > 0) {
-            valorPromo = valorPromocaoNum.toFixed(2);
+            const valorOriginal = Number(results[0].valor);
+            // Limite: mínimo R$1,00 abaixo do valor real
+            if (valorPromocaoNum > (valorOriginal - 1)) valorPromo = (valorOriginal - 1).toFixed(2);
+            else valorPromo = valorPromocaoNum.toFixed(2);
             console.log('[PROMOCAO] Usando valorPromo direto:', valorPromo);
         }
 
@@ -56,9 +62,15 @@ router.post('/', upload.single('imagem'), (req, res) => {
             return res.status(400).send('Informe um valor promocional válido!');
         }
 
+        // Monta data/hora fim
+        let dataHoraFim = null;
+        if (dataFim && horaFim && minutoFim) {
+            dataHoraFim = `${dataFim} ${horaFim}:${minutoFim}:00`;
+        }
+
         db.query(
-            'INSERT INTO Promocao (produto_id, descricao, imagem, valor_promocional) VALUES (?, ?, ?, ?)',
-            [id, descricao, imagem, valorPromo],
+            'INSERT INTO Promocao (produto_id, descricao, imagem, valor_promocional, data_fim) VALUES (?, ?, ?, ?, ?)',
+            [id, descricao, imagem, valorPromo, dataHoraFim],
             (err2) => {
                 if (err2) {
                     console.log('[PROMOCAO] Erro ao cadastrar promoção:', err2);
@@ -73,14 +85,21 @@ router.post('/', upload.single('imagem'), (req, res) => {
 
 // Listar promoções
 router.get('/listar', (req, res) => {
+    // Remove promoções expiradas antes de listar
     db.query(
-        `SELECT Promocao.id, Promocao.imagem, Promocao.descricao, Promocao.valor_promocional, Produto.nome AS produto_nome
-         FROM Promocao
-         JOIN Produto ON Promocao.produto_id = Produto.ID
-         ORDER BY Promocao.id DESC`,
-        (err, promocoes) => {
-            if (err) return res.status(500).json([]);
-            res.json(promocoes);
+        'DELETE FROM Promocao WHERE data_fim IS NOT NULL AND data_fim < NOW()',
+        (err) => {
+            // Agora lista as promoções válidas
+            db.query(
+                `SELECT Promocao.id, Promocao.imagem, Promocao.descricao, Promocao.valor_promocional, Produto.nome AS produto_nome
+                 FROM Promocao
+                 JOIN Produto ON Promocao.produto_id = Produto.ID
+                 ORDER BY Promocao.id DESC`,
+                (err2, promocoes) => {
+                    if (err2) return res.status(500).json([]);
+                    res.json(promocoes);
+                }
+            );
         }
     );
 });

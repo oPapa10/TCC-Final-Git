@@ -57,6 +57,27 @@
                             <textarea class="form-control" id="descricao" name="descricao" maxlength="255" placeholder="Descreva os detalhes da promoção..."></textarea>
                         </div>
 
+                        <div class="form-group">
+                            <label class="form-label" for="dataFim">DATA DE TÉRMINO DA PROMOÇÃO</label>
+                            <input type="date" class="form-control" id="dataFim" name="dataFim" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="horaFim">HORA DE TÉRMINO</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select id="horaFim" name="horaFim" class="form-control" style="width:auto;display:inline-block;">
+                                    <% for(let h=0; h<24; h++) { %>
+                                        <option value="<%= h.toString().padStart(2,'0') %>"><%= h.toString().padStart(2,'0') %> h</option>
+                                    <% } %>
+                                </select>
+                                :
+                                <select id="minutoFim" name="minutoFim" class="form-control" style="width:auto;display:inline-block;">
+                                    <% for(let m=0; m<60; m++) { %>
+                                        <option value="<%= m.toString().padStart(2,'0') %>"><%= m.toString().padStart(2,'0') %> min</option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn-salvar">
                             <i class="fas fa-tag"></i> CADASTRAR PROMOÇÃO
                         </button>
@@ -68,7 +89,19 @@
             <div class="col-12 col-xl-6">
                 <div class="card-promocao h-100">
                     <h2 class="mb-4" style="font-size:1.3rem;font-weight:600;color:var(--text-dark);">PROMOÇÕES CADASTRADAS</h2>
-                    <ul id="listaPromocoes" class="lista-promocoes"></ul>
+                    <ul id="listaPromocoes" class="lista-promocoes">
+                        <li class="lista-item">
+                            <div class="d-flex flex-wrap align-items-center gap-2 w-100">
+                                <span class="produto-nome">Nome do Produto Muito Grande Que Quebra Linha</span>
+                                <span class="text-muted ms-md-3">Preço atual: R$ 999,99</span>
+                                <span class="novo-valor-label me-2">Porcentagem (%)</span>
+                                <input type="number" class="form-control ms-md-3" ...>
+                                <span class="novo-valor-label me-2">Valor Promocional</span>
+                                <input type="number" class="form-control ms-md-3" ...>
+                                <button class="btn btn-sm btn-danger ms-md-3 mt-2 mt-md-0">Remover</button>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

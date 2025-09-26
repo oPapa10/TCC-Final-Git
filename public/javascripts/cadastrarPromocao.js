@@ -63,6 +63,17 @@ document.addEventListener('DOMContentLoaded', function() {
             nomeSpan.textContent = selecionado.nome;
             nomeSpan.style.fontWeight = 'bold';
 
+            // Imagem do produto
+            const img = document.createElement('img');
+            img.src = selecionado.imagem;
+            img.alt = 'Foto do produto';
+            img.className = 'produto-imagem-promocao mb-2';
+            img.style.maxWidth = '120px';
+            img.style.maxHeight = '120px';
+            img.style.borderRadius = '8px';
+            img.style.border = '1px solid #e0e3eb';
+            img.style.display = 'block';
+
             // Preço real
             const precoSpan = document.createElement('span');
             precoSpan.className = 'ms-md-3 text-muted';
@@ -102,20 +113,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             promoInput.addEventListener('input', function() {
+                const valorReal = Number(selecionado.valor);
+                let valorPromo = Number(this.value);
+
+                // Limite: mínimo R$1,00 abaixo do valor real
+                if (valorPromo > 0 && valorPromo > (valorReal - 1)) {
+                    this.value = (valorReal - 1).toFixed(2);
+                    valorPromo = valorReal - 1;
+                }
+                // Limite: máximo até 2 casas decimais
+                if (this.value && !/^\d+(\.\d{1,2})?$/.test(this.value)) {
+                    this.value = valorPromo.toFixed(2);
+                }
+                if (valorPromo <= 0) {
+                    this.value = '';
+                }
+                // Alternância dos campos
                 if (this.value && Number(this.value) > 0) {
                     porcentInput.value = '';
                     porcentInput.disabled = true;
                 } else {
                     porcentInput.disabled = false;
-                }
-                // Limite: máximo até 1 centavo abaixo do valor real
-                const valorReal = Number(selecionado.valor);
-                let valorPromo = Number(this.value);
-                if (valorPromo >= valorReal) {
-                    this.value = (valorReal - 0.01).toFixed(2);
-                }
-                if (valorPromo <= 0) {
-                    this.value = '';
                 }
             });
 
@@ -130,17 +148,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 mostrarLista(busca.value);
             };
 
+            // Labels para os campos
+            const porcentLabel = document.createElement('span');
+            porcentLabel.textContent = 'Porcentagem (%)';
+            porcentLabel.className = 'novo-valor-label me-2';
+
+            const valorLabel = document.createElement('span');
+            valorLabel.textContent = 'Valor Promocional';
+            valorLabel.className = 'novo-valor-label me-2';
+
             // Agrupando: joga inputs e botão para a direita
             const rightGroup = document.createElement('div');
             rightGroup.className = 'd-flex align-items-center ms-auto gap-2';
+            rightGroup.appendChild(porcentLabel);
             rightGroup.appendChild(porcentInput);
+            rightGroup.appendChild(valorLabel);
             rightGroup.appendChild(promoInput);
             rightGroup.appendChild(btn);
 
+            const infoCol = document.createElement('div');
+            infoCol.className = 'd-flex flex-column align-items-start';
+            infoCol.appendChild(nomeSpan);
+            infoCol.appendChild(img);
+            infoCol.appendChild(precoSpan);
+
             const row = document.createElement('div');
-            row.className = 'd-flex flex-column flex-md-row align-items-md-center gap-2 w-100';
-            row.appendChild(nomeSpan);
-            row.appendChild(precoSpan);
+            row.className = 'd-flex flex-wrap align-items-center gap-2 w-100';
+            row.appendChild(infoCol);
             row.appendChild(rightGroup);
 
             li.appendChild(row);
@@ -237,15 +271,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     const li = document.createElement('li');
                     li.className = 'list-group-item d-flex align-items-center justify-content-between gap-2';
                     li.innerHTML = `
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-3" style="min-width:0;overflow:hidden;">
                             <img src="${promo.imagem}" alt="Promo" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">
-                            <div>
-                                <div style="font-weight:600;">${promo.produto_nome}</div>
+                            <div style="min-width:0;">
+                                <div style="font-weight:600;overflow-wrap:break-word;max-width:220px;">${promo.produto_nome}</div>
                                 <div style="font-size:0.95rem;color:#888;">${promo.descricao || ''}</div>
                                 <div style="font-size:0.95rem;color:#28a745;font-weight:600;">R$ ${Number(promo.valor_promocional).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
                             </div>
                         </div>
-                        <button class="btn btn-danger btn-sm" data-id="${promo.id}">
+                        <button class="btn btn-danger btn-sm" data-id="${promo.id}" style="margin-left:auto;min-width:110px;">
                             <i class="fas fa-trash"></i> Remover
                         </button>
                     `;
@@ -292,6 +326,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Se usar busca personalizada, atualize a lista JS também!
             window.produtos = produtos;
         });
+
+    // Define data e hora padrão
+    const dataFim = document.getElementById('dataFim');
+    const horaFim = document.getElementById('horaFim');
+    const minutoFim = document.getElementById('minutoFim');
+    if (dataFim) {
+        const hoje = new Date();
+        dataFim.value = hoje.toISOString().split('T')[0];
+    }
+    if (horaFim && minutoFim) {
+        const agora = new Date();
+        horaFim.value = agora.getHours().toString().padStart(2, '0');
+        minutoFim.value = (Math.floor(agora.getMinutes() / 5) * 5).toString().padStart(2, '0');
+    }
 });
 
 document.getElementById('porcentagemPromocao')?.addEventListener('input', function() {
@@ -351,4 +399,27 @@ document.getElementById('btnUsarImagemProduto')?.addEventListener('click', funct
         document.getElementById('formPromocao').appendChild(hiddenImg);
     }
     hiddenImg.value = selecionado.imagem;
+});
+
+porcentInput.addEventListener('input', function() {
+    // Remove caracteres não numéricos
+    this.value = this.value.replace(/[^\d]/g, '');
+
+    let val = Number(this.value);
+
+    // Não permite negativo
+    if (val < 0) val = 0;
+
+    // Não permite acima de 100%
+    if (val > 100) val = 100;
+
+    this.value = val ? val : '';
+
+    // Alternância dos campos
+    if (val > 0) {
+        promoInput.value = '';
+        promoInput.disabled = true;
+    } else {
+        promoInput.disabled = false;
+    }
 });

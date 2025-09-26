@@ -10,8 +10,9 @@
 /* ===== NAVBAR SUPERIOR ===== */
 .navbar-custom {
     background-color: var(--accent-color) !important;
-    position: relative;
-    z-index: 1030;
+    z-index: 10;
+    position: sticky; /* ou fixed, se já estiver */
+    top: 0;
     padding: 10px 0;
 }
 

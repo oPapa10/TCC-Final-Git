@@ -235,9 +235,9 @@ textarea.form-control {
 .produto-nome {
     font-weight: 600;
     margin-bottom: 0.25rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal; /* Permite quebrar linha */
+    overflow-wrap: break-word; /* Quebra nomes grandes */
+    max-width: 220px; /* Limite para não invadir os inputs */
 }
 
 .produto-preco {
@@ -264,15 +264,19 @@ textarea.form-control {
     color: var(--text-dark);
 }
 
-.novo-valor-input {
-    width: 150px;
+.novo-valor-input,
+.form-control.ms-md-3 {
+    width: 180px;
+    min-width: 120px;
+    max-width: 220px;
     padding: 0.5rem 0.75rem;
     border: 2px solid #e0e3eb;
     border-radius: 8px;
     transition: all 0.3s ease;
-    text-align: right;
+    text-align: left; /* <-- Troque para left */
     font-weight: 600;
     color: var(--primary-dark);
+    font-size: 1rem;
 }
 
 .novo-valor-input:focus {
@@ -291,8 +295,10 @@ textarea.form-control {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-top: 0.5rem;
-    align-self: flex-start;
+    margin-top: 0 !important;
+    align-self: center;
+    min-width: 90px;
+    white-space: normal;
 }
 
 @media (min-width: 768px) {
@@ -348,11 +354,28 @@ textarea.form-control {
 }
 
 .lista-promocoes li {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 1rem;
-    transition: all 0.3s ease;
-    border: 1px solid #e0e3eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap; /* Permite quebra para telas pequenas */
+}
+
+.lista-promocoes .d-flex.align-items-center.gap-3 {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.lista-promocoes .btn-danger.btn-sm {
+    flex-shrink: 0;
+    min-width: 110px;
+    max-width: 100%;
+    align-self: center;
+    margin-left: auto;
+    margin-top: 0;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .lista-promocoes li:hover {
@@ -381,6 +404,15 @@ textarea.form-control {
     object-fit: cover;
     border-radius: 8px;
     border: 1px solid #e0e3eb;
+}
+
+.produto-imagem-promocao {
+    margin: 0.5rem 0;
+    max-width: 120px;
+    max-height: 120px;
+    border-radius: 8px;
+    border: 1px solid #e0e3eb;
+    background: #fff;
 }
 
 .promocao-detalhes {
@@ -515,4 +547,34 @@ textarea.form-control {
     .btn-remover-promocao {
         align-self: flex-end;
     }
+}
+
+@media (min-width: 600px) {
+    .lista-promocoes li {
+        flex-wrap: nowrap;
+    }
+}
+
+.promocao-valor-container input[type="number"],
+.d-flex.flex-wrap.align-items-center.gap-2.w-100 input[type="number"] {
+    width: 180px;
+    min-width: 120px;
+    max-width: 220px;
+    font-size: 1rem;
+}
+
+.d-flex.align-items-center.ms-auto.gap-2 {
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#horaFim, #minutoFim {
+    min-width: 80px;
+    max-width: 110px;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 0.5rem 0.7rem;
+    background: #f8fafc;
+    border: 2px solid #e0e3eb;
+    margin-bottom: 0;
 }

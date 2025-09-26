@@ -15,6 +15,19 @@
     <link rel="stylesheet" href="/stylesheets/theme.css">
    
 </head>
+    <%
+    function formatLocalDateTime(date) {
+        if (!date) return '';
+        let d = (typeof date === 'string') ? new Date(date) : date;
+        let year = d.getFullYear();
+        let month = (d.getMonth() + 1).toString().padStart(2, '0');
+        let day = d.getDate().toString().padStart(2, '0');
+        let hour = d.getHours().toString().padStart(2, '0');
+        let min = d.getMinutes().toString().padStart(2, '0');
+        let sec = d.getSeconds().toString().padStart(2, '0');
+        return `${year}-${month}-${day}T${hour}:${min}:${sec}`;
+    }
+    %>
 <body>
     <!-- Navbar Superior -->
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
@@ -118,34 +131,41 @@
                 <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <% promocoes.forEach(function(promo, idx) { %>
-                            <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
-                                <div class="promo-carousel-item">
-                                    <div class="promo-image-container">
-                                        <img src="<%= promo.imagem %>" class="promo-image" alt="<%= promo.produto_nome %>">
-                                    </div>
-                                    <div class="promo-info">
-                                        <h3 class="promo-title"><%= promo.produto_nome %></h3>
-                                        <div class="promo-price-container">
-                                            <span class="original-price">
-                                                R$ <%= Number(promo.valor_real).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
-                                            </span>
-                                            <span class="discounted-price">
-                                                R$ <%= Number(promo.valor_promocional).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
-                                            </span>
-                                            <% const discount = Math.round((1 - promo.valor_promocional/promo.valor_real)*100); %>
-                                            <% if (discount > 0) { %>
-                                                <span class="discount-badge"><%= discount %>% OFF</span>
-                                            <% } %>
-                                        </div>
-                                        <% if (promo.descricao) { %>
-                                            <p class="promo-description"><%= promo.descricao %></p>
-                                        <% } %>
-                                        <a href="/produtos/p/<%= promo.slug %>" class="btn promo-button">
-                                            Ver Oferta <i class="fas fa-arrow-right ms-2"></i>
-                                        </a>
-                                    </div>
+                          <div class="carousel-item <%= idx === 0 ? 'active' : '' %>">
+                            <div class="promo-carousel-item">
+                              <div class="promo-image-container">
+                                <img src="<%= promo.imagem %>" class="promo-image" alt="<%= promo.produto_nome %>">
+                              </div>
+                              <div class="promo-info">
+                                <h3 class="promo-title"><%= promo.produto_nome %></h3>
+                                <div class="promo-price-container">
+                                    <span class="original-price">
+                                        R$ <%= Number(promo.valor_real).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                    </span>
+                                    <span class="discounted-price">
+                                        R$ <%= Number(promo.valor_promocional).toLocaleString('pt-BR', {minimumFractionDigits: 2}) %>
+                                    </span>
+                                    <% const discount = Math.round((1 - promo.valor_promocional/promo.valor_real)*100); %>
+                                    <% if (discount > 0) { %>
+                                        <span class="discount-badge"><%= discount %>% OFF</span>
+                                    <% } %>
                                 </div>
+                                <% if (promo.descricao) { %>
+                                    <p class="promo-description"><%= promo.descricao %></p>
+                                <% } %>
+                                <% if (promo.data_fim) { %>
+                                  <div class="promo-timer text-danger fw-bold mb-2" 
+                                       data-fim="<%= formatLocalDateTime(promo.data_fim) %>">
+                                    <i class="fas fa-clock me-1"></i>
+                                    <span class="timer-text">Carregando...</span>
+                                  </div>
+                                <% } %>
+                                <a href="/produtos/p/<%= promo.slug %>" class="btn promo-button">
+                                    Ver Oferta <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                              </div>
                             </div>
+                          </div>
                         <% }) %>
                     </div>
                     <% if (promocoes.length > 1) { %>

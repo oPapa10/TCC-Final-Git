@@ -5,7 +5,6 @@ const router = express.Router();
 
 // Função para limitar a quantidade no carrinho de acordo com o estoque
 function limitarCarrinhoPorEstoque(carrinho, produtos) {
-    // produtos: array de produtos do banco, cada um com ID e estoque
     const estoqueMap = {};
     produtos.forEach(p => estoqueMap[p.ID] = p.estoque);
 
@@ -20,7 +19,7 @@ function limitarCarrinhoPorEstoque(carrinho, produtos) {
 
 // Rota para exibir o carrinho
 router.get('/', (req, res) => {
-  const carrinho = req.session.carrinho || [];
+  let carrinho = req.session.carrinho || [];
   if (carrinho.length === 0) {
     return res.render('carrinho', { carrinho: [] });
   }
@@ -42,23 +41,46 @@ router.get('/', (req, res) => {
 
     const produtosArray = Array.isArray(produtos) ? produtos : [produtos];
 
-    // Ao montar o carrinhoCompleto:
+    // Monta o carrinho completo e verifica estoque e promoção
     const carrinhoCompleto = carrinho.map(item => {
       const produto = produtosArray.find(p => p.ID == item.produtoId);
-      const valorPromocional = produto && produto.valor_promocional ? Number(produto.valor_promocional) : null;
+      const valorPromocionalAtual = produto && produto.valor_promocional ? Number(produto.valor_promocional) : null;
       const valorOriginal = produto && produto.valor ? Number(produto.valor) : 0;
+      const estoque = produto ? produto.estoque : 0;
+      let semEstoque = estoque <= 0;
+
+      // Detecta mudança de promoção
+      let mudancaPromocao = false;
+      // Se o valor anterior era promocional e agora não é, ou mudou o valor promocional
+      if (
+        item.valorPromocional !== undefined &&
+        ((item.valorPromocional !== null && valorPromocionalAtual === null) ||
+         (item.valorPromocional !== null && valorPromocionalAtual !== null && item.valorPromocional !== valorPromocionalAtual))
+      ) {
+        mudancaPromocao = true;
+        console.log(`[PROMOÇÃO] Produto ${item.produtoId} perdeu ou mudou promoção!`);
+      } else {
+        console.log(`[PROMOÇÃO] Produto ${item.produtoId} - anterior: ${item.valorPromocional}, atual: ${valorPromocionalAtual}, mudancaPromocao: ${mudancaPromocao}`);
+      }
+
+      // Atualiza o valor anterior para o próximo GET
+      item.valorPromocional = valorPromocionalAtual;
+
       return {
-        ...item, // <-- mantém produtoId, oculto, quantidade, etc!
+        ...item,
         nome: produto ? produto.nome : 'Produto removido',
         imagem: produto ? produto.imagem : '',
-        preco: valorPromocional || valorOriginal,
-        valorOriginal: valorOriginal,
-        valorPromocional: valorPromocional,
-        estoque: produto ? produto.estoque : 0
+        preco: valorPromocionalAtual || valorOriginal,
+        valorOriginal,
+        valorPromocional: valorPromocionalAtual,
+        estoque,
+        oculto: item.oculto || semEstoque,
+        semEstoque,
+        mudancaPromocao
       };
     });
 
-    carrinhoCompleto.sort((a, b) => a.produtoId - b.produtoId); // ou pela ordem que preferir
+    carrinhoCompleto.sort((a, b) => a.produtoId - b.produtoId);
     res.render('carrinho', { carrinho: carrinhoCompleto });
   });
 });
@@ -80,7 +102,7 @@ router.post('/adicionar', (req, res) => {
 
     db.query(
         `SELECT p.*, pr.valor_promocional 
-         FROM PRODUTO p 
+         FROM Produto p 
          LEFT JOIN Promocao pr ON pr.produto_id = p.ID 
          WHERE p.ID = ?`, 
         [produtoId], 
@@ -93,27 +115,26 @@ router.post('/adicionar', (req, res) => {
             const produto = results[0];
             const preco = produto.valor_promocional || produto.valor;
             const estoque = produto.estoque ?? 0;
+            const valorPromocionalAtual = produto.valor_promocional ? Number(produto.valor_promocional) : null;
 
             if (!req.session.carrinho) req.session.carrinho = [];
             const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
             const quantidadeAtual = idx >= 0 ? req.session.carrinho[idx].quantidade : 0;
-            let quantidadeTotal = quantidadeAtual + Number(quantidade); // Soma a quantidade
+            let quantidadeTotal = quantidadeAtual + Number(quantidade);
 
-            if (quantidadeTotal > estoque) {
-                quantidadeTotal = estoque;
-            }
-
-            console.log('Estoque:', estoque, 'Quantidade solicitada:', quantidade, 'Quantidade total:', quantidadeTotal);
+            if (quantidadeTotal > estoque) quantidadeTotal = estoque;
 
             if (idx >= 0) {
                 req.session.carrinho[idx].quantidade = quantidadeTotal;
+                req.session.carrinho[idx].valorPromocional = valorPromocionalAtual;
             } else {
                 req.session.carrinho.push({
                     produtoId: produto.ID,
                     nome: produto.nome,
                     preco: preco,
                     imagem: produto.imagem,
-                    quantidade: Math.min(Number(quantidade), estoque)
+                    quantidade: Math.min(Number(quantidade), estoque),
+                    valorPromocional: valorPromocionalAtual
                 });
             }
 
@@ -140,12 +161,10 @@ router.post('/remover', (req, res) => {
     req.session.carrinho = req.session.carrinho.filter(item => item.produtoId != produtoId);
   }
   if (req.session.usuario) {
-    // Remove do banco também!
     db.query(
       'DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id = ?',
       [req.session.usuario.ID, produtoId],
       (err) => {
-        // Ignora erro, só redireciona
         res.redirect('/carrinho');
       }
     );
@@ -195,15 +214,10 @@ router.post('/alterar', (req, res) => {
 // Ocultar item
 router.post('/ocultar', (req, res) => {
   const { produtoId } = req.body;
-  console.log('[OCULTAR] produtoId recebido:', produtoId);
   if (req.session.carrinho) {
-    console.log('[OCULTAR] Carrinho antes:', JSON.stringify(req.session.carrinho));
     req.session.carrinho = req.session.carrinho.map(item =>
       item.produtoId == produtoId ? { ...item, oculto: true } : item
     );
-    console.log('[OCULTAR] Carrinho depois:', JSON.stringify(req.session.carrinho));
-  } else {
-    console.log('[OCULTAR] Carrinho não existe na sessão!');
   }
   res.json({ success: true });
 });
@@ -211,27 +225,25 @@ router.post('/ocultar', (req, res) => {
 // Mostrar item novamente
 router.post('/mostrar', (req, res) => {
   const { produtoId } = req.body;
-  console.log('[MOSTRAR] produtoId recebido:', produtoId);
   if (req.session.carrinho) {
-    console.log('[MOSTRAR] Carrinho antes:', JSON.stringify(req.session.carrinho));
     req.session.carrinho = req.session.carrinho.map(item =>
       item.produtoId == produtoId ? { ...item, oculto: false } : item
     );
-    console.log('[MOSTRAR] Carrinho depois:', JSON.stringify(req.session.carrinho));
-  } else {
-    console.log('[MOSTRAR] Carrinho não existe na sessão!');
   }
   res.json({ success: true });
 });
 
 router.post('/pedido/finalizar', (req, res) => {
-    const carrinho = req.session.carrinho || [];
-    if (carrinho.length === 0) {
+    let carrinho = req.session.carrinho || [];
+    // Filtra apenas os itens ativos (não ocultos)
+    const ativos = carrinho.filter(item => !item.oculto);
+
+    if (ativos.length === 0) {
         return res.redirect('/carrinho');
     }
 
-    // Para cada item, diminui o estoque
-    const promises = carrinho.map(item => {
+    // Para cada item ativo, diminui o estoque
+    const promises = ativos.map(item => {
         return new Promise((resolve, reject) => {
             db.query(
                 'UPDATE Produto SET estoque = estoque - ? WHERE ID = ? AND estoque >= ?',
@@ -246,13 +258,19 @@ router.post('/pedido/finalizar', (req, res) => {
 
     Promise.all(promises)
         .then(() => {
-            // Limpa o carrinho da sessão
-            req.session.carrinho = [];
-            // Opcional: Limpa o carrinho do banco se usar usuário logado
+            // Remove apenas os itens ativos do carrinho da sessão
+            req.session.carrinho = carrinho.filter(item => item.oculto);
+
+            // Opcional: Remove só os ativos do banco, se usar usuário logado
             if (req.session.usuario) {
-                db.query('DELETE FROM CARRINHO WHERE usuario_id = ?', [req.session.usuario.ID]);
+                const ativosIds = ativos.map(item => item.produtoId);
+                if (ativosIds.length > 0) {
+                    db.query(
+                        `DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id IN (${ativosIds.map(() => '?').join(',')})`,
+                        [req.session.usuario.ID, ...ativosIds]
+                    );
+                }
             }
-            // Redireciona para a página inicial após finalizar
             res.redirect('/');
         })
         .catch(err => {

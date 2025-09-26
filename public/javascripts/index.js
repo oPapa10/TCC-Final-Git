@@ -139,6 +139,44 @@ window.filterProducts = function(category, clickedButton) {
             }
           });
     }
+
+    // Timer das promoções
+    function atualizarTimersPromocao() {
+        document.querySelectorAll('.promo-timer').forEach(function(timerDiv) {
+            const dataFimStr = timerDiv.getAttribute('data-fim');
+            if (!dataFimStr) {
+                console.log('[FRONT] data-fim vazio');
+                return;
+            }
+            const dataFim = parseLocalDateTime(dataFimStr);
+            console.log('[FRONT] data-fim:', dataFimStr, '| dataFim:', dataFim);
+            if (!dataFim || isNaN(dataFim.getTime())) {
+                timerDiv.querySelector('.timer-text').textContent = 'Promoção encerrada!';
+                timerDiv.closest('.carousel-item').style.display = 'none';
+                console.log('[FRONT] Data inválida, escondendo promoção');
+                return;
+            }
+            const agora = new Date();
+            const diff = dataFim - agora;
+            const timerText = timerDiv.querySelector('.timer-text');
+            if (diff <= 0) {
+                timerText.textContent = 'Promoção encerrada!';
+                timerDiv.closest('.carousel-item').style.display = 'none';
+                console.log('[FRONT] Promoção expirada, escondendo');
+            } else {
+                const horas = Math.floor(diff / 1000 / 60 / 60);
+                const minutos = Math.floor((diff / 1000 / 60) % 60);
+                const segundos = Math.floor((diff / 1000) % 60);
+                timerText.textContent =
+                    (horas > 0 ? `${horas}h ` : '') +
+                    (minutos > 0 ? `${minutos}min ` : '') +
+                    `${segundos}s restantes`;
+                console.log(`[FRONT] Promoção ativa: ${horas}h ${minutos}min ${segundos}s restantes`);
+            }
+        });
+    }
+    setInterval(atualizarTimersPromocao, 1000);
+    atualizarTimersPromocao();
 });
 
 
@@ -210,3 +248,48 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Função para atualizar os dados da promoção em tempo real
+function atualizarDadosPromocao() {
+    document.querySelectorAll('.promo-timer').forEach(function(timerDiv) {
+        const dataFimStr = timerDiv.getAttribute('data-fim');
+        if (!dataFimStr) return;
+        const dataFim = new Date(dataFimStr);
+        if (isNaN(dataFim.getTime())) {
+            timerDiv.querySelector('.timer-text').textContent = 'Promoção encerrada!';
+            timerDiv.closest('.carousel-item').style.display = 'none';
+            return;
+        }
+        const agora = new Date();
+        const diff = dataFim - agora;
+        const timerText = timerDiv.querySelector('.timer-text');
+        if (diff <= 0) {
+            timerText.textContent = 'Promoção encerrada!';
+            timerDiv.closest('.carousel-item').style.display = 'none';
+        } else {
+            const horas = Math.floor(diff / 1000 / 60 / 60);
+            const minutos = Math.floor((diff / 1000 / 60) % 60);
+            const segundos = Math.floor((diff / 1000) % 60);
+            timerText.textContent = 
+                (horas > 0 ? `${horas}h ` : '') +
+                (minutos > 0 ? `${minutos}min ` : '') +
+                `${segundos}s restantes`;
+        }
+    });
+}
+
+// Atualiza os dados da promoção ao carregar a página
+document.addEventListener('DOMContentLoaded', atualizarDadosPromocao);
+
+// Atualiza os dados da promoção a cada 10 segundos
+setInterval(atualizarDadosPromocao, 10000);
+
+// Converte "YYYY-MM-DDTHH:mm:ss" para data local corretamente
+function parseLocalDateTime(str) {
+    // str: "2024-07-01T15:00:00"
+    const [datePart, timePart] = str.split('T');
+    if (!datePart || !timePart) return null;
+    const [year, month, day] = datePart.split('-').map(Number);
+    const [hour, minute, second] = timePart.split(':').map(Number);
+    return new Date(year, month - 1, day, hour, minute, second || 0);
+}
