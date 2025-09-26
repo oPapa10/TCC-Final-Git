@@ -10,9 +10,8 @@
 /* ===== NAVBAR SUPERIOR ===== */
 .navbar-custom {
     background-color: var(--accent-color) !important;
-    z-index: 10;
-    position: sticky; /* ou fixed, se já estiver */
-    top: 0;
+    z-index: 100;
+    position: static !important;
     padding: 10px 0;
 }
 
@@ -89,4 +88,15 @@
     .logo-img {
         height: 150%;
     }
+}
+
+.navbar-custom,
+#navbar2 {
+    position: static !important;
+    z-index: auto;
+}
+
+#navbar2 {
+    position: static !important;
+    z-index: 10;
 }

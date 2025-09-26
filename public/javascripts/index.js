@@ -144,16 +144,11 @@ window.filterProducts = function(category, clickedButton) {
     function atualizarTimersPromocao() {
         document.querySelectorAll('.promo-timer').forEach(function(timerDiv) {
             const dataFimStr = timerDiv.getAttribute('data-fim');
-            if (!dataFimStr) {
-                console.log('[FRONT] data-fim vazio');
-                return;
-            }
+            if (!dataFimStr) return;
             const dataFim = parseLocalDateTime(dataFimStr);
-            console.log('[FRONT] data-fim:', dataFimStr, '| dataFim:', dataFim);
             if (!dataFim || isNaN(dataFim.getTime())) {
                 timerDiv.querySelector('.timer-text').textContent = 'Promoção encerrada!';
                 timerDiv.closest('.carousel-item').style.display = 'none';
-                console.log('[FRONT] Data inválida, escondendo promoção');
                 return;
             }
             const agora = new Date();
@@ -162,7 +157,6 @@ window.filterProducts = function(category, clickedButton) {
             if (diff <= 0) {
                 timerText.textContent = 'Promoção encerrada!';
                 timerDiv.closest('.carousel-item').style.display = 'none';
-                console.log('[FRONT] Promoção expirada, escondendo');
             } else {
                 const horas = Math.floor(diff / 1000 / 60 / 60);
                 const minutos = Math.floor((diff / 1000 / 60) % 60);
@@ -171,11 +165,10 @@ window.filterProducts = function(category, clickedButton) {
                     (horas > 0 ? `${horas}h ` : '') +
                     (minutos > 0 ? `${minutos}min ` : '') +
                     `${segundos}s restantes`;
-                console.log(`[FRONT] Promoção ativa: ${horas}h ${minutos}min ${segundos}s restantes`);
             }
         });
     }
-    setInterval(atualizarTimersPromocao, 1000);
+    setInterval(atualizarTimersPromocao, 1000); // a cada 1 segundo
     atualizarTimersPromocao();
 });
 
@@ -281,8 +274,8 @@ function atualizarDadosPromocao() {
 // Atualiza os dados da promoção ao carregar a página
 document.addEventListener('DOMContentLoaded', atualizarDadosPromocao);
 
-// Atualiza os dados da promoção a cada 10 segundos
-setInterval(atualizarDadosPromocao, 10000);
+// Atualiza os dados da promoção a cada 1 segundos
+setInterval(atualizarDadosPromocao, 1000);
 
 // Converte "YYYY-MM-DDTHH:mm:ss" para data local corretamente
 function parseLocalDateTime(str) {
