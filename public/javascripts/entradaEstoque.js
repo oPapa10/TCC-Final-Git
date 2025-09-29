@@ -1,9 +1,34 @@
+// Pesquisa por nome
 document.getElementById('searchProduto')?.addEventListener('input', function(e) {
     const termo = e.target.value.toLowerCase();
     const select = document.getElementById('produto');
+    const idInput = document.getElementById('searchProdutoId');
+    if (termo) {
+        idInput.value = '';
+        idInput.disabled = true;
+    } else {
+        idInput.disabled = false;
+    }
     Array.from(select.options).forEach(option => {
         if (option.value === "") return;
         option.style.display = option.text.toLowerCase().includes(termo) ? '' : 'none';
+    });
+});
+
+// Pesquisa por ID
+document.getElementById('searchProdutoId')?.addEventListener('input', function(e) {
+    const termo = e.target.value.trim();
+    const select = document.getElementById('produto');
+    const nomeInput = document.getElementById('searchProduto');
+    if (termo) {
+        nomeInput.value = '';
+        nomeInput.disabled = true;
+    } else {
+        nomeInput.disabled = false;
+    }
+    Array.from(select.options).forEach(option => {
+        if (option.value === "") return;
+        option.style.display = (option.value === termo) ? '' : 'none';
     });
 });
 

@@ -260,21 +260,29 @@ function atualizarDadosPromocao() {
             timerText.textContent = 'Promoção encerrada!';
             timerDiv.closest('.carousel-item').style.display = 'none';
         } else {
-            const horas = Math.floor(diff / 1000 / 60 / 60);
-            const minutos = Math.floor((diff / 1000 / 60) % 60);
-            const segundos = Math.floor((diff / 1000) % 60);
-            timerText.textContent = 
-                (horas > 0 ? `${horas}h ` : '') +
-                (minutos > 0 ? `${minutos}min ` : '') +
-                `${segundos}s restantes`;
+            const totalSegundos = Math.floor(diff / 1000);
+            const dias = Math.floor(totalSegundos / (60 * 60 * 24));
+            const horas = Math.floor((totalSegundos % (60 * 60 * 24)) / (60 * 60));
+            const minutos = Math.floor((totalSegundos % (60 * 60)) / 60);
+            const segundos = totalSegundos % 60;
+
+            if (dias > 0) {
+                timerText.textContent = `${dias} Dias ${horas} Horas`;
+            } else if (horas > 0) {
+                timerText.textContent = `${horas} Horas ${minutos} Minutos`;
+            } else if (minutos > 0) {
+                timerText.textContent = `${minutos} Minutos`;
+            } else {
+                timerText.textContent = `${segundos} Segundos`;
+            }
         }
     });
 }
 
-// Atualiza os dados da promoção ao carregar a página
+// Atualiza ao carregar a página
 document.addEventListener('DOMContentLoaded', atualizarDadosPromocao);
 
-// Atualiza os dados da promoção a cada 1 segundos
+// Atualiza a cada segundo
 setInterval(atualizarDadosPromocao, 1000);
 
 // Converte "YYYY-MM-DDTHH:mm:ss" para data local corretamente

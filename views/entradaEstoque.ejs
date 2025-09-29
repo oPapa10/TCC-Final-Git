@@ -29,10 +29,12 @@
 </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="header-section d-flex justify-content-between align-items-center mb-4">
-            <a href="/adm" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Voltar</a>
-            <h2>Entrada e Alteração de Estoque</h2>
+    <div class="container">
+        <div class="header-section mb-4">
+            <div class="d-flex justify-content-start align-items-center mt-3 mb-2">
+                <a href="/adm" class="btn btn-primary btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
+            </div>
+            <h2 class="text-center">Entrada e Alteração de Estoque</h2>
         </div>
         <% if (sucesso) { %>
             <div class="alert alert-success text-center">Estoque atualizado com sucesso!</div>
@@ -48,12 +50,21 @@
                         <p class="text-muted mt-1 mb-0">Atualize o estoque dos produtos de forma simples e rápida.</p>
                     </div>
                     <div class="mb-3">
-                        <label for="produto" class="form-label fw-semibold">Produto</label>
-                        <input type="text" class="form-control mb-2" id="searchProduto" placeholder="Pesquisar produto...">
-                        <select class="form-select" id="produto" name="produto" required>
+                        <label class="form-label fw-semibold">Pesquisar Produto</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label for="searchProduto" class="form-label">Por nome:</label>
+                                <input type="text" class="form-control" id="searchProduto" placeholder="Digite parte do nome do produto...">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="searchProdutoId" class="form-label">Por ID:</label>
+                                <input type="number" class="form-control" id="searchProdutoId" placeholder="Digite o ID do produto...">
+                            </div>
+                        </div>
+                        <select class="form-select mt-2" id="produto" name="produto" required>
                             <option value="">Selecione o produto</option>
                             <% produtos.forEach(function(produto) { %>
-                                <option value="<%= produto.ID %>"><%= produto.nome %> (Estoque atual: <%= produto.estoque %>)</option>
+                                <option value="<%= produto.ID %>"><%= produto.nome %> (ID: <%= produto.ID %>, Estoque atual: <%= produto.estoque %>)</option>
                             <% }) %>
                         </select>
                     </div>

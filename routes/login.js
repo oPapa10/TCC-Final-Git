@@ -41,9 +41,10 @@ router.post('/', (req, res) => {
 
       // Se ambos têm produtos, perguntar ao usuário
       if (carrinhoSessao.length > 0 && carrinhoBanco.length > 0) {
+        console.log('Fluxo de escolha do carrinho ativado');
         req.session.carrinhoSessaoTemp = carrinhoSessao;
         req.session.carrinhoBancoTemp = carrinhoBanco;
-        req.session.pedirEscolhaCarrinho = true; // <-- sinaliza para mostrar o modal
+        req.session.pedirEscolhaCarrinho = true;
         return res.redirect('/perfil');
       }
 

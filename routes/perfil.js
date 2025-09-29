@@ -32,6 +32,7 @@ router.get('/', (req, res) => {
   }
   const mostrarModalCarrinho = req.session.pedirEscolhaCarrinho;
   req.session.pedirEscolhaCarrinho = false;
+  console.log('mostrarModalCarrinho:', mostrarModalCarrinho);
   res.render('perfil', {
       usuario,
       mostrarModalCarrinho,

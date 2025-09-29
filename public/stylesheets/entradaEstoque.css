@@ -13,6 +13,16 @@ body {
     border-radius: 8px;
     font-weight: 600;
 }
+.btn-voltar {
+    margin-top: 20px;
+    margin-bottom: -220px;
+    margin-left: 0;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
+    position: absolute;
+    left: 220px;
+}
 .table th, .table td {
     vertical-align: middle;
 }
