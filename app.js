@@ -77,6 +77,7 @@ app.use('/', perfilPosCadastroRouter);
 app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
 app.use('/editar-perfil', editarPerfilRouter);
+app.use('/avaliacao', require('./routes/avaliação')); // Nova rota adicionada
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

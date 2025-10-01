@@ -13,9 +13,31 @@ exports.listar = (req, res) => {
 
 // Detalhar um produto
 exports.detalhar = (req, res) => {
-  Produto.findById(req.params.id, (err, produto) => {
-    if (err || !produto) return res.status(404).send('Produto não encontrado');
-    res.render('product', { produto, relacionados: [] });
+  const produtoId = req.params.id;
+  db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, produtos) => {
+    if (err || produtos.length === 0) return res.render('product', { produto: null, avaliacoes: [], relacionados: [] });
+
+    const produto = produtos[0];
+
+    // Busca avaliações
+    db.query(
+      `SELECT a.*, u.nome AS usuario_nome 
+       FROM AVALIACAO a 
+       JOIN CLIENTE u ON a.usuario_id = u.ID 
+       WHERE a.produto_id = ? 
+       ORDER BY a.data_avaliacao DESC`,
+      [produtoId],
+      (err2, avaliacoes) => {
+        // Busca produtos relacionados (opcional)
+        db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produtoId], (err3, relacionados) => {
+          res.render('product', {
+            produto,
+            avaliacoes: avaliacoes || [],
+            relacionados: relacionados || []
+          });
+        });
+      }
+    );
   });
 };
 
@@ -34,7 +56,7 @@ exports.detalharPorSlug = (req, res) => {
       [slug],
       (err, results) => {
           if (err || results.length === 0) {
-              return res.render('product', { produto: null, relacionados: [] });
+              return res.render('product', { produto: null, avaliacoes: [], relacionados: [] });
           }
           const produto = results[0];
           produto.valor_promocional = produto.valor_promocional ? Number(produto.valor_promocional) : undefined;
@@ -48,7 +70,26 @@ exports.detalharPorSlug = (req, res) => {
           } else {
               produto.thumbnails = [];
           }
-          res.render('product', { produto, relacionados: [] });
+
+          // Busca avaliações para o produto pelo slug
+          db.query(
+            `SELECT a.*, u.nome AS usuario_nome 
+             FROM AVALIACAO a 
+             JOIN CLIENTE u ON a.usuario_id = u.ID 
+             WHERE a.produto_id = ? 
+             ORDER BY a.data_avaliacao DESC`,
+            [produto.ID],
+            (err2, avaliacoes) => {
+              // Busca produtos relacionados (opcional)
+              db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produto.ID], (err3, relacionados) => {
+                res.render('product', {
+                  produto,
+                  avaliacoes: avaliacoes || [],
+                  relacionados: relacionados || []
+                });
+              });
+            }
+          );
       }
   );
 };
@@ -158,6 +199,7 @@ exports.remover = (req, res) => {
   });
 };
 
+// Função update (caso seja usada em outro lugar)
 exports.update = (id, produto, callback) => {
   // ...existing code...
   console.log('[MODEL] Atualizando produto:', id, produto);

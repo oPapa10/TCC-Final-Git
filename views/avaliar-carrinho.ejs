@@ -1,0 +1,115 @@
+<!-- filepath: views/avaliar-carrinho.ejs -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Avaliar Produtos do Carrinho</title>
+    <link rel="stylesheet" href="/stylesheets/avaliar.css"/>
+    <link rel="stylesheet" href="/stylesheets/index.css"/>
+    <link rel="stylesheet" href="/stylesheets/theme.css"/>
+    <style>
+        .carousel-avaliacao {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .carousel-produto {
+            width: 400px;
+            min-height: 420px;
+            margin: 0 20px;
+            transition: transform 0.3s, opacity 0.3s;
+            opacity: 1;
+            z-index: 2;
+        }
+        .carousel-produto.lateral {
+            width: 250px;
+            opacity: 0.5;
+            transform: scale(0.85);
+            z-index: 1;
+        }
+        .carousel-seta {
+            font-size: 2.5rem;
+            color: #4361ee;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .carousel-seta:disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        @media (max-width: 600px) {
+            .carousel-produto { width: 95vw; min-height: 350px; }
+            .carousel-produto.lateral { width: 60vw; }
+        }
+    </style>
+</head>
+<body>
+<%- include('partials/navbar', { usuario: usuario }) %>
+<main class="container mt-5 pt-5">
+    <h2 class="text-center mb-4">Avalie seus produtos comprados</h2>
+    <div class="carousel-avaliacao">
+        <button class="carousel-seta" id="seta-esq">&lt;</button>
+        <% produtos.forEach(function(produto, idx) { 
+            // Busca avaliação do usuário para este produto
+            let av = avaliacoes.find(a => a.produto_id == produto.ID);
+        %>
+            <div class="carousel-produto <%= idx === 0 ? '' : 'lateral' %>" data-idx="<%= idx %>" style="<%= idx !== 0 ? 'display:none;' : '' %>">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="product-preview mb-3">
+                            <img src="<%= produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto">
+                            <div class="product-preview-info">
+                                <h5><%= produto.nome %></h5>
+                                <p><%= produto.categoria_nome %></p>
+                            </div>
+                        </div>
+                        <form class="form-avaliacao" action="/avaliacao/enviar" method="POST">
+                            <input type="hidden" name="produtoId" value="<%= produto.ID %>">
+                            <div class="mb-3">
+                                <label class="form-label">Sua Avaliação:</label>
+                                <div class="rating-stars">
+                                    <% for(let i=5; i>=1; i--) { %>
+                                        <input type="radio" id="star<%= i %>_<%= produto.ID %>" name="estrela" value="<%= i %>" <%= av && av.estrela == i ? 'checked' : '' %> required>
+                                        <label for="star<%= i %>_<%= produto.ID %>"><i class="fas fa-star"></i></label>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Comentário:</label>
+                                <textarea name="descricao" class="form-control" rows="3" required><%= av ? av.descricao : '' %></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i><%= av ? 'Atualizar Avaliação' : 'Enviar Avaliação' %>
+                            </button>
+                        </form>
+                        <% if (av) { %>
+                            <div class="alert alert-info mt-3">Você já avaliou este produto. Edite se desejar.</div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+        <button class="carousel-seta" id="seta-dir">&gt;</button>
+    </div>
+</main>
+<%- include('partials/footer') %>
+<script>
+    // Carrossel simples JS
+    const produtos = document.querySelectorAll('.carousel-produto');
+    let idxAtual = 0;
+    function mostrarProduto(idx) {
+        produtos.forEach((el, i) => {
+            el.style.display = (i === idx) ? '' : 'none';
+        });
+        document.getElementById('seta-esq').disabled = idx === 0;
+        document.getElementById('seta-dir').disabled = idx === produtos.length - 1;
+    }
+    document.getElementById('seta-esq').onclick = () => { if (idxAtual > 0) mostrarProduto(--idxAtual); };
+    document.getElementById('seta-dir').onclick = () => { if (idxAtual < produtos.length - 1) mostrarProduto(++idxAtual); };
+    mostrarProduto(idxAtual);
+</script>
+</body>
+</html>

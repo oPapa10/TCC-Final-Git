@@ -21,7 +21,7 @@ function limitarCarrinhoPorEstoque(carrinho, produtos) {
 router.get('/', (req, res) => {
   let carrinho = req.session.carrinho || [];
   if (carrinho.length === 0) {
-    return res.render('carrinho', { carrinho: [] });
+    return res.render('carrinho', { carrinho: [], mensagemCompra: 'Compra finalizada com sucesso! Avalie seus produtos.' });
   }
 
   const ids = carrinho.map(item => Number(item.produtoId));
@@ -149,7 +149,7 @@ router.post('/adicionar', (req, res) => {
                 console.log('SUCESSO: Produto adicionado ao carrinho');
                 return res.json({ success: true, quantidade: quantidadeTotal, estoque });
             }
-            res.redirect('/carrinho');
+            res.redirect('/avaliacao/carrinho');
         }
     );
 });
@@ -165,11 +165,11 @@ router.post('/remover', (req, res) => {
       'DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id = ?',
       [req.session.usuario.ID, produtoId],
       (err) => {
-        res.redirect('/carrinho');
+        res.redirect('/avaliacao/carrinho');
       }
     );
   } else {
-    res.redirect('/carrinho');
+    res.redirect('/avaliacao/carrinho');
   }
 });
 
@@ -234,6 +234,10 @@ router.post('/mostrar', (req, res) => {
 });
 
 router.post('/pedido/finalizar', (req, res) => {
+    if (!req.session.usuario) {
+        return res.status(401).render('error', { error: { status: 401 }, message: 'Você precisa estar logado para finalizar a compra.' });
+    }
+
     let carrinho = req.session.carrinho || [];
     // Filtra apenas os itens ativos (não ocultos)
     const ativos = carrinho.filter(item => !item.oculto);
@@ -271,12 +275,21 @@ router.post('/pedido/finalizar', (req, res) => {
                     );
                 }
             }
-            res.redirect('/');
+            // Redireciona para avaliação dos produtos comprados
+            res.redirect('/avaliacao/carrinho');
         })
         .catch(err => {
             console.error('Erro ao finalizar pedido:', err);
             res.status(500).send('Erro ao finalizar pedido');
         });
+});
+
+// Exemplo para rota POST /comprar-agora
+router.post('/comprar-agora', (req, res) => {
+    if (!req.session.usuario) {
+        return res.status(401).render('error', { error: { status: 401 }, message: 'Você precisa estar logado para finalizar a compra.' });
+    }
+    // ...restante do fluxo...
 });
 
 module.exports = router;

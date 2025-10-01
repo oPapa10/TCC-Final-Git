@@ -104,9 +104,24 @@ router.get('/product/:id', (req, res) => {
         [id],
         (err, results) => {
             if (err || results.length === 0) {
-                return res.render('product', { produto: null, relacionados: [] });
+                return res.render('product', { produto: null, relacionados: [], avaliacoes: [] });
             }
-            res.render('product', { produto: results[0], relacionados: [] });
+            // Buscar avaliações
+            db.query(
+                `SELECT a.*, u.nome AS usuario_nome 
+                 FROM AVALIACAO a 
+                 LEFT JOIN CLIENTE u ON a.usuario_id = u.ID 
+                 WHERE a.produto_id = ? 
+                 ORDER BY a.data_avaliacao DESC`,
+                [id],
+                (err2, avaliacoes) => {
+                    res.render('product', {
+                        produto: results[0],
+                        relacionados: [],
+                        avaliacoes: avaliacoes || []
+                    });
+                }
+            );
         }
     );
 });
@@ -115,11 +130,24 @@ router.get('/product/:slug', (req, res) => {
     const slug = req.params.slug;
     Produto.findBySlug(slug, (err, produto) => {
         if (err || !produto) {
-            return res.render('product', { produto: null, relacionados: [] });
+            return res.render('product', { produto: null, relacionados: [], avaliacoes: [] });
         }
-        console.log('Produto encontrado:', produto);
-        console.log('Categoria_ID:', produto.Categoria_ID, 'ID:', produto.ID);
-        res.render('product', { produto, relacionados: [] });
+        // Buscar avaliações
+        db.query(
+            `SELECT a.*, u.nome AS usuario_nome 
+             FROM AVALIACAO a 
+             LEFT JOIN CLIENTE u ON a.usuario_id = u.ID 
+             WHERE a.produto_id = ? 
+             ORDER BY a.data_avaliacao DESC`,
+            [produto.ID],
+            (err2, avaliacoes) => {
+                res.render('product', {
+                    produto,
+                    relacionados: [],
+                    avaliacoes: avaliacoes || []
+                });
+            }
+        );
     });
 });
 
@@ -128,22 +156,86 @@ const campos = [
     'potencia', 'tanque', 'material', 'protecao', 'thumbnails', 'imagem', 'descricao'
 ];
 
+// Exemplo para rota POST /comprar-agora
 router.post('/comprar-agora', (req, res) => {
     const { produtoId, quantidade } = req.body;
-    if (!produtoId || !quantidade) return res.redirect('/');
-
-    db.query(
-        'UPDATE Produto SET estoque = estoque - ? WHERE ID = ? AND estoque >= ?',
-        [quantidade, produtoId, quantidade],
-        (err, result) => {
-            if (err) {
-                console.error('Erro ao comprar agora:', err);
-                return res.status(500).send('Erro ao comprar produto');
+    if (!req.session.usuario) {
+        // ...busca produto e avaliações como antes...
+        db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, results) => {
+            if (err || !results || results.length === 0) {
+                return res.status(404).send('Produto não encontrado');
             }
-            // Redireciona para a página inicial após comprar
-            res.redirect('/');
+            const produto = results[0];
+            db.query(
+                `SELECT a.*, u.nome AS usuario_nome 
+                 FROM AVALIACAO a 
+                 LEFT JOIN CLIENTE u ON a.usuario_id = u.ID 
+                 WHERE a.produto_id = ? 
+                 ORDER BY a.data_avaliacao DESC`,
+                [produtoId],
+                (err2, avaliacoes) => {
+                    db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produtoId], (err3, relacionados) => {
+                        // Se for AJAX/fetch, renderiza só o bloco do alerta
+                        if (req.xhr || req.headers.accept.indexOf('json') > -1 || req.headers['content-type'] === 'application/json') {
+                            return res.render('partials/compraConfirmacao', {
+                                mensagemNaoLogado: 'Você precisa estar logado para comprar!',
+                                confirmacaoCompra: false,
+                                produtoNome: null,
+                                produtoId: null
+                            });
+                        }
+                        // Se não for AJAX, renderiza a página inteira (fallback)
+                        res.render('product', {
+                            produto,
+                            avaliacoes: avaliacoes || [],
+                            relacionados: relacionados || [],
+                            mensagemNaoLogado: 'Você precisa estar logado para comprar!',
+                            confirmacaoCompra: false,
+                            quantidade: quantidade || 1
+                        });
+                    });
+                }
+            );
+        });
+        return;
+    }
+
+    // USUÁRIO LOGADO: mostrar confirmação de compra
+    db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, results) => {
+        if (err || !results || results.length === 0) {
+            return res.status(404).send('Produto não encontrado');
         }
-    );
+        const produto = results[0];
+        // Se for AJAX/fetch, renderiza só o bloco do alerta de confirmação
+        if (req.xhr || req.headers.accept.indexOf('json') > -1 || req.headers['content-type'] === 'application/json') {
+            return res.render('partials/compraConfirmacao', {
+                mensagemNaoLogado: null,
+                confirmacaoCompra: true,
+                produtoId: produtoId,
+                produtoNome: produto.nome
+            });
+        }
+        // Se não for AJAX, renderiza a página inteira (fallback)
+        db.query(
+            `SELECT a.*, u.nome AS usuario_nome 
+             FROM AVALIACAO a 
+             LEFT JOIN CLIENTE u ON a.usuario_id = u.ID 
+             WHERE a.produto_id = ? 
+             ORDER BY a.data_avaliacao DESC`,
+            [produtoId],
+            (err2, avaliacoes) => {
+                db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produtoId], (err3, relacionados) => {
+                    res.render('product', {
+                        produto,
+                        avaliacoes: avaliacoes || [],
+                        relacionados: relacionados || [],
+                        confirmacaoCompra: true,
+                        quantidade: quantidade || 1
+                    });
+                });
+            }
+        );
+    });
 });
 
 module.exports = router;

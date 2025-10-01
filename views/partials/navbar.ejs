@@ -1,0 +1,59 @@
+<!-- filepath: views/partials/navbar.ejs -->
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand logo-container" href="/">
+            <img src="/images/logo.png" alt="Logomarca" class="logo-img" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
+            aria-label="Alternar navegação">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
+            <ul class="navbar-nav ms-auto">
+                <% if (typeof usuario !== 'undefined' && usuario) { %>
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="/perfil" class="nav-link d-flex align-items-center" style="cursor:pointer;">
+                            <span class="me-2">Bem-vindo, <%= usuario.nome.split(' ')[0] %></span>
+                            <% if (usuario.avatar && usuario.avatar.match(/\.(jpg|jpeg|png|gif)$/i)) { %>
+                                <img src="<%= usuario.avatar %>" alt="Avatar" class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
+                            <% } else { %>
+                                <span class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width:32px; height:32px;">
+                                    <i class="fas fa-user" style="font-size: 1.3rem; color: #888;"></i>
+                                </span>
+                            <% } %>
+                        </a>
+                    </li>
+                <% } %>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/perfil">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/carrinho">
+                        <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
+                        <span id="cartCounter" class="cart-counter"></span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
+                        role="button" data-bs-toggle="dropdown">
+                        <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
+                            alt="Opções" class="nav-icon"/>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
+                        <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
+                        <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
+                        <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
