@@ -36,6 +36,8 @@
                 
                 <form action="/avaliacao/enviar" method="POST">
                     <input type="hidden" name="produtoId" value="<%= produtoId %>">
+                    <input type="hidden" name="origem" value="<%= origem || 'produto' %>">
+                    <input type="hidden" name="quantidade" value="<%= quantidadeSelecionada %>">
                     
                     <!-- Sistema de Estrelas Interativo -->
                     <div class="mb-4">

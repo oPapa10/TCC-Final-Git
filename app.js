@@ -30,6 +30,14 @@ const editarPerfilRouter = require('./routes/editar-perfil');
 
 const app = express();
 
+app.set('etag', false);
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    next();
+});
+
 // Configuração do express-session
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -77,7 +85,7 @@ app.use('/', perfilPosCadastroRouter);
 app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
 app.use('/editar-perfil', editarPerfilRouter);
-app.use('/avaliacao', require('./routes/avaliação')); // Nova rota adicionada
+app.use('/avaliacao', require('./routes/avaliacao')); // Nova rota adicionada
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

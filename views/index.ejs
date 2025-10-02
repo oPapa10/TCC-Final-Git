@@ -101,6 +101,10 @@
         </div>
     </nav>
 
+    <% if (typeof msg !== 'undefined' && msg === 'avaliacao') { %>
+     <div class="alert alert-success text-center mt-3">Avaliação cadastrada!</div>
+    <% } %>
+
     <!-- Navbar de Categorias -->
     <nav class="navbar navbar-expand-lg navbar-dark" id="navbar2">
         <div class="container-fluid">
@@ -333,5 +337,6 @@ if (window.location.search.includes('sucesso=1')) {
     alert('Compra efetuada com sucesso!');
 }
 </script>
+
 </body>
 </html>

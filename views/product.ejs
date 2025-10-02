@@ -103,6 +103,29 @@
                         <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
                     </button>
                 </form>
+                <div id="cartMessage" class="cart-message">Produto adicionado ao carrinho!</div>
+                <script>
+                document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const form = this;
+                    const data = new URLSearchParams(new FormData(form));
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: data
+                    })
+                    .then(res => res.json())
+                    .then(json => {
+                        if (json.success) {
+                            const msg = document.getElementById('cartMessage');
+                            msg.style.display = 'block';
+                            setTimeout(() => { msg.style.display = 'none'; }, 2000);
+                        } else {
+                            alert(json.message || 'Erro ao adicionar ao carrinho');
+                        }
+                    });
+                });
+                </script>
 
                 <!-- ÁREA DE COMPRA AGORA COM CONFIRMAÇÃO -->
                 <div class="buy-now-section">

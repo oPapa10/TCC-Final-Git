@@ -149,7 +149,7 @@ router.post('/adicionar', (req, res) => {
                 console.log('SUCESSO: Produto adicionado ao carrinho');
                 return res.json({ success: true, quantidade: quantidadeTotal, estoque });
             }
-            res.redirect('/avaliacao/carrinho');
+            res.redirect('/carrinho'); // <-- Corrija aqui!
         }
     );
 });
@@ -165,11 +165,11 @@ router.post('/remover', (req, res) => {
       'DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id = ?',
       [req.session.usuario.ID, produtoId],
       (err) => {
-        res.redirect('/avaliacao/carrinho');
+        res.redirect('/carrinho');
       }
     );
   } else {
-    res.redirect('/avaliacao/carrinho');
+    res.redirect('/carrinho');
   }
 });
 
@@ -242,9 +242,17 @@ router.post('/pedido/finalizar', (req, res) => {
     // Filtra apenas os itens ativos (não ocultos)
     const ativos = carrinho.filter(item => !item.oculto);
 
+    console.log('[FINALIZAR COMPRA] Carrinho:', carrinho);
+    console.log('[FINALIZAR COMPRA] Ativos para avaliar:', ativos);
+
     if (ativos.length === 0) {
+        console.log('[FINALIZAR COMPRA] Nenhum produto ativo para avaliar.');
         return res.redirect('/carrinho');
     }
+
+    // Salva os produtos ativos para avaliação
+    req.session.produtosParaAvaliar = ativos.map(item => ({ produtoId: item.produtoId, quantidade: item.quantidade }));
+    console.log('[FINALIZAR COMPRA] Salvo em req.session.produtosParaAvaliar:', req.session.produtosParaAvaliar);
 
     // Para cada item ativo, diminui o estoque
     const promises = ativos.map(item => {
@@ -262,9 +270,7 @@ router.post('/pedido/finalizar', (req, res) => {
 
     Promise.all(promises)
         .then(() => {
-            // Remove apenas os itens ativos do carrinho da sessão
             req.session.carrinho = carrinho.filter(item => item.oculto);
-
             // Opcional: Remove só os ativos do banco, se usar usuário logado
             if (req.session.usuario) {
                 const ativosIds = ativos.map(item => item.produtoId);
@@ -275,7 +281,7 @@ router.post('/pedido/finalizar', (req, res) => {
                     );
                 }
             }
-            // Redireciona para avaliação dos produtos comprados
+            console.log('Redirecionando para /avaliacao/carrinho');
             res.redirect('/avaliacao/carrinho');
         })
         .catch(err => {

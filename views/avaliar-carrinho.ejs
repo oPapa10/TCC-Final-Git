@@ -50,50 +50,64 @@
 <%- include('partials/navbar', { usuario: usuario }) %>
 <main class="container mt-5 pt-5">
     <h2 class="text-center mb-4">Avalie seus produtos comprados</h2>
-    <div class="carousel-avaliacao">
-        <button class="carousel-seta" id="seta-esq">&lt;</button>
-        <% produtos.forEach(function(produto, idx) { 
-            // Busca avaliação do usuário para este produto
-            let av = avaliacoes.find(a => a.produto_id == produto.ID);
-        %>
-            <div class="carousel-produto <%= idx === 0 ? '' : 'lateral' %>" data-idx="<%= idx %>" style="<%= idx !== 0 ? 'display:none;' : '' %>">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="product-preview mb-3">
-                            <img src="<%= produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto">
-                            <div class="product-preview-info">
-                                <h5><%= produto.nome %></h5>
-                                <p><%= produto.categoria_nome %></p>
-                            </div>
-                        </div>
-                        <form class="form-avaliacao" action="/avaliacao/enviar" method="POST">
-                            <input type="hidden" name="produtoId" value="<%= produto.ID %>">
-                            <div class="mb-3">
-                                <label class="form-label">Sua Avaliação:</label>
-                                <div class="rating-stars">
-                                    <% for(let i=5; i>=1; i--) { %>
-                                        <input type="radio" id="star<%= i %>_<%= produto.ID %>" name="estrela" value="<%= i %>" <%= av && av.estrela == i ? 'checked' : '' %> required>
-                                        <label for="star<%= i %>_<%= produto.ID %>"><i class="fas fa-star"></i></label>
-                                    <% } %>
+    <% if (!produtos || produtos.length === 0) { %>
+        <div class="alert alert-warning text-center mt-5">Nenhum produto para avaliar.</div>
+    <% } else { %>
+        <div class="carousel-avaliacao">
+            <button class="carousel-seta" id="seta-esq">&lt;</button>
+            <% produtos.forEach(function(produto, idx) { 
+                // Busca avaliação do usuário para este produto
+                let av = avaliacoes.find(a => a.produto_id == produto.ID);
+            %>
+                <div class="carousel-produto <%= idx === 0 ? '' : 'lateral' %>" data-idx="<%= idx %>" style="<%= idx !== 0 ? 'display:none;' : '' %>">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="product-preview mb-3">
+                                <img src="<%= produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto">
+                                <div class="product-preview-info">
+                                    <h5><%= produto.nome %></h5>
+                                    <p><%= produto.categoria_nome %></p>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Comentário:</label>
-                                <textarea name="descricao" class="form-control" rows="3" required><%= av ? av.descricao : '' %></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-paper-plane me-2"></i><%= av ? 'Atualizar Avaliação' : 'Enviar Avaliação' %>
-                            </button>
-                        </form>
-                        <% if (av) { %>
-                            <div class="alert alert-info mt-3">Você já avaliou este produto. Edite se desejar.</div>
-                        <% } %>
+                            <form class="form-avaliacao" action="/avaliacao/enviar" method="POST">
+                                <input type="hidden" name="produtoId" value="<%= produto.ID %>">
+                                <input type="hidden" name="origem" value="carrinho">
+                                <div class="mb-3">
+                                    <label class="form-label">Sua Avaliação:</label>
+                                    <div class="rating-stars">
+                                        <% for(let i=5; i>=1; i--) { %>
+                                            <input type="radio" id="star<%= i %>_<%= produto.ID %>" name="estrela" value="<%= i %>" <%= av && av.estrela == i ? 'checked' : '' %> required>
+                                            <label for="star<%= i %>_<%= produto.ID %>"><i class="fas fa-star"></i></label>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Comentário:</label>
+                                    <textarea name="descricao" class="form-control" rows="3" required><%= av ? av.descricao : '' %></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i><%= av ? 'Atualizar Avaliação' : 'Enviar Avaliação' %>
+                                </button>
+                            </form>
+                            <% if (av) { %>
+                                <div class="alert alert-info mt-3">Você já avaliou este produto. Edite se desejar.</div>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <% }) %>
-        <button class="carousel-seta" id="seta-dir">&gt;</button>
-    </div>
+            <% }) %>
+            <button class="carousel-seta" id="seta-dir">&gt;</button>
+        </div>
+    <% } %>
+    <div style="background:yellow; color:black; padding:10px;">ESTOU NA VIEW avaliar-carrinho.ejs</div>
+    <pre>
+produtos: <%= JSON.stringify(produtos) %>
+avaliacoes: <%= JSON.stringify(avaliacoes) %>
+produtoId: <%= produtoId %>
+produtoNome: <%= produtoNome %>
+produtoCategoria: <%= produtoCategoria %>
+produtoImagem: <%= produtoImagem %>
+</pre>
 </main>
 <%- include('partials/footer') %>
 <script>
