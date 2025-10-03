@@ -92,6 +92,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
                             <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
+                            <li><a class="dropdown-item" href="/avaliacao">Minhas Avaliações</a></li>
                             <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
                             <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
                         </ul>
@@ -102,7 +103,9 @@
     </nav>
 
     <% if (typeof msg !== 'undefined' && msg === 'avaliacao') { %>
-     <div class="alert alert-success text-center mt-3">Avaliação cadastrada!</div>
+     <div class="alert alert-success text-center mt-3">
+    Você tem produtos disponíveis para avaliação! <a href="/avaliacao" class="btn btn-sm btn-primary ms-2">Avaliar agora</a>
+ </div>
     <% } %>
 
     <!-- Navbar de Categorias -->

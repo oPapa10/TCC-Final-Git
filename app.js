@@ -66,7 +66,7 @@ app.use((req, res, next) => {
 // Rotas
 
 app.use('/', indexRouter);
-app.use('/', productRouter); // Isso já está correto!
+app.use('/', productRouter); // Inclui as rotas de produto, inclusive /comprar-agora e /comprar-confirmacao/:produtoId
 app.use('/carrinho', carrinhoRouter); // Isso já está correto!
 app.use('/cadastro', cadastroRouter);
 app.use('/opcoes', opcoesRouter);

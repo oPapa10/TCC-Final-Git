@@ -158,83 +158,42 @@ const campos = [
 
 // Exemplo para rota POST /comprar-agora
 router.post('/comprar-agora', (req, res) => {
-    const { produtoId, quantidade } = req.body;
     if (!req.session.usuario) {
-        // ...busca produto e avaliações como antes...
-        db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, results) => {
-            if (err || !results || results.length === 0) {
-                return res.status(404).send('Produto não encontrado');
-            }
-            const produto = results[0];
+        return res.status(401).render('error', { error: { status: 401 }, message: 'Você precisa estar logado para finalizar a compra.' });
+    }
+    const { produtoId, quantidade } = req.body;
+    db.query(
+        'UPDATE Produto SET estoque = estoque - ? WHERE ID = ? AND estoque >= ?',
+        [quantidade, produtoId, quantidade],
+        (err, result) => {
+            if (err) return res.status(500).send('Erro ao atualizar estoque');
             db.query(
-                `SELECT a.*, u.nome AS usuario_nome 
-                 FROM AVALIACAO a 
-                 LEFT JOIN CLIENTE u ON a.usuario_id = u.ID 
-                 WHERE a.produto_id = ? 
-                 ORDER BY a.data_avaliacao DESC`,
-                [produtoId],
-                (err2, avaliacoes) => {
-                    db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produtoId], (err3, relacionados) => {
-                        // Se for AJAX/fetch, renderiza só o bloco do alerta
-                        if (req.xhr || req.headers.accept.indexOf('json') > -1 || req.headers['content-type'] === 'application/json') {
-                            return res.render('partials/compraConfirmacao', {
-                                mensagemNaoLogado: 'Você precisa estar logado para comprar!',
-                                confirmacaoCompra: false,
-                                produtoNome: null,
-                                produtoId: null
-                            });
-                        }
-                        // Se não for AJAX, renderiza a página inteira (fallback)
-                        res.render('product', {
-                            produto,
-                            avaliacoes: avaliacoes || [],
-                            relacionados: relacionados || [],
-                            mensagemNaoLogado: 'Você precisa estar logado para comprar!',
-                            confirmacaoCompra: false,
-                            quantidade: quantidade || 1
-                        });
+                'INSERT INTO PEDIDO_ITENS (usuario_id, produto_id, quantidade) VALUES (?, ?, ?)',
+                [req.session.usuario.ID, produtoId, quantidade],
+                (err2) => {
+                    if (err2) return res.status(500).send('Erro ao registrar pedido');
+                    console.log('[PEDIDO_ITENS] Tentando inserir:', {
+                        usuarioId: req.session.usuario.ID,
+                        produtoId,
+                        quantidade
                     });
+                    res.redirect('/?msg=avaliacao');
                 }
             );
-        });
-        return;
-    }
+        }
+    );
+});
 
-    // USUÁRIO LOGADO: mostrar confirmação de compra
-    db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, results) => {
-        if (err || !results || results.length === 0) {
-            return res.status(404).send('Produto não encontrado');
-        }
-        const produto = results[0];
-        // Se for AJAX/fetch, renderiza só o bloco do alerta de confirmação
-        if (req.xhr || req.headers.accept.indexOf('json') > -1 || req.headers['content-type'] === 'application/json') {
-            return res.render('partials/compraConfirmacao', {
-                mensagemNaoLogado: null,
-                confirmacaoCompra: true,
-                produtoId: produtoId,
-                produtoNome: produto.nome
-            });
-        }
-        // Se não for AJAX, renderiza a página inteira (fallback)
-        db.query(
-            `SELECT a.*, u.nome AS usuario_nome 
-             FROM AVALIACAO a 
-             LEFT JOIN CLIENTE u ON a.usuario_id = u.ID 
-             WHERE a.produto_id = ? 
-             ORDER BY a.data_avaliacao DESC`,
-            [produtoId],
-            (err2, avaliacoes) => {
-                db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produtoId], (err3, relacionados) => {
-                    res.render('product', {
-                        produto,
-                        avaliacoes: avaliacoes || [],
-                        relacionados: relacionados || [],
-                        confirmacaoCompra: true,
-                        quantidade: quantidade || 1
-                    });
-                });
-            }
-        );
+router.get('/comprar-confirmacao/:produtoId', (req, res) => {
+    const produtoId = req.params.produtoId;
+    db.query('SELECT * FROM Produto WHERE ID = ?', [produtoId], (err, results) => {
+        const produto = results && results[0] ? results[0] : null;
+        res.render('partials/compraConfirmacao', {
+            confirmacaoCompra: true,
+            produtoId,
+            produtoNome: produto ? produto.nome : '',
+            quantidade: 1
+        });
     });
 });
 

@@ -129,31 +129,23 @@
 
                 <!-- ÁREA DE COMPRA AGORA COM CONFIRMAÇÃO -->
                 <div class="buy-now-section">
-                    <form id="formComprarAgora" class="mt-2">
-                        <input type="hidden" name="produtoId" value="<%= produto.ID %>">
-                        <input type="hidden" name="quantidade" id="quantidadeComprarAgora" value="1">
-                        <button type="submit" class="btn btn-outline-primary btn-buy-now">
-                            <i class="fas fa-bolt me-2"></i>Comprar Agora
-                        </button>
-                    </form>
+                    <!-- Botão que abre o modal -->
+                    <button type="button" class="btn btn-outline-primary btn-buy-now" onclick="abrirConfirmacaoCompra('<%= produto.ID %>', '<%= produto.nome %>')">
+                        <i class="fas fa-bolt me-2"></i>Comprar Agora
+                    </button>
+
+                    <!-- Área para renderizar o modal -->
                     <div id="buyNowConfirmation"></div>
+
                     <script>
-                    document.getElementById('formComprarAgora').addEventListener('submit', function(e) {
-                        e.preventDefault();
-                        var produtoId = this.produtoId.value;
-                        var quantidade = this.quantidade.value;
-                        fetch('/comprar-agora', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ produtoId, quantidade })
-                        })
-                        .then(res => res.text())
-                        .then(html => {
-                            document.getElementById('buyNowConfirmation').innerHTML = html;
-                            // Scroll até o alerta de confirmação
-                            document.getElementById('buyNowConfirmation').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        });
-                    });
+                    function abrirConfirmacaoCompra(produtoId, produtoNome) {
+                        fetch('/comprar-confirmacao/' + produtoId)
+                            .then(res => res.text())
+                            .then(html => {
+                                document.getElementById('buyNowConfirmation').innerHTML = html;
+                                window.scrollTo({ top: document.getElementById('buyNowConfirmation').offsetTop - 100, behavior: 'smooth' });
+                            });
+                    }
                     </script>
                 </div>
 

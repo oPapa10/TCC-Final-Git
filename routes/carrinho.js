@@ -270,19 +270,40 @@ router.post('/pedido/finalizar', (req, res) => {
 
     Promise.all(promises)
         .then(() => {
-            req.session.carrinho = carrinho.filter(item => item.oculto);
-            // Opcional: Remove só os ativos do banco, se usar usuário logado
-            if (req.session.usuario) {
-                const ativosIds = ativos.map(item => item.produtoId);
-                if (ativosIds.length > 0) {
+            const usuarioId = req.session.usuario.ID;
+            const insertPromises = ativos.map(item => {
+                return new Promise((resolve, reject) => {
                     db.query(
-                        `DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id IN (${ativosIds.map(() => '?').join(',')})`,
-                        [req.session.usuario.ID, ...ativosIds]
+                        'INSERT INTO PEDIDO_ITENS (usuario_id, produto_id, quantidade) VALUES (?, ?, ?)',
+                        [usuarioId, item.produtoId, item.quantidade],
+                        (err2) => {
+                            if (err2) {
+    console.error('[PEDIDO_ITENS] ERRO:', err2);
+    return res.status(500).send('Erro ao registrar pedido: ' + (err2.sqlMessage || err2.message));
+}
+                            resolve();
+                        }
                     );
-                }
-            }
-            console.log('Redirecionando para /avaliacao/carrinho');
-            res.redirect('/avaliacao/carrinho');
+                });
+            });
+            Promise.all(insertPromises)
+                .then(() => {
+                    req.session.carrinho = carrinho.filter(item => item.oculto);
+                    // Remove do banco se quiser
+                    if (req.session.usuario) {
+                        const ativosIds = ativos.map(item => item.produtoId);
+                        if (ativosIds.length > 0) {
+                            db.query(
+                                `DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id IN (${ativosIds.map(() => '?').join(',')})`,
+                                [req.session.usuario.ID, ...ativosIds]
+                            );
+                        }
+                    }
+                    res.redirect('/?msg=avaliacao');
+                })
+                .catch(err => {
+                    res.status(500).send('Erro ao registrar pedido');
+                });
         })
         .catch(err => {
             console.error('Erro ao finalizar pedido:', err);
