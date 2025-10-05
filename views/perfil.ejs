@@ -12,256 +12,7 @@
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="/stylesheets/theme.css">
     <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
-    <style>
-        /* Estilos adicionais para embelezar */
-        .profile-completion-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-            border: none;
-        }
-        
-        .welcome-banner {
-            background: linear-gradient(135deg, #007bff 0%, #00c6ff 100%);
-            color: white;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .welcome-banner::before {
-            content: "";
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-        
-        .welcome-banner::after {
-            content: "";
-            position: absolute;
-            bottom: -80px;
-            right: -30px;
-            width: 250px;
-            height: 250px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
-        }
-        
-        .avatar-container {
-            width: 150px;
-            height: 150px;
-            margin: -30px auto 10px;
-            position: relative;
-            z-index: 2;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .avatar-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border: 5px solid white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .avatar-container:hover .avatar-img {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-        
-        .avatar-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%);
-            border: 5px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 3rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-        
-        .avatar-upload {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 3;
-        }
-        
-        .avatar-upload-form {
-            display: none;
-            position: absolute;
-            bottom: -70px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-            z-index: 4;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        
-        .avatar-upload-form.show {
-            display: block;
-        }
-        
-        .avatar-upload-btn {
-            position: absolute;
-            bottom: -15px;
-            right: -10px;
-            width: 40px;
-            height: 40px;
-            background: #007bff;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-            z-index: 2;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .avatar-upload-btn:hover {
-            background: #0069d9;
-            transform: scale(1.1);
-        }
-        
-        .info-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .info-item {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        
-        .info-icon {
-            width: 40px;
-            height: 40px;
-            background: #f8f9fa;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            color: #28a745;
-            font-size: 1.1rem;
-        }
-        
-        .action-btn {
-            transition: all 0.3s ease;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-        }
-        
-        .divider {
-            position: relative;
-            text-align: center;
-            margin: 2rem 0;
-            color: #6c757d;
-        }
-        
-        .divider::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
-            z-index: 1;
-        }
-        
-        .divider span {
-            background: white;
-            position: relative;
-            z-index: 2;
-            padding: 0 1rem;
-        }
-        
-        /* Estilos melhorados para o botão de sair */
-        .logout-section {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        .logout-btn {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            border: none;
-            border-radius: 50px;
-            padding: 0.5rem 1.5rem;
-            color: white;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
-            color: white;
-        }
-        
-        .logout-btn i {
-            margin-right: 8px;
-        }
-        
-        .btn-upload {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 0.5rem 1.5rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-upload:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-            color: white;
-        }
-    </style>
+   
 </head>
 <body>
     <%- include('partials/navbar', { usuario: usuario }) %>
@@ -379,68 +130,70 @@
     </main>
     <% } else { %>
     <!-- FORMULÁRIO DE LOGIN SIMPLES (mantido igual) -->
-    <main class="flex-grow-1 d-flex align-items-center" style="min-height: 100vh;">
-        <div class="container profile-container">
-            <div class="profile-card">
-                <div class="profile-header text-center mb-4">
-                    <div class="profile-avatar">
-                        <img src="https://c0.klipartz.com/pngpicture/507/702/gratis-png-icono-de-perfil-icono-de-usuario-simple.png" alt="Imagem de Perfil">
-                    </div>
-                    <h2 class="profile-title">
-                        Acesse sua conta
-                    </h2>
-                    <p class="profile-subtitle">Gerencie seus pedidos, lista de desejos e muito mais</p>
-                </div>
-                <form class="profile-form" action="/login" method="POST">
-                    <div class="form-group mb-3">
-                        <label for="email" class="form-label">E-mail</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="seu@email.com" required>
+    <main class="main-content flex-grow-1 d-flex align-items-center" style="padding-top: 80px;">
+        <div class="main-content w-100">
+            <div class="container profile-container">
+                <div class="profile-card">
+                    <div class="profile-header text-center mb-4">
+                        <div class="profile-avatar">
+                            <img src="https://c0.klipartz.com/pngpicture/507/702/gratis-png-icono-de-perfil-icono-de-usuario-simple.png" alt="Imagem de Perfil">
                         </div>
+                        <h2 class="profile-title">
+                            Acesse sua conta
+                        </h2>
+                        <p class="profile-subtitle">Gerencie seus pedidos, lista de desejos e muito mais</p>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="senha" class="form-label">Senha</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="senha" name="senha" placeholder="Sua senha" required>
-                            <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('senha', this)">
-                                <i class="fas fa-eye"></i>
+                    <form class="profile-form" action="/login" method="POST">
+                        <div class="form-group mb-3">
+                            <label for="email" class="form-label">E-mail</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="seu@email.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="senha" class="form-label">Senha</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="senha" name="senha" placeholder="Sua senha" required>
+                                <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('senha', this)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="lembrar" name="lembrar">
+                                <label class="form-check-label" for="lembrar">Lembrar-me</label>
+                            </div>
+                            <a href="#" class="forgot-password" onclick="alert('Redirecionar para recuperação de senha')">
+                                Esqueceu a senha?
+                            </a>
+                        </div>
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                            <button type="button" class="btn btn-outline-primary btn-lg" onclick="window.location.href='/cadastro'">
+                                Criar nova conta
                             </button>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="lembrar" name="lembrar">
-                            <label class="form-check-label" for="lembrar">Lembrar-me</label>
+                        <div class="divider my-4">ou</div>
+                        <div class="social-login">
+                            <button type="button" class="btn btn-google">
+                                <i class="fab fa-google me-2"></i> Continuar com Google
+                            </button>
+                            <button type="button" class="btn btn-facebook mt-2">
+                                <i class="fab fa-facebook-f me-2"></i> Continuar com Facebook
+                            </button>
                         </div>
-                        <a href="#" class="forgot-password" onclick="alert('Redirecionar para recuperação de senha')">
-                            Esqueceu a senha?
-                        </a>
-                    </div>
-                    <div class="d-grid gap-3">
-                        <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
-                        <button type="button" class="btn btn-outline-primary btn-lg" onclick="window.location.href='/cadastro'">
-                            Criar nova conta
-                        </button>
-                    </div>
-                    <div class="divider my-4">ou</div>
-                    <div class="social-login">
-                        <button type="button" class="btn btn-google">
-                            <i class="fab fa-google me-2"></i> Continuar com Google
-                        </button>
-                        <button type="button" class="btn btn-facebook mt-2">
-                            <i class="fab fa-facebook-f me-2"></i> Continuar com Facebook
-                        </button>
-                    </div>
-                </form>
-                <% if (mensagem) { %>
-                  <div id="alerta-erro" class="alert-erro-overlay">
-                    <div class="alert alert-danger text-center shadow-lg">
-                      <%= mensagem %>
-                    </div>
-                  </div>
-                <% } %>
+                    </form>
+                    <% if (mensagem) { %>
+                      <div id="alerta-erro" class="alert-erro-overlay">
+                        <div class="alert alert-danger text-center shadow-lg">
+                          <%= mensagem %>
+                        </div>
+                      </div>
+                    <% } %>
+                </div>
             </div>
         </div>
     </main>

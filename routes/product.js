@@ -22,19 +22,34 @@ router.get('/p/:slug', (req, res) => {
         [slug],
         (err, results) => {
             if (err || results.length === 0) {
-                return res.render('product', { produto: null, relacionados: [] });
+                return res.render('product', { produto: null, relacionados: [], avaliacoes: [] });
             }
             const produto = results[0];
             const categoriaId = Number(produto.Categoria_ID);
             const produtoId = Number(produto.ID);
 
-            // Busca produtos da mesma categoria, exceto o atual
+            // Busca avaliações do produto
             db.query(
-                `SELECT * FROM Produto WHERE Categoria_ID = ? AND ID != ? LIMIT 4`,
-                [categoriaId, produtoId],
-                (err2, relacionados) => {
-                    if (err2 || !relacionados) relacionados = [];
-                    res.render('product', { produto, relacionados });
+                `SELECT a.*, u.nome AS usuario_nome 
+                 FROM AVALIACAO a 
+                 LEFT JOIN CLIENTE u ON a.usuario_id = u.ID 
+                 WHERE a.produto_id = ? 
+                 ORDER BY a.data_avaliacao DESC`,
+                [produtoId],
+                (err3, avaliacoes) => {
+                    // Busca produtos da mesma categoria, exceto o atual
+                    db.query(
+                        `SELECT * FROM Produto WHERE Categoria_ID = ? AND ID != ? LIMIT 4`,
+                        [categoriaId, produtoId],
+                        (err2, relacionados) => {
+                            if (err2 || !relacionados) relacionados = [];
+                            res.render('product', {
+                                produto,
+                                relacionados,
+                                avaliacoes: avaliacoes || []
+                            });
+                        }
+                    );
                 }
             );
         }

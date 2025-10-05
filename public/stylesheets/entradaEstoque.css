@@ -26,3 +26,9 @@ body {
 .table th, .table td {
     vertical-align: middle;
 }
+/* Limita largura do alerta de sucesso */
+.alert-success {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
