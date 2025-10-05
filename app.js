@@ -27,6 +27,7 @@ const perfilPosCadastroRouter = require('./routes/perfil-pos-cadastro');
 const entradaEstoqueRouter = require('./routes/entradaEstoque');
 const cadastrarPromocaoRouter = require('./routes/cadastrarPromocao');
 const editarPerfilRouter = require('./routes/editar-perfil');
+const avaliacaoRouter = require('./routes/avaliacao');
 
 const app = express();
 
@@ -85,7 +86,7 @@ app.use('/', perfilPosCadastroRouter);
 app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
 app.use('/editar-perfil', editarPerfilRouter);
-app.use('/avaliacao', require('./routes/avaliacao')); // Nova rota adicionada
+app.use('/avaliacao', avaliacaoRouter); // Nova rota adicionada
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

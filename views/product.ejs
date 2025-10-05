@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/stylesheets/footer.css"/>
     <link rel="stylesheet" href="/stylesheets/product.css"/>
     <link rel="stylesheet" href="/stylesheets/theme.css">
+    <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
 </head>
 <body>
     <%- include('partials/navbar', { usuario: usuario }) %>
@@ -204,12 +205,14 @@
             </div>
             <div class="user-reviews">
                 <% avaliacoes.forEach(function(av) { 
-                    let isMinhaAvaliacao = usuario && av.usuario_id && usuario.ID === av.usuario_id;
+                    let isMinhaAvaliacao = usuario && av.usuario_id && usuario.ID == av.usuario_id;
                 %>
                     <div class="review-card">
                         <div class="review-header">
                             <div class="user-info">
-                                <% if (!isMinhaAvaliacao) { %>
+                                <% if (isMinhaAvaliacao) { %>
+                                    <span class="user-name text-primary"><i class="fas fa-user-check me-1"></i>Sua avaliação</span>
+                                <% } else { %>
                                     <span class="user-name"><%= av.usuario_nome || 'Visitante' %></span>
                                 <% } %>
                                 <div class="rating">
@@ -222,13 +225,6 @@
                         </div>
                         <h5 class="review-title"><%= av.titulo %></h5>
                         <p class="review-text"><%= av.descricao %></p>
-                        <% if (isMinhaAvaliacao) { %>
-                            <form action="/avaliacao/remover" method="POST" style="display:inline;">
-                                <input type="hidden" name="avaliacaoId" value="<%= av.id %>">
-                                <input type="hidden" name="produtoId" value="<%= produto.ID %>">
-                                <button type="submit" class="btn btn-danger btn-sm mt-2">Remover Avaliação</button>
-                            </form>
-                        <% } %>
                     </div>
                 <% }) %>
             </div>

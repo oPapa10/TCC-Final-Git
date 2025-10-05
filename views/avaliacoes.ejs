@@ -10,102 +10,252 @@
     <link rel="stylesheet" href="/stylesheets/avaliacao.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="/stylesheets/theme.css">
+    <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
 </head>
 <body>
 
 <%- include('partials/navbar', { usuario: usuario }) %>
 
 <main class="container mt-5 pt-5">
-    <h2 class="text-center mb-4">Minhas Avaliações</h2>
+    <h2 class="text-center mb-4 fw-bold text-gradient">Minhas Avaliações</h2>
+
+    <% 
+    function getRatingText(rating) {
+        const ratings = {
+            1: 'Péssimo - Produto muito ruim',
+            2: 'Ruim - Produto com problemas',
+            3: 'Regular - Produto aceitável',
+            4: 'Bom - Produto satisfatório',
+            5: 'Excelente - Produto perfeito'
+        };
+        return ratings[rating] || '';
+    }
+
+    const avaliados = [];
+    const naoAvaliados = [];
+    if (produtos && avaliacoes) {
+        produtos.forEach(function(produto) {
+            const av = avaliacoes.find(a => a.produto_id == produto.ID);
+            if (av) {
+                avaliados.push({ produto, av });
+            } else {
+                naoAvaliados.push(produto);
+            }
+        });
+    }
+    %>
     
-    <% if (!produtos || produtos.length === 0) { %>
-        <div class="alert alert-warning text-center mt-5">Você ainda não comprou nenhum produto.</div>
+    <% if (typeof mensagemNaoLogado !== 'undefined' && mensagemNaoLogado) { %>
+        <div class="alert alert-warning text-center mt-4 shadow-sm">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <%= mensagemNaoLogado %>
+            <a href="/perfil" class="btn btn-primary btn-sm ms-2">Entrar</a>
+        </div>
+    <% } else if (!produtos || produtos.length === 0) { %>
+        <div class="alert alert-info text-center mt-5 shadow-sm">
+            <i class="fas fa-info-circle me-2"></i>
+            Você ainda não comprou nenhum produto.
+        </div>
     <% } else { %>
-        <div class="row">
-            <% produtos.forEach(function(produto, index) { 
-                let av = avaliacoes.find(a => a.produto_id == produto.ID);
-            %>
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="<%= produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto" class="product-image">
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="product-title"><%= produto.nome %></h5>
-                                    <p class="product-category"><%= produto.categoria_nome %></p>
-                                </div>
-                            </div>
-                            
-                            <% if (av) { %>
-                                <div class="existing-rating">
-                                    <strong class="d-block text-center mb-2">Sua avaliação:</strong>
-                                    <div class="stars-container text-center mb-2">
-                                        <% for(let i=1; i<=5; i++) { %>
-                                            <span class="fa fa-star <%= i <= av.estrela ? 'checked' : '' %>"></span>
+        <div class="d-flex justify-content-center mb-4">
+            <button id="btnNaoAvaliados" class="btn btn-outline-primary me-3 active" onclick="mostrarTab('naoAvaliados')">
+                <i class="fas fa-clock me-2"></i>Produtos não avaliados
+            </button>
+            <button id="btnAvaliados" class="btn btn-outline-primary" onclick="mostrarTab('avaliados')">
+                <i class="fas fa-check-circle me-2"></i>Produtos avaliados
+            </button>
+        </div>
+        
+        <div class="tab-content" id="tabContent">
+            <!-- Aba de produtos não avaliados -->
+            <div class="tab-pane active" id="naoAvaliados">
+                <% if (naoAvaliados.length === 0) { %>
+                    <div class="alert alert-info text-center shadow-sm">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Nenhum produto pendente de avaliação.
+                    </div>
+                <% } else { %>
+                    <div class="products-grid">
+                        <% naoAvaliados.forEach(function(produto) { %>
+                            <div class="d-flex">
+                                <div class="card flex-fill">
+                                    <div class="card-body d-flex align-items-start">
+                                        <% if (produto.estoque > 0) { %>
+                                            <a href="/produtos/p/<%= produto.slug %>" style="text-decoration: none; color: inherit;">
+                                                <img src="<%= produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto" class="product-image me-3">
+                                            </a>
+                                        <% } else { %>
+                                            <img src="<%= produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto" class="product-image me-3">
                                         <% } %>
-                                    </div>
-                                    <p class="rating-comment text-center"><%= av.descricao %></p>
-                                    <div class="text-center">
-                                        <form action="/avaliacao/remover" method="POST" style="display:inline;">
-                                            <input type="hidden" name="avaliacaoId" value="<%= av.id %>">
-                                            <input type="hidden" name="produtoId" value="<%= produto.ID %>">
-                                            <button type="submit" class="btn btn-danger btn-sm">Remover Avaliação</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            <% } else { %>
-                                <form class="form-avaliacao" action="/avaliacao/enviar" method="POST">
-                                    <input type="hidden" name="produtoId" value="<%= produto.ID %>">
-                                    <input type="hidden" name="origem" value="avaliacoes">
-                                    
-                                    <div class="rating-section mb-3">
-                                        <label class="form-label text-center d-block mb-3">Sua Avaliação:</label>
-                                        <div class="rating-container">
-                                            <div class="rating-stars" data-produto="<%= produto.ID %>">
-                                                <% for(let i=5; i>=1; i--) { %>
-                                                    <input type="radio" id="star<%= i %>_<%= produto.ID %>" name="estrela" value="<%= i %>" required>
-                                                    <label for="star<%= i %>_<%= produto.ID %>" title="<%= getRatingText(i) %>">
-                                                        <i class="fas fa-star"></i>
-                                                    </label>
-                                                <% } %>
-                                            </div>
-                                            <div class="rating-text" id="rating-text-<%= produto.ID %>">Selecione uma avaliação</div>
+                                        <div class="flex-grow-1">
+                                            <% if (produto.estoque > 0) { %>
+                                                <a href="/produtos/p/<%= produto.slug %>" style="text-decoration: none; color: inherit;">
+                                                    <h5 class="product-title"><%= produto.nome %></h5>
+                                                </a>
+                                            <% } else { %>
+                                                <h5 class="product-title"><%= produto.nome %></h5>
+                                            <% } %>
+                                            <p class="product-category mb-3"><%= produto.categoria_nome %></p>
+                                            <form class="form-avaliacao mb-3" action="/avaliacao/enviar" method="POST">
+                                                <input type="hidden" name="produtoId" value="<%= produto.ID %>">
+                                                <input type="hidden" name="origem" value="avaliacoes">
+                                                <div class="rating-stars" data-produto="<%= produto.ID %>">
+                                                    <% for(let i=5; i>=1; i--) { %>
+                                                        <input type="radio" id="star<%= i %>_<%= produto.ID %>" name="estrela" value="<%= i %>" required>
+                                                        <label for="star<%= i %>_<%= produto.ID %>" title="<%= getRatingText(i) %>">
+                                                            <i class="fas fa-star"></i>
+                                                        </label>
+                                                    <% } %>
+                                                </div>
+                                                <div class="rating-text" id="rating-text-<%= produto.ID %>">Selecione uma avaliação</div>
+                                                <textarea name="descricao" class="form-control compact-textarea mt-2" rows="3" maxlength="200" placeholder="Compartilhe sua experiência com este produto..." required></textarea>
+                                                <div class="form-text text-end"><span id="char-count-<%= produto.ID %>">0</span>/200</div>
+                                                <div class="btn-group-vertical">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="fas fa-paper-plane me-2"></i>Enviar Avaliação
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger" onclick="confirmarExclusaoProduto('<%= produto.ID %>')">
+                                                        <i class="fas fa-trash me-2"></i>Excluir Produto
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                    
-                                    <div class="comment-section mb-3">
-                                        <label class="form-label">Comentário:</label>
-                                        <textarea name="descricao" class="form-control compact-textarea" rows="2" maxlength="200" placeholder="Escreva um comentário breve (máx. 200 caracteres)" required></textarea>
-                                        <div class="form-text text-end"><span id="char-count-<%= produto.ID %>">0</span>/200</div>
-                                    </div>
-                                    
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
-                                    </div>
-                                </form>
-                            <% } %>
-                        </div>
+                                </div>
+                            </div>
+                        <% }) %>
                     </div>
-                </div>
-                
-                <% if ((index + 1) % 2 === 0) { %>
-                    </div><div class="row">
                 <% } %>
-            <% }) %>
+            </div>
+            
+            <!-- Aba de produtos avaliados -->
+            <div class="tab-pane" id="avaliados">
+                <% if (avaliados.length === 0) { %>
+                    <div class="alert alert-info text-center shadow-sm">
+                        <i class="fas fa-star me-2"></i>
+                        Nenhum produto avaliado ainda.
+                    </div>
+                <% } else { %>
+                    <div class="products-grid">
+                        <% avaliados.forEach(function(item) { %>
+                            <div class="d-flex">
+                                <div class="card flex-fill">
+                                    <div class="card-body d-flex align-items-start">
+                                        <% if (item.produto.estoque > 0) { %>
+                                            <a href="/produtos/p/<%= item.produto.slug %>" style="text-decoration: none; color: inherit;">
+                                                <img src="<%= item.produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto" class="product-image me-3">
+                                            </a>
+                                        <% } else { %>
+                                            <img src="<%= item.produto.imagem || '/images/product-placeholder.jpg' %>" alt="Produto" class="product-image me-3">
+                                        <% } %>
+                                        <div class="flex-grow-1">
+                                            <% if (item.produto.estoque > 0) { %>
+                                                <a href="/produtos/p/<%= item.produto.slug %>" style="text-decoration: none; color: inherit;">
+                                                    <h5 class="product-title"><%= item.produto.nome %></h5>
+                                                </a>
+                                            <% } else { %>
+                                                <h5 class="product-title"><%= item.produto.nome %></h5>
+                                            <% } %>
+                                            <p class="product-category mb-3"><%= item.produto.categoria_nome %></p>
+                                            <p class="mb-1 fw-semibold text-primary">
+                                                <i class="fas fa-user-check me-1"></i>Sua avaliação
+                                            </p>
+                                            <div class="stars-container">
+                                                <% for(let i=1; i<=5; i++) { %>
+                                                    <span class="fa fa-star <%= i <= item.av.estrela ? 'checked' : '' %>" style="color: <%= i <= item.av.estrela ? '#ffc107' : '#e0e0e0' %>"></span>
+                                                <% } %>
+                                            </div>
+                                            <p class="rating-comment"><i class="fas fa-quote-left me-2 text-muted"></i><%= item.av.descricao %></p>
+                                            <div class="btn-group-vertical">
+                                                <button class="btn btn-outline-primary me-2" onclick="editarAvaliacao('<%= item.av.id %>', '<%= item.produto.ID %>', '<%= item.av.estrela %>', '<%= item.av.descricao.replace(/'/g, "\\'") %>')">
+                                                    <i class="fas fa-edit me-2"></i>Editar Avaliação
+                                                </button>
+                                                <button class="btn btn-outline-danger" onclick="confirmarExclusaoAvaliacao('<%= item.av.id %>', '<%= item.produto.ID %>')">
+                                                    <i class="fas fa-trash me-2"></i>Excluir Avaliação
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+            </div>
         </div>
     <% } %>
 </main>
 
+
+
+<!-- Modal de edição -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Editar Avaliação</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editAvaliacaoForm" action="/avaliacao/editar" method="POST">
+          <input type="hidden" name="avaliacaoId" id="editAvaliacaoId">
+          <input type="hidden" name="produtoId" id="editProdutoId">
+          <div class="rating-stars mb-3" id="modalRatingStars">
+            <% for(let i=5; i>=1; i--) { %>
+              <input type="radio" id="modalStar<%= i %>" name="estrela" value="<%= i %>">
+              <label for="modalStar<%= i %>" title="<%= getRatingText(i) %>">
+                <i class="fas fa-star"></i>
+              </label>
+            <% } %>
+          </div>
+          <div class="rating-text mb-3" id="modalRatingText">Selecione uma avaliação</div>
+          <textarea name="descricao" id="modalDescricao" class="form-control compact-textarea" rows="4" maxlength="200" placeholder="Compartilhe sua experiência com este produto..." required></textarea>
+          <div class="form-text text-end"><span id="modalCharCount">0</span>/200</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="salvarEdicao()">Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmação -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body" id="confirmModalBody">
+        Tem certeza que deseja excluir?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmModalBtn">Excluir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <%- include('partials/footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    inicializarSistemaAvaliacao();
+});
+
+function inicializarSistemaAvaliacao() {
     // Sistema de avaliação com estrelas
     document.querySelectorAll('.rating-stars').forEach(function(ratingContainer) {
         const produtoId = ratingContainer.getAttribute('data-produto');
         const stars = ratingContainer.querySelectorAll('input[type="radio"]');
         const ratingText = document.getElementById('rating-text-' + produtoId);
-        const textarea = document.querySelector(`form input[name="produtoId"][value="${produtoId}"]`).closest('form').querySelector('textarea[name="descricao"]');
+        const textarea = document.querySelector(`form input[name="produtoId"][value="${produtoId}"]`)?.closest('form')?.querySelector('textarea[name="descricao"]');
         const charCount = document.getElementById('char-count-' + produtoId);
 
         function getRatingText(rating) {
@@ -160,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (starIndex <= hoverValue) {
                         label.style.color = '#ffc107';
                     } else {
-                        label.style.color = '#dee2e6';
+                        label.style.color = '#e0e0e0';
                     }
                 });
             });
@@ -181,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (starIndex <= selectedValue) {
                         label.style.color = '#ffc107';
                     } else {
-                        label.style.color = '#dee2e6';
+                        label.style.color = '#e0e0e0';
                     }
                 });
             } else {
@@ -191,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Reseta todas as estrelas
                 stars.forEach(function(s) {
                     const label = s.nextElementSibling;
-                    label.style.color = '#dee2e6';
+                    label.style.color = '#e0e0e0';
                 });
             }
         });
@@ -212,21 +362,111 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-});
-</script>
-
-<%
-function getRatingText(rating) {
-    const ratings = {
-        1: 'Péssimo - Produto muito ruim',
-        2: 'Ruim - Produto com problemas',
-        3: 'Regular - Produto aceitável',
-        4: 'Bom - Produto satisfatório',
-        5: 'Excelente - Produto perfeito'
-    };
-    return ratings[rating] || '';
 }
-%>
+
+let excluirTipo = null;
+let excluirId = null;
+let excluirProdutoId = null;
+
+function confirmarExclusaoProduto(produtoId) {
+    excluirTipo = 'produto';
+    excluirId = produtoId;
+    document.getElementById('confirmModalBody').textContent = 'Tem certeza que deseja excluir este produto da sua lista de compras? Esta ação não pode ser desfeita.';
+    var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.show();
+}
+
+function confirmarExclusaoAvaliacao(avaliacaoId, produtoId) {
+    excluirTipo = 'avaliacao';
+    excluirId = avaliacaoId;
+    excluirProdutoId = produtoId;
+    document.getElementById('confirmModalBody').textContent = 'Tem certeza que deseja excluir esta avaliação? O produto voltará para a lista de não avaliados.';
+    var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.show();
+}
+
+document.getElementById('confirmModalBtn').onclick = function() {
+    if (excluirTipo === 'produto') {
+        fetch('/avaliacao/excluir-produto', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ produtoId: excluirId })
+        }).then(response => response.json())
+          .then(data => {
+              if (data.ok) {
+                  location.reload();
+              } else {
+                  alert('Erro ao excluir produto: ' + data.error);
+              }
+          })
+          .catch(error => {
+              console.error('Erro:', error);
+              alert('Erro ao excluir produto');
+          });
+    } else if (excluirTipo === 'avaliacao') {
+        fetch('/avaliacao/remover', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ avaliacaoId: excluirId, produtoId: excluirProdutoId })
+        }).then(response => response.json())
+          .then(data => {
+              if (data.ok) {
+                  location.reload();
+              } else {
+                  alert('Erro ao excluir avaliação: ' + data.error);
+              }
+          })
+          .catch(error => {
+              console.error('Erro:', error);
+              alert('Erro ao excluir avaliação');
+          });
+    }
+};
+
+function editarAvaliacao(avaliacaoId, produtoId, estrela, descricao) {
+    // Preenche o modal de edição
+    document.getElementById('editAvaliacaoId').value = avaliacaoId;
+    document.getElementById('editProdutoId').value = produtoId;
+    document.getElementById('modalDescricao').value = descricao;
+    document.getElementById('modalCharCount').textContent = descricao.length;
+    
+    // Seleciona as estrelas
+    const stars = document.querySelectorAll('#modalRatingStars input[type="radio"]');
+    stars.forEach(star => {
+        if (star.value === estrela) {
+            star.checked = true;
+            star.dispatchEvent(new Event('change'));
+        }
+    });
+    
+    // Mostra o modal
+    var modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+}
+
+function salvarEdicao() {
+    document.getElementById('editAvaliacaoForm').submit();
+}
+
+function mostrarTab(tab) {
+    // Esconde todas as abas
+    document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+    });
+    
+    // Mostra a aba selecionada
+    document.getElementById(tab).classList.add('active');
+    
+    // Atualiza botões
+    document.getElementById('btnNaoAvaliados').classList.toggle('active', tab === 'naoAvaliados');
+    document.getElementById('btnAvaliados').classList.toggle('active', tab === 'avaliados');
+    
+    // Re-inicializa o sistema de avaliação para a aba ativa
+    setTimeout(() => {
+        inicializarSistemaAvaliacao();
+    }, 100);
+}
+</script>
 
 </body>
 </html>
