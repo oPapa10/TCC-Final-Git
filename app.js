@@ -28,6 +28,7 @@ const entradaEstoqueRouter = require('./routes/entradaEstoque');
 const cadastrarPromocaoRouter = require('./routes/cadastrarPromocao');
 const editarPerfilRouter = require('./routes/editar-perfil');
 const avaliacaoRouter = require('./routes/avaliacao');
+const pagamentoRouter = require('./routes/pagamento');
 
 const app = express();
 
@@ -87,6 +88,7 @@ app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
 app.use('/editar-perfil', editarPerfilRouter);
 app.use('/avaliacao', avaliacaoRouter); // Nova rota adicionada
+app.use('/pagamento', pagamentoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

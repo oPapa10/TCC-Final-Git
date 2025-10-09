@@ -18,6 +18,16 @@
     <%- include('partials/navbar', { usuario: usuario }) %>
     <!-- Conteúdo Principal -->
     <main class="container mt-5 pt-4">
+        <% 
+            // Calcula avaliações só uma vez para usar em todo o template
+            var totalAvaliacoes = avaliacoes.length;
+            var somaEstrelas = avaliacoes.reduce((soma, av) => soma + Number(av.estrela), 0);
+            var media = totalAvaliacoes > 0 ? (somaEstrelas / totalAvaliacoes) : 0;
+            var porcentagens = [5,4,3,2,1].map(function(estrela) {
+                var qtd = avaliacoes.filter(function(av) { return Number(av.estrela) === estrela; }).length;
+                return totalAvaliacoes > 0 ? Math.round((qtd / totalAvaliacoes) * 100) : 0;
+            });
+        %>
         <% if (produto) { %>
         <div class="row">
             <!-- Galeria de Imagens -->
@@ -45,12 +55,10 @@
             <div class="col-md-6">
                 <h1 class="product-title"><%= produto.nome %></h1>
                 <div class="rating mb-3">
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star-half-alt checked"></span>
-                    <span class="ms-2">4.5 (128 avaliações)</span>
+                    <% for(var i=1; i<=5; i++) { %>
+                        <span class="fa fa-star <%= i <= Math.round(media) ? 'checked' : '' %>"></span>
+                    <% } %>
+                    <span class="ms-2"><%= media.toFixed(1) %> (<%= totalAvaliacoes %> avaliação<%= totalAvaliacoes === 1 ? '' : 's' %>)</span>
                 </div>
                 <div class="price-container mb-3">
                   <% if (produto.valor_promocional && Number(produto.valor_promocional) > 0) { %>
@@ -131,23 +139,12 @@
                 <!-- ÁREA DE COMPRA AGORA COM CONFIRMAÇÃO -->
                 <div class="buy-now-section">
                     <!-- Botão que abre o modal -->
-                    <button type="button" class="btn btn-outline-primary btn-buy-now" onclick="abrirConfirmacaoCompra('<%= produto.ID %>', '<%= produto.nome %>')">
-                        <i class="fas fa-bolt me-2"></i>Comprar Agora
-                    </button>
-
-                    <!-- Área para renderizar o modal -->
-                    <div id="buyNowConfirmation"></div>
-
-                    <script>
-                    function abrirConfirmacaoCompra(produtoId, produtoNome) {
-                        fetch('/comprar-confirmacao/' + produtoId)
-                            .then(res => res.text())
-                            .then(html => {
-                                document.getElementById('buyNowConfirmation').innerHTML = html;
-                                window.scrollTo({ top: document.getElementById('buyNowConfirmation').offsetTop - 100, behavior: 'smooth' });
-                            });
-                    }
-                    </script>
+                    <a 
+                      href="/pagamento?valor=<%= produto.valor_promocional && Number(produto.valor_promocional) > 0 ? produto.valor_promocional : produto.valor %>&descricao=Compra+de+<%= encodeURIComponent(produto.nome) %>"
+                      class="btn btn-outline-primary btn-buy-now"
+                    >
+                      <i class="fas fa-bolt me-2"></i>Comprar Agora
+                    </a>
                 </div>
 
                 <% if (typeof mensagemNaoLogado !== 'undefined' && mensagemNaoLogado) { %>
@@ -168,21 +165,12 @@
         <section class="reviews-section mt-5">
             <h3 class="section-title mb-4">Avaliações dos Clientes</h3>
             <!-- Resumo das avaliações -->
-            <% 
-                let totalAvaliacoes = avaliacoes.length;
-                let somaEstrelas = avaliacoes.reduce((soma, av) => soma + Number(av.estrela), 0);
-                let media = totalAvaliacoes > 0 ? (somaEstrelas / totalAvaliacoes) : 0;
-                let porcentagens = [5,4,3,2,1].map(estrela => {
-                    let qtd = avaliacoes.filter(av => Number(av.estrela) === estrela).length;
-                    return totalAvaliacoes > 0 ? Math.round((qtd / totalAvaliacoes) * 100) : 0;
-                });
-            %>
             <div class="review-summary mb-4">
                 <div class="row">
                     <div class="col-md-3 text-center">
                         <div class="average-rating"><%= media.toFixed(1) %></div>
                         <div class="stars mb-2">
-                            <% for(let i=1; i<=5; i++) { %>
+                            <% for(var i=1; i<=5; i++) { %>
                                 <span class="fa fa-star <%= i <= Math.round(media) ? 'checked' : '' %>"></span>
                             <% } %>
                         </div>
@@ -190,7 +178,7 @@
                     </div>
                     <div class="col-md-9">
                         <div class="rating-progress">
-                            <% [5,4,3,2,1].forEach((estrela, idx) => { %>
+                            <% [5,4,3,2,1].forEach(function(estrela, idx) { %>
                                 <div class="progress-item">
                                     <span><%= estrela %> estrela<%= estrela === 1 ? '' : 's' %></span>
                                     <div class="progress">
@@ -205,7 +193,7 @@
             </div>
             <div class="user-reviews">
                 <% avaliacoes.forEach(function(av) { 
-                    let isMinhaAvaliacao = usuario && av.usuario_id && usuario.ID == av.usuario_id;
+                    var isMinhaAvaliacao = usuario && av.usuario_id && usuario.ID == av.usuario_id;
                 %>
                     <div class="review-card">
                         <div class="review-header">
@@ -216,7 +204,7 @@
                                     <span class="user-name"><%= av.usuario_nome || 'Visitante' %></span>
                                 <% } %>
                                 <div class="rating">
-                                    <% for(let i=1; i<=5; i++) { %>
+                                    <% for(var i=1; i<=5; i++) { %>
                                         <span class="fa fa-star <%= i <= av.estrela ? 'checked' : '' %>"></span>
                                     <% } %>
                                 </div>
@@ -231,7 +219,7 @@
             <button class="btn btn-outline-primary mt-3">Ver todas as avaliações</button>
         </section>
 
-        <!-- Produtos Relacionados (exemplo estático) -->
+        <!-- Produtos Relacionados -->
         <section class="related-products mt-5">
             <h3 class="section-title mb-4">Produtos Relacionados</h3>
             <div class="row">
