@@ -54,7 +54,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto flex-row flex-nowrap align-items-center">
                     <% if (typeof usuario !== 'undefined' && usuario) { %>
                         <li class="nav-item d-flex align-items-center">
                             <a href="/perfil" class="nav-link d-flex align-items-center" style="cursor:pointer;">
@@ -112,20 +112,13 @@
     <!-- Navbar de Categorias -->
     <nav class="navbar navbar-expand-lg navbar-dark" id="navbar2">
         <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavCategorias">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavCategorias">
-                <div class="navbar-nav mx-auto">
-                    <button class="nav-link btn-category" onclick="filterProducts('', this)">Mostrar Todos</button>
-                    <% if (categorias && categorias.length > 0) { %>
-                        <% categorias.forEach(function(cat) { %>
-                            <button class="nav-link btn-category" onclick="filterProducts('<%= cat.nome %>', this)"><%= cat.nome %></button>
-                        <% }) %>
-                    <% } else { %>
-                        
-                    <% } %>
-                </div>
+            <div class="navbar-nav mx-auto flex-row flex-nowrap align-items-center" id="categorias-scroll">
+                <button class="nav-link btn-category" onclick="filterProducts('', this)">Mostrar Todos</button>
+                <% if (categorias && categorias.length > 0) { %>
+                    <% categorias.forEach(function(cat) { %>
+                        <button class="nav-link btn-category" onclick="filterProducts('<%= cat.nome %>', this)"><%= cat.nome %></button>
+                    <% }) %>
+                <% } %>
             </div>
         </div>
     </nav>

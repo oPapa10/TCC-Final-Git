@@ -143,30 +143,31 @@
                         </h2>
                         <p class="profile-subtitle">Gerencie seus pedidos, lista de desejos e muito mais</p>
                     </div>
-                    <form class="profile-form" action="/login" method="POST">
+                    <form class="profile-form" action="/login" method="POST" id="loginForm">
                         <div class="form-group mb-3">
                             <label for="email" class="form-label">E-mail</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="seu@email.com" required>
+                                <input type="email" class="form-control" id="email" name="email" autocomplete="username" placeholder="seu@email.com" required>
                             </div>
                         </div>
                         <div class="form-group mb-3">
                             <label for="senha" class="form-label">Senha</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="senha" name="senha" placeholder="Sua senha" required>
+                                <input type="password" class="form-control" id="senha" name="senha" autocomplete="current-password" placeholder="Sua senha" required>
                                 <button type="button" class="btn btn-outline-secondary btn-sm show-password-btn" tabindex="-1" onclick="togglePassword('senha', this)">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                         </div>
+
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="lembrar" name="lembrar">
                                 <label class="form-check-label" for="lembrar">Lembrar-me</label>
                             </div>
-                            <a href="#" class="forgot-password" onclick="alert('Redirecionar para recuperação de senha')">
+                            <a href="/recuperar-senha" class="forgot-password">
                                 Esqueceu a senha?
                             </a>
                         </div>
@@ -277,6 +278,48 @@
     document.body.classList.remove('dark-theme');
   }
 })();
+
+    // Remember-me usando localStorage (front-end)
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailEl = document.getElementById('email');
+        const senhaEl = document.getElementById('senha');
+        const lembrarEl = document.getElementById('lembrar');
+        const loginForm = document.getElementById('loginForm');
+
+        // Carrega credenciais se existir
+        try {
+            const saved = JSON.parse(localStorage.getItem('credenciais_loja_motos') || 'null');
+            if (saved && saved.email) {
+                emailEl.value = saved.email;
+                if (saved.senha) senhaEl.value = saved.senha;
+                lembrarEl.checked = true;
+            }
+        } catch(e){ console.error('localStorage read error', e); }
+
+        // Quando checkbox mudar
+        lembrarEl.addEventListener('change', function() {
+            if (this.checked) {
+                localStorage.setItem('credenciais_loja_motos', JSON.stringify({
+                    email: emailEl.value || '',
+                    senha: senhaEl.value || ''
+                }));
+            } else {
+                localStorage.removeItem('credenciais_loja_motos');
+            }
+        });
+
+        // Ao submeter o form, atualiza o armazenamento conforme checkbox
+        loginForm.addEventListener('submit', function() {
+            if (lembrarEl.checked) {
+                localStorage.setItem('credenciais_loja_motos', JSON.stringify({
+                    email: emailEl.value || '',
+                    senha: senhaEl.value || ''
+                }));
+            } else {
+                localStorage.removeItem('credenciais_loja_motos');
+            }
+        });
+    });
     </script>
 
     <% if (typeof mostrarModalCarrinho !== 'undefined' && mostrarModalCarrinho) { %>

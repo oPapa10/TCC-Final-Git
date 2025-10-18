@@ -1,3 +1,4 @@
+require('dotenv').config(); // <-- adicionado: carrega .env antes de usar process.env
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -29,6 +30,7 @@ const cadastrarPromocaoRouter = require('./routes/cadastrarPromocao');
 const editarPerfilRouter = require('./routes/editar-perfil');
 const avaliacaoRouter = require('./routes/avaliacao');
 const pagamentoRouter = require('./routes/pagamento');
+const recuperarSenhaRouter = require('./routes/recuperarSenha');
 
 const app = express();
 
@@ -89,6 +91,7 @@ app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
 app.use('/editar-perfil', editarPerfilRouter);
 app.use('/avaliacao', avaliacaoRouter); // Nova rota adicionada
 app.use('/pagamento', pagamentoRouter);
+app.use('/', recuperarSenhaRouter); // Nova rota para recuperação de senha
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

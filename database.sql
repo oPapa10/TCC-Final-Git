@@ -94,3 +94,13 @@ CREATE TABLE CARRINHO (
     quantidade INT,
     UNIQUE KEY (usuario_id, produto_id)
 );
+
+CREATE TABLE IF NOT EXISTS password_resets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cliente_id INT NOT NULL,
+  token VARCHAR(128) NOT NULL,
+  expires DATETIME NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX (token),
+  FOREIGN KEY (cliente_id) REFERENCES Cliente(ID) ON DELETE CASCADE
+);

@@ -81,11 +81,14 @@
     justify-content: flex-start !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #222;
     min-height: 44px;
     height: 44px;
     align-items: center !important;
-    scrollbar-width: thin;
-    scrollbar-color: #888 #222;
+    gap: 8px;
     margin-bottom: -8px;
     padding-bottom: 0;
     transition: height 0.2s;
@@ -571,9 +574,8 @@ body.dark-theme .btn-category.active {
     justify-content: flex-start !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
-    min-height: 44px;
-    height: 44px;
-    align-items: center !important;
+    overflow-y: hidden;
+    white-space: nowrap;
     scrollbar-width: thin;
     scrollbar-color: #888 #222;
     margin-bottom: 0;
@@ -884,4 +886,36 @@ body.dark-theme .no-results-message {
 .carousel-indicators .active {
     opacity: 1;
     background-color: #007bff !important;
+}
+
+/* Categorias horizontais com rolagem no mobile */
+#navbarNavCategorias .navbar-nav.mx-auto {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    min-height: 44px;
+    height: 44px;
+    align-items: center !important;
+    gap: 8px;
+    user-select: none;
+    cursor: grab;
+}
+
+#navbarNavCategorias .navbar-nav.mx-auto::-webkit-scrollbar,
+#categorias-scroll::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+#categorias-scroll {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    user-select: none;
+    cursor: grab;
 }

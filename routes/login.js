@@ -27,7 +27,18 @@ router.post('/', (req, res) => {
     if (!match) {
       return res.render('perfil', { mensagem: 'E-mail ou senha incorretos.', usuario: null });
     }
-    req.session.usuario = usuario;
+    req.session.usuario = {
+      ID: usuario.ID,
+      nome: usuario.nome,
+      cpf: usuario.cpf,
+      email: usuario.email,
+      cep: usuario.cep,
+      endereco: usuario.endereco,
+      numero: usuario.numero,
+      bairro: usuario.bairro,
+      cidade: usuario.cidade,
+      estado: usuario.estado
+    };
 
     // Após autenticar o usuário:
     const usuarioId = usuario.ID || usuario.id;

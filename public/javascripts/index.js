@@ -294,3 +294,49 @@ function parseLocalDateTime(str) {
     const [hour, minute, second] = timePart.split(':').map(Number);
     return new Date(year, month - 1, day, hour, minute, second || 0);
 }
+
+// Arraste horizontal nas categorias
+document.addEventListener('DOMContentLoaded', function() {
+    const categorias = document.getElementById('categorias-scroll');
+    if (!categorias) return;
+    let isDown = false;
+    let startX, scrollLeft;
+
+    categorias.addEventListener('mousedown', (e) => {
+        isDown = true;
+        categorias.classList.add('dragging');
+        startX = e.pageX - categorias.offsetLeft;
+        scrollLeft = categorias.scrollLeft;
+    });
+    categorias.addEventListener('mouseleave', () => {
+        isDown = false;
+        categorias.classList.remove('dragging');
+    });
+    categorias.addEventListener('mouseup', () => {
+        isDown = false;
+        categorias.classList.remove('dragging');
+    });
+    categorias.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - categorias.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        categorias.scrollLeft = scrollLeft - walk;
+    });
+
+    // Touch para mobile
+    categorias.addEventListener('touchstart', (e) => {
+        isDown = true;
+        startX = e.touches[0].pageX - categorias.offsetLeft;
+        scrollLeft = categorias.scrollLeft;
+    });
+    categorias.addEventListener('touchend', () => {
+        isDown = false;
+    });
+    categorias.addEventListener('touchmove', (e) => {
+        if (!isDown) return;
+        const x = e.touches[0].pageX - categorias.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        categorias.scrollLeft = scrollLeft - walk;
+    });
+});
