@@ -104,3 +104,17 @@ CREATE TABLE IF NOT EXISTS password_resets (
   INDEX (token),
   FOREIGN KEY (cliente_id) REFERENCES Cliente(ID) ON DELETE CASCADE
 );
+
+-- ...existing code...
+CREATE TABLE IF NOT EXISTS notificacoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cliente_id INT NOT NULL,
+  titulo VARCHAR(255) NOT NULL,
+  mensagem TEXT NOT NULL,
+  status VARCHAR(50) DEFAULT 'preparando', -- 'preparando', 'enviado', 'entregue', etc.
+  lida TINYINT(1) DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX (cliente_id),
+  FOREIGN KEY (cliente_id) REFERENCES Cliente(ID) ON DELETE CASCADE
+);
+-- ...existing code...

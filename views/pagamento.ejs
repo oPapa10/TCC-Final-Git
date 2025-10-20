@@ -49,6 +49,22 @@
                         <form action="/pagamento/pix-confirm" method="POST" class="mt-3">
                             <input type="hidden" name="valor" value="<%= valor %>">
                             <input type="hidden" name="descricao" value="<%= descricao %>">
+                            <!-- hidden com produtoId e opcional produtoNome/imagem -->
+                            <input type="hidden" name="produtoId" value="<%= typeof produtoId !== 'undefined' ? produtoId : '' %>">
+                            <input type="hidden" name="produtoNome" value="<%= descricao %>">
+                        <!-- opcional: mostrar resumo do produto ao lado do QR -->
+                        <% if (typeof produtoId !== 'undefined' && produtoId) { %>
+                          <div class="mb-3 small d-flex align-items-center">
+                            <% if (typeof produtoImagem !== 'undefined' && produtoImagem) { %>
+                              <img src="<%= produtoImagem %>" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:6px;margin-right:10px;">
+                            <% } %>
+                            <div>
+                              <div class="fw-bold"><%= descricao %></div>
+                              <div class="text-success">R$ <%= Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+                            </div>
+                          </div>
+                        <% } %>
+
                             <button type="submit" class="btn btn-success w-100 mt-2">
                                 <i class="fa fa-check-circle me-2"></i>Confirmar Pedido (PIX)
                             </button>
@@ -64,6 +80,9 @@
                         <form id="formCartao" action="/pagamento/cartao" method="POST">
                             <input type="hidden" name="valor" value="<%= valor %>">
                             <input type="hidden" name="descricao" value="<%= descricao %>">
+                            <!-- hidden com produtoId e opcional produtoNome/imagem -->
+                            <input type="hidden" name="produtoId" value="<%= typeof produtoId !== 'undefined' ? produtoId : '' %>">
+                            <input type="hidden" name="produtoNome" value="<%= descricao %>">
 
                             <div class="row">
                                 <div class="col-md-6">

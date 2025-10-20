@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Notificações</title>
+  <link rel="stylesheet" href="/stylesheets/menu-superior.css">
+  <link rel="stylesheet" href="/stylesheets/footer.css">
+  <link rel="stylesheet" href="/stylesheets/adm-vendas.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <main class="container mt-5 mb-5">
+    <% if (typeof mensagemNaoLogado !== 'undefined' && mensagemNaoLogado) { %>
+      <div class="alert alert-warning text-center mt-4 shadow-sm">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <%= mensagemNaoLogado %>
+        <a href="/perfil" class="btn btn-primary btn-sm ms-2">Entrar</a>
+      </div>
+    <% } %>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3><i class="fas fa-bell me-2"></i>Notificações</h3>
+    </div>
+
+    <!-- se estiver deslogado, notificacoes estará vazio e a lista mostrará estado vazio -->
+  
+
+    <div class="list-group">
+      <% if (notificacoes && notificacoes.length) { %>
+        <% notificacoes.forEach(function(n){ %>
+          <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
+            <div class="d-flex">
+              <% if (n.produto_imagem) { %>
+                <img src="<%= n.produto_imagem %>" alt="" class="rounded" style="width:64px;height:64px;object-fit:cover;margin-right:12px;">
+              <% } else { %>
+                <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width:64px;height:64px;margin-right:12px;color:#999">—</div>
+              <% } %>
+              <div>
+                <div class="fw-bold"><%= n.titulo %></div>
+                <% if (n.produto_nome) { %>
+                  <div class="small text-muted"><strong><%= n.produto_nome %></strong> — R$ <%= Number(n.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+                <% } %>
+                <div class="small text-muted mt-1"><%= n.mensagem %></div>
+              </div>
+            </div>
+            <div class="text-end small">
+              <div class="text-muted"><%= new Date(n.created_at).toLocaleString('pt-BR') %></div>
+              <% if (n.status === 'preparando') { %>
+                <span class="badge bg-warning text-dark mt-1">Preparando</span>
+              <% } else if (n.status === 'enviado') { %>
+                <span class="badge bg-success mt-1">Enviado</span>
+              <% } else if (n.status === 'a_caminho' && n.venda_id) { %>
+                <span class="badge bg-info text-dark mt-1">A caminho</span>
+                <form method="POST" action="/notificacoes/confirmar-entrega" class="mt-2">
+                  <input type="hidden" name="vendaId" value="<%= n.venda_id %>">
+                  <button type="submit" class="btn btn-sm btn-success">Confirmar recebimento</button>
+                </form>
+              <% } else { %>
+                <span class="badge bg-secondary mt-1"><%= n.status %></span>
+              <% } %>
+            </div>
+          </a>
+        <% }) %>
+      <% } else { %>
+        <div class="card p-4 text-center text-muted">Você não tem notificações no momento.</div>
+      <% } %>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

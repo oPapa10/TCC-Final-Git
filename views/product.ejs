@@ -140,7 +140,7 @@
                 <div class="buy-now-section">
                     <!-- Botão que abre o modal -->
                     <% if (usuario) { %>
-                      <a href="/pagamento?valor=<%= produto.valor_promocional && Number(produto.valor_promocional) > 0 ? produto.valor_promocional : produto.valor %>&descricao=Compra+de+<%= encodeURIComponent(produto.nome) %>"
+                      <a href="/pagamento?valor=<%= produto.valor_promocional && Number(produto.valor_promocional) > 0 ? produto.valor_promocional : produto.valor %>&descricao=Compra+de+<%= encodeURIComponent(produto.nome) %>&produtoId=<%= produto.ID %>"
                          class="btn btn-outline-primary btn-buy-now">
                         <i class="fas fa-bolt me-2"></i>Comprar Agora
                       </a>

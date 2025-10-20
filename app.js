@@ -19,6 +19,7 @@ const seeProdutoRouter = require('./routes/seeProduto');
 const createCategoriaRouter = require('./routes/createCategoria');
 const createItensRouter = require('./routes/createItens');
 const admRouter = require('./routes/adm');
+const admVendasRouter = require('./routes/admVendas');
 const categoriaRoutes = require('./routes/categoria');
 const produtoRoutes = require('./routes/produto'); // Corrigido para importar o router certo
 const loginRouter = require('./routes/login');
@@ -31,6 +32,7 @@ const editarPerfilRouter = require('./routes/editar-perfil');
 const avaliacaoRouter = require('./routes/avaliacao');
 const pagamentoRouter = require('./routes/pagamento');
 const recuperarSenhaRouter = require('./routes/recuperarSenha');
+const notificacoesRouter = require('./routes/notificacoes'); // { changed code }
 
 const app = express();
 
@@ -79,6 +81,7 @@ app.use('/createItens', createItensRouter);
 app.use('/seeProduto', seeProdutoRouter);
 app.use('/createCategoria', createCategoriaRouter);
 app.use('/adm', admRouter);
+app.use('/adm/vendas', admVendasRouter);
 app.use('/categorias', categoriaRoutes);   //  corrigido
 app.use('/produtos', require('./routes/produto'));
 app.use('/login', loginRouter);
@@ -92,6 +95,8 @@ app.use('/editar-perfil', editarPerfilRouter);
 app.use('/avaliacao', avaliacaoRouter); // Nova rota adicionada
 app.use('/pagamento', pagamentoRouter);
 app.use('/', recuperarSenhaRouter); // Nova rota para recuperação de senha
+app.use('/', notificacoesRouter); // { changed code }
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

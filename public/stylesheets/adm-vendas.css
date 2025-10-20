@@ -1,0 +1,304 @@
+/* stylesheets/adm-vendas.css */
+body {
+    background: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 15px;
+}
+
+/* Header Styles */
+.d-flex.justify-content-between {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+h3 {
+    color: #293241;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-outline-secondary {
+    border: 2px solid #4361ee;
+    color: #4361ee;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #4361ee;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+}
+
+/* Filters Card */
+.filters-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+.filters-card .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-select, .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.15);
+}
+
+/* Price range inputs */
+.col-md-2.d-flex .form-control {
+    font-size: 0.85rem;
+}
+
+.col-md-2.d-flex > div {
+    flex: 1;
+}
+
+.col-md-2.d-flex > div:first-child {
+    margin-right: 0.5rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #4361ee;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #3a56d4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+}
+
+/* Table Card */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+}
+
+.table-responsive {
+    border-radius: 12px;
+}
+
+/* Table Styles */
+.vendas-table {
+    margin-bottom: 0;
+    background-color: white;
+}
+
+.vendas-table thead th {
+    background-color: #4361ee;
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    vertical-align: middle;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.vendas-table tbody td {
+    padding: 0.9rem 1rem;
+    vertical-align: middle;
+    border-color: #f1f3f4;
+    font-size: 0.92rem;
+}
+
+.vendas-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.vendas-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Small muted text */
+.small-muted {
+    font-size: 0.85rem;
+    color: #6c757d !important;
+    margin-top: 0.25rem;
+}
+
+/* Product name styling */
+.vendas-table td strong {
+    color: #293241;
+    font-weight: 600;
+}
+
+/* Rating stars */
+.vendas-table td:nth-child(6) {
+    font-weight: 600;
+    color: #ffb703;
+}
+
+/* Action buttons */
+.btn-sm {
+    border-radius: 6px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    margin: 0.1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary {
+    border: 1.5px solid #4361ee;
+    color: #4361ee;
+}
+
+.btn-outline-primary:hover {
+    background-color: #4361ee;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+    border: 1.5px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+    transform: translateY(-1px);
+}
+
+/* Empty state */
+.text-center.py-4 {
+    color: #6c757d;
+    font-style: italic;
+    padding: 3rem !important;
+}
+
+/* Product thumbnail */
+.prod-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.prod-thumb.placeholder {
+  background: #f5f6f8;
+  color: #9aa0a6;
+  font-size: 0.9rem;
+}
+
+/* Product name */
+.produto-nome { display:block; color:#1f2d4a; font-size:0.98rem; margin-bottom:2px; }
+
+/* Price tag */
+.valor-mais {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #1b7a4b;
+  background: linear-gradient(90deg, rgba(27,122,75,0.06), transparent);
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  min-width: 120px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem auto;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .filters-card .row.g-2 {
+        gap: 1rem;
+    }
+    
+    .col-md-2, .col-md-3, .col-md-1 {
+        width: 100%;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .btn-sm {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+    
+    .prod-thumb { width:48px; height:48px; }
+    .valor-mais { font-size: 0.95rem; min-width: 90px; }
+}
+
+/* Loading state animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.vendas-table tbody tr {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Status badges (caso queira adicionar status futuramente) */
+.badge-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-completed {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+}
+
+.badge-pending {
+    background-color: #fff3e0;
+    color: #f57c00;
+}

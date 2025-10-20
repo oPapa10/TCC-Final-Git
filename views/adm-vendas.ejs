@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle de Vendas — ADM</title>
+  <link rel="stylesheet" href="/stylesheets/adm.css">
+  <link rel="stylesheet" href="/stylesheets/index.css">
+  <link rel="stylesheet" href="/stylesheets/adm-vendas.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <main class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3><i class="fas fa-chart-line me-2"></i>Controle de Vendas</h3>
+      <a href="/adm" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar ao ADM
+      </a>
+    </div>
+
+    <div class="card filters-card p-3">
+      <form class="row g-2" method="GET" action="/adm/vendas">
+        <div class="col-md-2">
+          <label class="form-label">Ano</label>
+          <select name="year" class="form-select">
+            <option value="">Todos</option>
+            <% years.forEach(function(y){ %>
+              <option value="<%= y %>" <%= (filters.year==y)?'selected':'' %>><%= y %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Mês</label>
+          <select name="month" class="form-select">
+            <option value="">Todos</option>
+            <% for(let m=1;m<=12;m++){ %>
+              <option value="<%= m %>" <%= (filters.month==m)?'selected':'' %>><%= m %></option>
+            <% } %>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Dia</label>
+          <select name="day" class="form-select">
+            <option value="">Todos</option>
+            <% for(let d=1;d<=31;d++){ %>
+              <option value="<%= d %>" <%= (filters.day==d)?'selected':'' %>><%= d %></option>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label"><i class="fas fa-search me-1"></i>Busca por produto / ID</label>
+          <input name="search" type="text" class="form-control" value="<%= filters.search || '' %>" placeholder="Nome do produto ou ID">
+        </div>
+
+        <div class="col-md-1">
+          <label class="form-label"><i class="fas fa-star me-1"></i>Avaliação ≥</label>
+          <select name="rating" class="form-select">
+            <option value="">-</option>
+            <% for(let r=1;r<=5;r++){ %>
+              <option value="<%= r %>" <%= (filters.rating==r)?'selected':'' %>><%= r %></option>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="col-md-2 d-flex">
+          <div class="me-2">
+            <label class="form-label">Preço min</label>
+            <input type="number" step="0.01" name="priceMin" class="form-control" value="<%= filters.priceMin || '' %>" placeholder="R$ 0,00">
+          </div>
+          <div>
+            <label class="form-label">Preço max</label>
+            <input type="number" step="0.01" name="priceMax" class="form-control" value="<%= filters.priceMax || '' %>" placeholder="R$ 0,00">
+          </div>
+        </div>
+
+        <div class="col-12 text-end mt-2">
+          <button class="btn btn-primary">
+            <i class="fas fa-filter me-2"></i>Aplicar filtros
+          </button>
+          <a href="/adm/vendas" class="btn btn-outline-secondary">
+            <i class="fas fa-eraser me-2"></i>Limpar
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <div class="mb-3">
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a class="nav-link <%= (!filters.status || filters.status==='entregue')?'' : (filters.status==='entregue'?'active':'') %>" href="/adm/vendas?status=entregue">Vendas realizadas</a></li>
+        <li class="nav-item ms-2"><a class="nav-link <%= (filters.status==='a_caminho') ? 'active' : '' %>" href="/adm/vendas?status=a_caminho">Vendas em trajeto</a></li>
+        <li class="nav-item ms-2"><a class="nav-link <%= (!filters.status || filters.status==='pendente' || filters.status==='pronto') ? 'active' : '' %>" href="/adm/vendas?status=pendente">Vendas pendentes</a></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-striped vendas-table mb-0">
+          <thead>
+            <tr>
+              <th>Foto</th>
+              <th>ID</th>
+              <th>Data / Hora</th>
+              <th>Produto</th>
+              <th>Cliente</th>
+              <th>Valor</th>
+              <th class="text-center">Valor</th>
+              <th>Avaliação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (vendas && vendas.length) { %>
+              <% vendas.forEach(function(v){ %>
+                <tr>
+                  <td style="width:80px">
+                    <% if (v.produto_imagem) { %>
+                      <img src="<%= v.produto_imagem %>" alt="Foto" class="prod-thumb rounded">
+                    <% } else { %>
+                      <div class="prod-thumb placeholder rounded d-flex align-items-center justify-content-center text-muted">—</div>
+                    <% } %>
+                  </td>
+                  <td><strong>#<%= v.ID %></strong></td>
+                  <td><%= new Date(v.hora_venda).toLocaleString('pt-BR') %></td>
+                  <td>
+                    <strong class="produto-nome"><%= v.produto_nome %></strong>
+                    <div class="small-muted">ID <%= v.produto_id %></div>
+                  </td>
+                  <td>
+                    <strong><%= v.cliente_nome %></strong>
+                    <div class="small-muted"><%= v.cliente_email %></div>
+                  </td>
+                  <td><strong>R$ <%= Number(v.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></strong></td>
+                  <td class="text-center align-middle">
+                    <div class="valor-mais">R$ <%= Number(v.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+                  </td>
+                  <td>
+                    <% if (v.estrela) { %>
+                      <span class="text-warning">
+                        <i class="fas fa-star"></i> <%= v.estrela %>
+                      </span>
+                    <% } else { %>
+                      <span class="text-muted">-</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="d-flex gap-1">
+                      <a href="/seeProduto/<%= v.produto_id %>" class="btn btn-sm btn-outline-primary" title="Ver produto">
+                        <i class="fas fa-eye"></i>
+                      </a>
+                      <a href="/adm/vendas/nota/<%= v.ID %>" class="btn btn-sm btn-outline-secondary" title="Detalhes">
+                        <i class="fas fa-info-circle"></i>
+                      </a>
+                    </div>
+                  </td>
+                  <td>
+                    <% if (v.status === 'pendente') { %>
+                      <form method="POST" action="/adm/vendas/<%= v.ID %>/pronto" style="display:inline">
+                        <button class="btn btn-sm btn-outline-warning">Pronto para entrega</button>
+                      </form>
+                    <% } else if (v.status === 'pronto') { %>
+                      <form method="POST" action="/adm/vendas/<%= v.ID %>/caminho" style="display:inline">
+                        <button class="btn btn-sm btn-outline-primary">Enviar (A caminho)</button>
+                      </form>
+                    <% } else if (v.status === 'a_caminho') { %>
+                      <span class="badge bg-info">A caminho</span>
+                    <% } else if (v.status === 'entregue') { %>
+                      <span class="badge bg-success">Entregue</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="7" class="text-center py-5">
+                  <i class="fas fa-receipt fa-2x mb-3" style="color: #dee2e6;"></i>
+                  <h5 class="text-muted">Nenhuma venda encontrada</h5>
+                  <p class="text-muted mb-0">Tente ajustar os filtros para ver mais resultados.</p>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
