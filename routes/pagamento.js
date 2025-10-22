@@ -3,7 +3,29 @@ const express = require('express');
 const router = express.Router();
 const QRCode = require('qrcode');
 const nodemailer = require('nodemailer');
-const db = require('../config/db');
+const db = require('../config/db'); // ajuste conforme seu arquivo de conexão
+
+// helper upsert local (pode reutilizar o mesmo padrão)
+async function upsertNotification(clienteId, vendaId, titulo, mensagem, status) {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
+      if (err) return reject(err);
+      if (rows && rows.length) {
+        db.query(
+          'UPDATE notificacoes SET cliente_id = ?, titulo = ?, mensagem = ?, status = ?, lida = 0, created_at = NOW() WHERE id = ?',
+          [clienteId, titulo, mensagem, status, rows[0].id],
+          (e, r) => e ? reject(e) : resolve(r)
+        );
+      } else {
+        db.query(
+          'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
+          [clienteId, titulo, mensagem, status, vendaId],
+          (e, r) => e ? reject(e) : resolve(r)
+        );
+      }
+    });
+  });
+}
 
 const CHAVE_PIX = process.env.PIX_KEY || '11147464952';
 const NOME_RECEBEDOR = process.env.PIX_NOME || 'Ruan Borges da Silveira';
@@ -184,11 +206,11 @@ Obrigado por comprar conosco!
         if (usuario && usuario.ID) {
           const titulo = 'Pagamento Recebido';
           const mensagem = `Recebemos seu pagamento no valor de R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}. Em breve seu pedido será processado.`;
-          db.query(
-            'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-            [usuario.ID, titulo, mensagem, 'pendente', vendaId],
-            (err) => { if (err) console.error('Erro ao gravar notificação:', err); }
-          );
+          try {
+            await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente');
+          } catch(e) {
+            console.error('Erro ao gravar notificação:', e);
+          }
         }
 
         return res.render('pagamento-confirmado', { valor, descricao, usuario });
@@ -257,17 +279,61 @@ Obrigado!
     if (usuario && usuario.ID) {
       const titulo = 'Pedido Recebido';
       const mensagem = `Recebemos sua compra: ${produtoTexto} no valor de R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}. Em breve seu pedido será processado.`;
-      db.query(
-        'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-        [usuario.ID, titulo, mensagem, 'pendente', vendaId],
-        (err) => { if (err) console.error('Erro ao gravar notificação (cartao):', err); }
-      );
+      try {
+        await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente');
+      } catch(e) {
+        console.error('Erro ao gravar notificação (cartao):', e);
+      }
     }
 
     return res.render('pagamento-confirmado', { valor, descricao, usuario });
   } catch (err) {
     console.error('Erro em /pagamento/cartao:', err);
     return res.status(500).render('error', { error: err, message: 'Erro ao processar pagamento por cartão' });
+  }
+});
+
+router.post('/:id/pronto', async (req, res) => {
+  const id = Number(req.params.id);
+  try {
+    await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['pronto', id], (e,r)=> e?reject(e):resolve(r)));
+    const rows = await new Promise((resolve, reject) => {
+      db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
+                FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
+                (err, r) => err ? reject(err) : resolve(r));
+    });
+    if (rows && rows[0]) {
+      const venda = rows[0];
+      const titulo = 'Pedido pronto para envio';
+      const mensagem = `Seu pedido (${venda.produto_nome}) está pronto para envio. Em breve será despachado.`;
+      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'pronto');
+    }
+    return res.redirect(req.get('referer') || '/adm/vendas');
+  } catch (err) {
+    console.error('Erro marcar pronto:', err);
+    return res.status(500).send('Erro ao marcar pronto');
+  }
+});
+
+router.post('/:id/caminho', async (req, res) => {
+  const id = Number(req.params.id);
+  try {
+    await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['a_caminho', id], (e,r)=> e?reject(e):resolve(r)));
+    const rows = await new Promise((resolve, reject) => {
+      db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
+                FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
+                (err, r) => err ? reject(err) : resolve(r));
+    });
+    if (rows && rows[0]) {
+      const venda = rows[0];
+      const titulo = 'Pedido a caminho';
+      const mensagem = `Seu pedido (${venda.produto_nome}) está a caminho. Ao receber, confirme a entrega no app para avaliá-lo.`;
+      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'a_caminho');
+    }
+    return res.redirect(req.get('referer') || '/adm/vendas');
+  } catch (err) {
+    console.error('Erro marcar a caminho:', err);
+    return res.status(500).send('Erro ao marcar a caminho');
   }
 });
 

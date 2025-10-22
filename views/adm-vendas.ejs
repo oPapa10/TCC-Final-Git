@@ -134,9 +134,10 @@
                   <td class="text-center align-middle">
                     <div class="valor-mais">R$ <%= Number(v.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
                   </td>
-                  <td>
-                    <% if (v.estrela) { %>
-                      <span class="text-warning"><i class="fas fa-star"></i> <%= v.estrela %></span>
+                  <td class="align-middle text-center">
+                    <% if (v.produto_qtd_avaliacoes && v.produto_qtd_avaliacoes > 0) { %>
+                      <div><span class="text-warning"><i class="fas fa-star"></i> <%= Number(v.produto_media).toFixed(1) %></span></div>
+                      <div class="text-muted small"><%= v.produto_qtd_avaliacoes %> avaliação<%= v.produto_qtd_avaliacoes>1 ? 's' : '' %></div>
                     <% } else { %>
                       <span class="text-muted">-</span>
                     <% } %>

@@ -1,6 +1,44 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db');
+const db = require('../config/db'); // ajuste conforme seu arquivo de conexão
+
+// helper upsert para notificações (novo)
+async function upsertNotification(clienteId, vendaId, titulo, mensagem, status) {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
+      if (err) return reject(err);
+      if (rows && rows.length) {
+        db.query(
+          'UPDATE notificacoes SET cliente_id = ?, titulo = ?, mensagem = ?, status = ?, lida = 0, created_at = NOW() WHERE id = ?',
+          [clienteId, titulo, mensagem, status, rows[0].id],
+          (e, r) => e ? reject(e) : resolve(r)
+        );
+      } else {
+        db.query(
+          'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
+          [clienteId, titulo, mensagem, status, vendaId],
+          (e, r) => e ? reject(e) : resolve(r)
+        );
+      }
+    });
+  });
+}
+
+// helper upsert (mesma lógica para manter consistência)
+function upsertNotificationSimple(clienteId, vendaId, titulo, mensagem, status) {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
+      if (err) return reject(err);
+      if (rows && rows.length) {
+        db.query('UPDATE notificacoes SET cliente_id=?, titulo=?, mensagem=?, status=?, lida=0, created_at=NOW() WHERE id=?',
+          [clienteId, titulo, mensagem, status, rows[0].id], (e,r) => e?reject(e):resolve(r));
+      } else {
+        db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
+          [clienteId, titulo, mensagem, status, vendaId], (e,r) => e?reject(e):resolve(r));
+      }
+    });
+  });
+}
 
 router.get('/notificacoes', (req, res) => {
   const usuario = req.session.usuario;
@@ -37,7 +75,6 @@ router.post('/notificacoes/confirmar-entrega', async (req, res) => {
   if (!usuario || !usuario.ID) return res.status(401).redirect('/login?redirect=/notificacoes');
 
   try {
-    // confirmar apenas se a venda pertence ao usuário
     const rows = await new Promise((resolve, reject) => {
       db.query('SELECT ID, Cliente_ID, Produto_ID FROM VENDE WHERE ID = ? AND Cliente_ID = ?', [vendaId, usuario.ID], (err, r) => err ? reject(err) : resolve(r));
     });
@@ -45,16 +82,58 @@ router.post('/notificacoes/confirmar-entrega', async (req, res) => {
 
     await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['entregue', vendaId], (e,r)=> e?reject(e):resolve(r)));
 
-    // gravar notificação de entrega para o usuário
-    db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-      [usuario.ID, 'Produto entregue', 'Produto recebido com sucesso. Você pode avaliar o produto agora.', 'entregue', vendaId],
-      (err) => { if (err) console.error(err); });
+    // atualiza/insere notificação (upsert) para essa venda
+    await upsertNotificationSimple(usuario.ID, vendaId, 'Produto entregue', 'Produto recebido com sucesso. Obrigado pela compra!', 'entregue');
 
-    // redireciona para avaliações para que o usuário possa avaliar
-    return res.redirect('/avaliacao');
+    // voltar para a lista de notificações (não ir direto para /avaliacao)
+    return res.redirect('/notificacoes');
   } catch (err) {
     console.error('Erro confirmar entrega:', err);
     return res.status(500).send('Erro interno');
+  }
+});
+
+router.post('/:id/pronto', async (req, res) => {
+  const id = Number(req.params.id);
+  try {
+    await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['pronto', id], (e,r)=> e?reject(e):resolve(r)));
+    const rows = await new Promise((resolve, reject) => {
+      db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
+                FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
+                (err, r) => err ? reject(err) : resolve(r));
+    });
+    if (rows && rows[0]) {
+      const venda = rows[0];
+      const titulo = 'Pedido pronto para envio';
+      const mensagem = `Seu pedido (${venda.produto_nome}) está pronto para envio. Em breve será despachado.`;
+      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'pronto');
+    }
+    return res.redirect(req.get('referer') || '/adm/vendas');
+  } catch (err) {
+    console.error('Erro marcar pronto:', err);
+    return res.status(500).send('Erro ao marcar pronto');
+  }
+});
+
+router.post('/:id/caminho', async (req, res) => {
+  const id = Number(req.params.id);
+  try {
+    await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['a_caminho', id], (e,r)=> e?reject(e):resolve(r)));
+    const rows = await new Promise((resolve, reject) => {
+      db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
+                FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
+                (err, r) => err ? reject(err) : resolve(r));
+    });
+    if (rows && rows[0]) {
+      const venda = rows[0];
+      const titulo = 'Pedido a caminho';
+      const mensagem = `Seu pedido (${venda.produto_nome}) está a caminho. Ao receber, confirme a entrega no app para avaliá-lo.`;
+      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'a_caminho');
+    }
+    return res.redirect(req.get('referer') || '/adm/vendas');
+  } catch (err) {
+    console.error('Erro marcar a caminho:', err);
+    return res.status(500).send('Erro ao marcar a caminho');
   }
 });
 

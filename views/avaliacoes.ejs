@@ -30,19 +30,6 @@
         };
         return ratings[rating] || '';
     }
-
-    const avaliados = [];
-    const naoAvaliados = [];
-    if (produtos && avaliacoes) {
-        produtos.forEach(function(produto) {
-            const av = avaliacoes.find(a => a.produto_id == produto.ID);
-            if (av) {
-                avaliados.push({ produto, av });
-            } else {
-                naoAvaliados.push(produto);
-            }
-        });
-    }
     %>
     
     <% if (typeof mensagemNaoLogado !== 'undefined' && mensagemNaoLogado) { %>
@@ -50,11 +37,6 @@
             <i class="fas fa-exclamation-triangle me-2"></i>
             <%= mensagemNaoLogado %>
             <a href="/perfil" class="btn btn-primary btn-sm ms-2">Entrar</a>
-        </div>
-    <% } else if (!produtos || produtos.length === 0) { %>
-        <div class="alert alert-info text-center mt-5 shadow-sm">
-            <i class="fas fa-info-circle me-2"></i>
-            Você ainda não comprou nenhum produto.
         </div>
     <% } else { %>
         <div class="d-flex justify-content-center mb-4">
@@ -69,14 +51,15 @@
         <div class="tab-content" id="tabContent">
             <!-- Aba de produtos não avaliados -->
             <div class="tab-pane active" id="naoAvaliados">
-                <% if (naoAvaliados.length === 0) { %>
+                <% if (!naoAvaliados || naoAvaliados.length === 0) { %>
                     <div class="alert alert-info text-center shadow-sm">
-                        <i class="fas fa-check text-success me-2"></i>
-                        Nenhum produto pendente de avaliação.
+                        <i class="fas fa-info-circle me-2"></i>
+                        Você ainda não tem produtos aguardando avaliação.
                     </div>
                 <% } else { %>
                     <div class="products-grid">
                         <% naoAvaliados.forEach(function(produto) { %>
+                            <!-- (conteúdo igual ao bloco anterior para naoAvaliados) -->
                             <div class="d-flex">
                                 <div class="card flex-fill">
                                     <div class="card-body d-flex align-items-start">
@@ -97,6 +80,8 @@
                                             <% } %>
                                             <p class="product-category mb-3"><%= produto.categoria_nome %></p>
                                             <form class="form-avaliacao mb-3" action="/avaliacao/enviar" method="POST">
+                                                <input type="hidden" name="venda_id" value="<%= produto.venda_id || '' %>">
+                                                <input type="hidden" name="produto_id" value="<%= produto.ID %>">
                                                 <input type="hidden" name="produtoId" value="<%= produto.ID %>">
                                                 <input type="hidden" name="origem" value="avaliacoes">
                                                 <div class="rating-stars" data-produto="<%= produto.ID %>">
@@ -130,10 +115,10 @@
             
             <!-- Aba de produtos avaliados -->
             <div class="tab-pane" id="avaliados">
-                <% if (avaliados.length === 0) { %>
+                <% if (!avaliados || avaliados.length === 0) { %>
                     <div class="alert alert-info text-center shadow-sm">
-                        <i class="fas fa-star me-2"></i>
-                        Nenhum produto avaliado ainda.
+                        <i class="fas fa-info-circle me-2"></i>
+                        Você ainda não avaliou nenhum produto.
                     </div>
                 <% } else { %>
                     <div class="products-grid">
@@ -167,10 +152,12 @@
                                             </div>
                                             <p class="rating-comment"><i class="fas fa-quote-left me-2 text-muted"></i><%= item.av.descricao %></p>
                                             <div class="btn-group-vertical">
-                                                <button class="btn btn-outline-primary me-2" onclick="editarAvaliacao('<%= item.av.id %>', '<%= item.produto.ID %>', '<%= item.av.estrela %>', '<%= item.av.descricao.replace(/'/g, "\\'") %>')">
+                                                <button class="btn btn-outline-primary me-2"
+                                                    onclick='editarAvaliacao(<%= item.av.id %>, <%= item.produto.ID %>, <%= item.av.estrela %>, <%- JSON.stringify(item.av.descricao || "") %>)'>
                                                     <i class="fas fa-edit me-2"></i>Editar Avaliação
                                                 </button>
-                                                <button class="btn btn-outline-danger" onclick="confirmarExclusaoAvaliacao('<%= item.av.id %>', '<%= item.produto.ID %>')">
+                                                <button class="btn btn-outline-danger"
+                                                    onclick='confirmarExclusaoAvaliacao(<%= item.av.id %>, <%= item.produto.ID %>)'>
                                                     <i class="fas fa-trash me-2"></i>Excluir Avaliação
                                                 </button>
                                             </div>
@@ -247,6 +234,14 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     inicializarSistemaAvaliacao();
+    // abre aba conforme query param ?show=avaliados ou ?show=naoAvaliados
+    const params = new URLSearchParams(window.location.search);
+    const show = params.get('show');
+    if (show === 'avaliados') {
+        mostrarTab('avaliados');
+    } else if (show === 'naoAvaliados') {
+        mostrarTab('naoAvaliados');
+    }
 });
 
 function inicializarSistemaAvaliacao() {

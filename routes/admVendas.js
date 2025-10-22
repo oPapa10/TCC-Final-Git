@@ -2,6 +2,28 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // ajuste conforme seu arquivo de conexão
 
+// helper upsert para notificações (novo)
+async function upsertNotification(clienteId, vendaId, titulo, mensagem, status) {
+  return new Promise((resolve, reject) => {
+    db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
+      if (err) return reject(err);
+      if (rows && rows.length) {
+        db.query(
+          'UPDATE notificacoes SET cliente_id = ?, titulo = ?, mensagem = ?, status = ?, lida = 0, created_at = NOW() WHERE id = ?',
+          [clienteId, titulo, mensagem, status, rows[0].id],
+          (e, r) => e ? reject(e) : resolve(r)
+        );
+      } else {
+        db.query(
+          'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
+          [clienteId, titulo, mensagem, status, vendaId],
+          (e, r) => e ? reject(e) : resolve(r)
+        );
+      }
+    });
+  });
+}
+
 // middleware simples para garantir admin (se tiver sistema de sessão/roles, troque)
 // Removi a exigência de login para o ADM conforme solicitado.
 // Se quiser reativar proteção depois, aplique novamente um middleware de autorização.
@@ -65,13 +87,18 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     const whereSQL = where.length ? 'WHERE ' + where.join(' AND ') : '';
 
     const sql = `
-      SELECT v.ID, v.hora_venda, v.valor_venda, v.estrela, v.status,
+      SELECT v.ID, v.hora_venda, v.valor_venda, v.status,
              c.nome AS cliente_nome, c.email AS cliente_email,
-             p.nome AS produto_nome, p.ID AS produto_id,
-             p.imagem AS produto_imagem
+             p.nome AS produto_nome, p.ID AS produto_id, p.imagem AS produto_imagem,
+             COALESCE(ar.avg_rating, 0) AS produto_media, COALESCE(ar.cnt, 0) AS produto_qtd_avaliacoes
       FROM VENDE v
       LEFT JOIN CLIENTE c ON v.Cliente_ID = c.ID
       LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID
+      LEFT JOIN (
+        SELECT produto_id, ROUND(AVG(estrela),2) AS avg_rating, COUNT(*) AS cnt
+        FROM AVALIACAO
+        GROUP BY produto_id
+      ) ar ON p.ID = ar.produto_id
       ${whereSQL}
       ORDER BY v.hora_venda DESC
       LIMIT 100
@@ -97,7 +124,6 @@ router.post('/:id/pronto', async (req, res) => {
   const id = Number(req.params.id);
   try {
     await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['pronto', id], (e,r)=> e?reject(e):resolve(r)));
-    // buscar cliente e produto para notificar
     const rows = await new Promise((resolve, reject) => {
       db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
                 FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
@@ -107,9 +133,7 @@ router.post('/:id/pronto', async (req, res) => {
       const venda = rows[0];
       const titulo = 'Pedido pronto para envio';
       const mensagem = `Seu pedido (${venda.produto_nome}) está pronto para envio. Em breve será despachado.`;
-      // grava notificação para cliente (se existir)
-      db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-        [venda.Cliente_ID, titulo, mensagem, 'pronto', venda.venda_id], (err)=>{ if (err) console.error(err); });
+      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'pronto');
     }
     return res.redirect(req.get('referer') || '/adm/vendas');
   } catch (err) {
@@ -122,7 +146,6 @@ router.post('/:id/caminho', async (req, res) => {
   const id = Number(req.params.id);
   try {
     await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['a_caminho', id], (e,r)=> e?reject(e):resolve(r)));
-    // notificar cliente que pedido está a caminho
     const rows = await new Promise((resolve, reject) => {
       db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
                 FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
@@ -132,8 +155,7 @@ router.post('/:id/caminho', async (req, res) => {
       const venda = rows[0];
       const titulo = 'Pedido a caminho';
       const mensagem = `Seu pedido (${venda.produto_nome}) está a caminho. Ao receber, confirme a entrega no app para avaliá-lo.`;
-      db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-        [venda.Cliente_ID, titulo, mensagem, 'a_caminho', venda.venda_id], (err)=>{ if (err) console.error(err); });
+      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'a_caminho');
     }
     return res.redirect(req.get('referer') || '/adm/vendas');
   } catch (err) {
