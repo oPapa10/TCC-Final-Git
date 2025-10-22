@@ -15,6 +15,7 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     const year = q.year ? Number(q.year) : null;
     const month = q.month ? Number(q.month) : null;
     const day = q.day ? Number(q.day) : null;
+    const status = q.status ? String(q.status) : null;
     const search = q.search ? q.search.trim() : null;
     const priceMin = q.priceMin ? Number(q.priceMin) : null;
     const priceMax = q.priceMax ? Number(q.priceMax) : null;
@@ -51,11 +52,20 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     if (rating) {
       where.push('v.estrela >= ?'); params.push(rating);
     }
+    // filtro por status (pendente, pronto, a_caminho, entregue, realizada)
+    if (status) {
+      if (status === 'entregue') {
+        // tratar "entregue" como entregue + realizada (vendas finalizadas)
+        where.push("(v.status = 'entregue' OR v.status = 'realizada')"); 
+      } else {
+        where.push('v.status = ?'); params.push(status);
+      }
+    }
 
     const whereSQL = where.length ? 'WHERE ' + where.join(' AND ') : '';
 
     const sql = `
-      SELECT v.ID, v.hora_venda, v.valor_venda, v.estrela, 
+      SELECT v.ID, v.hora_venda, v.valor_venda, v.estrela, v.status,
              c.nome AS cliente_nome, c.email AS cliente_email,
              p.nome AS produto_nome, p.ID AS produto_id,
              p.imagem AS produto_imagem
@@ -74,7 +84,7 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     res.render('adm-vendas', {
       vendas,
       years: yearsRows.map(r => r.ano).filter(Boolean),
-      filters: { year, month, day, search, priceMin, priceMax, rating }
+      filters: { year, month, day, search, priceMin, priceMax, rating, status }
     });
   } catch (err) {
     console.error('admVendas error:', err);
@@ -96,10 +106,10 @@ router.post('/:id/pronto', async (req, res) => {
     if (rows && rows[0]) {
       const venda = rows[0];
       const titulo = 'Pedido pronto para envio';
-      const mensagem = `Seu pedido (${venda.produto_nome}) está pronto para entrega. Em breve será enviado.`;
+      const mensagem = `Seu pedido (${venda.produto_nome}) está pronto para envio. Em breve será despachado.`;
       // grava notificação para cliente (se existir)
       db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-        [venda.Cliente_ID, titulo, mensagem, 'preparando', venda.venda_id], (err)=>{ if (err) console.error(err); });
+        [venda.Cliente_ID, titulo, mensagem, 'pronto', venda.venda_id], (err)=>{ if (err) console.error(err); });
     }
     return res.redirect(req.get('referer') || '/adm/vendas');
   } catch (err) {

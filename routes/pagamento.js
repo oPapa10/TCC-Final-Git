@@ -162,7 +162,7 @@ Obrigado por comprar conosco!
         // grava VENDE (se veio produtoId) ANTES de inserir a notificação
         const produtoId = produtoIdBody ? Number(produtoIdBody) : null;
         let vendaId = null;
-        console.log('[pix-confirm] produtoId do form:', produtoId, 'usuario.ID:', usuario && usuario.ID);
+        console.log('[pagamento] produtoId do form:', produtoId, 'usuario.ID:', usuario && usuario.ID);
 
         if (produtoId && usuario && usuario.ID) {
           try {
@@ -180,13 +180,14 @@ Obrigado por comprar conosco!
           }
         }
 
+        // agora insere a notificação referenciando venda_id e com status 'pendente'
         if (usuario && usuario.ID) {
           const titulo = 'Pagamento Recebido';
-          const mensagem = `Recebemos seu comprovante de pagamento no valor de R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}. Em breve seu pedido será processado e você receberá atualizações por e-mail.`;
+          const mensagem = `Recebemos seu pagamento no valor de R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}. Em breve seu pedido será processado.`;
           db.query(
             'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-            [usuario.ID, titulo, mensagem, 'preparando', vendaId],
-            (err) => { if (err) console.error('Erro ao gravar notificação PIX:', err); }
+            [usuario.ID, titulo, mensagem, 'pendente', vendaId],
+            (err) => { if (err) console.error('Erro ao gravar notificação:', err); }
           );
         }
 
@@ -241,8 +242,8 @@ Obrigado!
       try {
         const resInsert = await new Promise((resolve, reject) => {
           db.query(
-            'INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda) VALUES (?, ?, NOW(), ?)',
-            [usuario.ID, produtoId, valor],
+            'INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)',
+            [usuario.ID, produtoId, valor, 'pendente'],
             (err, result) => err ? reject(err) : resolve(result)
           );
         });
@@ -258,7 +259,7 @@ Obrigado!
       const mensagem = `Recebemos sua compra: ${produtoTexto} no valor de R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}. Em breve seu pedido será processado.`;
       db.query(
         'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-        [usuario.ID, titulo, mensagem, 'preparando', vendaId],
+        [usuario.ID, titulo, mensagem, 'pendente', vendaId],
         (err) => { if (err) console.error('Erro ao gravar notificação (cartao):', err); }
       );
     }

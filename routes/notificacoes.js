@@ -47,11 +47,11 @@ router.post('/notificacoes/confirmar-entrega', async (req, res) => {
 
     // gravar notificação de entrega para o usuário
     db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-      [usuario.ID, 'Produto entregue', 'Confirme que recebeu o produto. Obrigado pela compra!', 'entregue', vendaId],
+      [usuario.ID, 'Produto entregue', 'Produto recebido com sucesso. Você pode avaliar o produto agora.', 'entregue', vendaId],
       (err) => { if (err) console.error(err); });
 
-    // opcional: enviar ao ADM notificação por outro canal (página ADM mostra status)
-    return res.redirect('/notificacoes');
+    // redireciona para avaliações para que o usuário possa avaliar
+    return res.redirect('/avaliacao');
   } catch (err) {
     console.error('Erro confirmar entrega:', err);
     return res.status(500).send('Erro interno');

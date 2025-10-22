@@ -105,10 +105,9 @@
               <th>Data / Hora</th>
               <th>Produto</th>
               <th>Cliente</th>
-              <th>Valor</th>
               <th class="text-center">Valor</th>
               <th>Avaliação</th>
-              <th>Ações</th>
+              <th>Ações / Status</th>
             </tr>
           </thead>
           <tbody>
@@ -132,49 +131,50 @@
                     <strong><%= v.cliente_nome %></strong>
                     <div class="small-muted"><%= v.cliente_email %></div>
                   </td>
-                  <td><strong>R$ <%= Number(v.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></strong></td>
                   <td class="text-center align-middle">
                     <div class="valor-mais">R$ <%= Number(v.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
                   </td>
                   <td>
                     <% if (v.estrela) { %>
-                      <span class="text-warning">
-                        <i class="fas fa-star"></i> <%= v.estrela %>
-                      </span>
+                      <span class="text-warning"><i class="fas fa-star"></i> <%= v.estrela %></span>
                     <% } else { %>
                       <span class="text-muted">-</span>
                     <% } %>
                   </td>
-                  <td>
-                    <div class="d-flex gap-1">
-                      <a href="/seeProduto/<%= v.produto_id %>" class="btn btn-sm btn-outline-primary" title="Ver produto">
-                        <i class="fas fa-eye"></i>
-                      </a>
-                      <a href="/adm/vendas/nota/<%= v.ID %>" class="btn btn-sm btn-outline-secondary" title="Detalhes">
-                        <i class="fas fa-info-circle"></i>
-                      </a>
-                    </div>
-                  </td>
-                  <td>
+                  <td class="align-middle text-end">
+                    <!-- status badge -->
                     <% if (v.status === 'pendente') { %>
-                      <form method="POST" action="/adm/vendas/<%= v.ID %>/pronto" style="display:inline">
-                        <button class="btn btn-sm btn-outline-warning">Pronto para entrega</button>
-                      </form>
+                      <span class="badge bg-warning text-dark me-2">Pendente</span>
                     <% } else if (v.status === 'pronto') { %>
-                      <form method="POST" action="/adm/vendas/<%= v.ID %>/caminho" style="display:inline">
-                        <button class="btn btn-sm btn-outline-primary">Enviar (A caminho)</button>
-                      </form>
+                      <span class="badge bg-secondary text-dark me-2">Pronto</span>
                     <% } else if (v.status === 'a_caminho') { %>
-                      <span class="badge bg-info">A caminho</span>
+                      <span class="badge bg-info text-dark me-2">A caminho</span>
                     <% } else if (v.status === 'entregue') { %>
-                      <span class="badge bg-success">Entregue</span>
+                      <span class="badge bg-success me-2">Entregue</span>
+                    <% } else if (v.status === 'realizada') { %>
+                      <span class="badge bg-success me-2">Realizada</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary me-2"><%= v.status || '—' %></span>
                     <% } %>
+
+                    <!-- ações conforme status -->
+                    <div class="d-inline-block">
+                      <% if (v.status === 'pendente') { %>
+                        <form method="POST" action="/adm/vendas/<%= v.ID %>/pronto" style="display:inline">
+                          <button class="btn btn-sm btn-outline-warning">Pronto para envio</button>
+                        </form>
+                      <% } else if (v.status === 'pronto') { %>
+                        <form method="POST" action="/adm/vendas/<%= v.ID %>/caminho" style="display:inline">
+                          <button class="btn btn-sm btn-outline-primary">Enviar (A caminho)</button>
+                        </form>
+                      <% } %>
+                    </div>
                   </td>
                 </tr>
               <% }) %>
             <% } else { %>
               <tr>
-                <td colspan="7" class="text-center py-5">
+                <td colspan="8" class="text-center py-5">
                   <i class="fas fa-receipt fa-2x mb-3" style="color: #dee2e6;"></i>
                   <h5 class="text-muted">Nenhuma venda encontrada</h5>
                   <p class="text-muted mb-0">Tente ajustar os filtros para ver mais resultados.</p>

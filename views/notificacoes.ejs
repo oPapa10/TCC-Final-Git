@@ -48,16 +48,18 @@
             </div>
             <div class="text-end small">
               <div class="text-muted"><%= new Date(n.created_at).toLocaleString('pt-BR') %></div>
-              <% if (n.status === 'preparando') { %>
-                <span class="badge bg-warning text-dark mt-1">Preparando</span>
-              <% } else if (n.status === 'enviado') { %>
-                <span class="badge bg-success mt-1">Enviado</span>
+              <% if (n.status === 'pendente') { %>
+                <span class="badge bg-warning text-dark mt-1">Pendente</span>
+              <% } else if (n.status === 'pronto') { %>
+                <span class="badge bg-secondary text-dark mt-1">Pronto</span>
               <% } else if (n.status === 'a_caminho' && n.venda_id) { %>
                 <span class="badge bg-info text-dark mt-1">A caminho</span>
                 <form method="POST" action="/notificacoes/confirmar-entrega" class="mt-2">
                   <input type="hidden" name="vendaId" value="<%= n.venda_id %>">
                   <button type="submit" class="btn btn-sm btn-success">Confirmar recebimento</button>
                 </form>
+              <% } else if (n.status === 'entregue') { %>
+                <span class="badge bg-success mt-1">Entregue</span>
               <% } else { %>
                 <span class="badge bg-secondary mt-1"><%= n.status %></span>
               <% } %>
