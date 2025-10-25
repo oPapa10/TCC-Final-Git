@@ -12,17 +12,105 @@
 .search-container {
     flex-grow: 1;
     max-width: 500px;
+    display: flex;
+    align-items: center;
+}
+
+/* ===== Ajustes para barra de pesquisa alinhada no desktop ===== */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-grow: 1;
+    max-width: 520px; /* limite maior no desktop, index inclui showSearch */
+}
+
+/* input + botão colados e alinhados */
+.search-container .input-group {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  gap: 0;
+}
+
+.search-container .input-group .form-control,
+#searchInput {
+  flex: 1 1 auto;
+  height: 44px; /* ajuste se quiser maior/menor */
+  box-sizing: border-box;
+  border-radius: 20px 0 0 20px;
+}
+
+.search-container .input-group .btn,
+.search-container .input-group .btn-outline-light,
+#button-search {
+  flex: 0 0 auto;
+  height: 44px;
+  margin-left: -1px; /* remove linha entre input e botão */
+  border-left: none;
+  border-radius: 0 20px 20px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  position: absolute;
+  right: -9%;
+}
+
+/* garante que o botão da lupa fique ao lado, colado no input */
+.search-container .input-group .btn,
+.input-group .btn-outline-light {
+  height:44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-left: -1px; /* remove pequeno gap entre input e botão */
+  border-left: none;
+  flex: 0 0 auto;
+  padding: 6px 12px;
+}
+
+/* fallback para garantir que o input não quebre em coluna */
+.search-container .input-group > .form-control,
+.search-container .input-group > input,
+.search-container .input-group > .btn {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+/* remover centragem automática que atrapalhava no desktop */
+.search-container.mx-auto { margin-left:0; margin-right:0; }
+
+/* garante que o ícone da lupa fique centralizado ao lado (não abaixo) */
+.input-group .btn-outline-light i {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* quando a tela for pequena, mantém o comportamento responsivo existente */
+@media (max-width: 768px) {
+    .search-container { max-width: none; order: 3; width: 100%; }
+    .search-container .input-group { max-width: 100%; }
+    .search-container .form-control,
+    .input-group .btn-outline-light { height: auto; }
 }
 
 #searchInput {
+    min-width: 0; /* permite encolher dentro do flex */
+    width: 100%;
+    box-sizing: border-box;
     border-radius: 20px 0 0 20px;
     border-right: none;
-    padding-left: 20px;
+    padding-left: 12px;
 }
 
 #searchInput:focus {
     box-shadow: none;
     border-color: #ced4da;
+}
+
+#button-search, #admin-button {
+    white-space: nowrap;
 }
 
 #button-search {
@@ -242,6 +330,16 @@
     .card img {
         height: 120px;
     }
+}
+
+@media (max-width: 991px) {
+  .search-container { max-width: 260px; }
+}
+@media (max-width: 576px) {
+  .search-container { max-width: 160px; }
+  #searchInput { padding-left: 10px; font-size: 0.9rem; }
+  #button-search { padding: 6px 8px; font-size: 0.9rem; }
+  #admin-button { padding: 6px 8px; font-size: 0.85rem; }
 }
 
 /* Centraliza verticalmente as categorias quando não há barra de rolagem */
@@ -797,10 +895,9 @@ body.dark-theme .no-results-message {
     background: #ff5252;
     color: #fff;
     border-radius: 6px;
-    padding: 2px 10px;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-left: 10px;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
 }
 
 .promo-description {
@@ -824,7 +921,6 @@ body.dark-theme .no-results-message {
     font-size: 1.1rem;
     transition: background 0.2s;
     width: fit-content;
-    margin-top: 10px;
 }
 
 .promo-button:hover {
@@ -867,6 +963,19 @@ body.dark-theme .no-results-message {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 8 8'><path d='M5.854 1.146a.5.5 0 0 1 0 .708L3.707 4l2.147 2.146a.5.5 0 0 1-.708.708l-2.5-2.5a.5.5 0 0 1 0-.708l2.5-2.5a.5.5 0 0 1 .708 0z'/></svg>");
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 8 8'><path d='M2.146 1.146a.5.5 0 0 1 .708 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.708-.708L4.293 4 2.146 1.854a.5.5 0 0 1 0-.708z'/></svg>");
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
 }
 
 .carousel-indicators {
@@ -918,4 +1027,512 @@ body.dark-theme .no-results-message {
     -ms-overflow-style: none; /* IE/Edge */
     user-select: none;
     cursor: grab;
+}
+
+/* garantir botão de busca "encaixe" no input */
+.input-group .btn-outline-light {
+  margin-left: -1px; /* removes small gap between input and button */
+  border-left: none;
+}
+
+/* admin button: no mobile mostrar só ícone (colocado fora do input-group) */
+#admin-button {
+  border-radius: 20px;
+  font-weight: 500;
+}
+@media (max-width: 767px) {
+  #admin-button.d-none.d-md-inline-flex {
+    display: inline-flex !important;
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+  /* se quiser mostrar só ícone em telas muito pequenas */
+  #admin-button i { margin-right: 6px; }
+}
+
+/* permite que o input encolha corretamente */
+#searchInput { min-width: 0; }
+
+/* ===== Promoções: responsividade e escala (REPLACE/APPEND desta seção) ===== */
+/* container responsivo e centralizado */
+.promo-carousel-container {
+  transition: all 220ms ease;
+  width: 100%;
+  margin: 0 auto 28px;
+  padding: 0 8px;
+  max-width: 1200px;
+}
+
+/* altura fluida do carousel (desktop -> mobile) */
+#promoCarousel {
+  height: clamp(240px, 28vw, 360px);
+  min-height: 180px;
+  max-height: 520px;
+  transition: height 220ms ease;
+}
+
+/* garante que cada slide use altura do carousel */
+.carousel-inner, .carousel-item {
+  height: 100%;
+}
+
+/* layout: lado a lado no desktop, empilha no mobile */
+.promo-carousel-item {
+  display: flex;
+  gap: 0;
+  height: 100%;
+  align-items: stretch;
+  transition: all 220ms ease;
+  overflow: visible;
+}
+
+/* área da imagem: mantém proporção e centra o conteúdo */
+.promo-image-container {
+  flex: 0 0 50%;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+/* imagem nunca deve ser cortada: width:auto, max-height relativo ao slide */
+.promo-image {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: transform 220ms ease;
+  display: block;
+}
+
+/* área de informação: espaçamento adequado e leitura */
+.promo-info {
+  flex: 1 1 50%;
+  padding: clamp(14px, 3.2vw, 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+/* tipografia responsiva */
+.promo-title {
+  font-size: clamp(1.05rem, 2.2vw, 2rem);
+  line-height: 1.05;
+  margin: 0 0 6px 0;
+  font-weight: 700;
+}
+
+.promo-description {
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  color: #444;
+  margin: 0 0 8px 0;
+}
+
+/* preços e badge */
+.promo-price-container {
+  display:flex;
+  flex-wrap:wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #888;
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+}
+
+.discounted-price {
+  color: #28a745;
+  font-weight: 800;
+  font-size: clamp(1rem, 1.8vw, 1.4rem);
+}
+
+.discount-badge {
+  background: #ff5252;
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* botão ajustado */
+.promo-button {
+  padding: clamp(8px, 1.2vw, 12px) clamp(12px, 2vw, 24px);
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+  border-radius: 8px;
+  width: fit-content;
+}
+
+/* Quebra para telas menores: empilha e reduz altura do carrossel */
+@media (max-width: 768px) {
+  #promoCarousel { height: clamp(200px, 44vw, 360px) !important; }
+
+  .promo-carousel-item {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding-bottom: 6px;
+  }
+
+  .promo-image {
+    max-height: 180px !important;
+    margin-top: 6px;
+  }
+
+  .promo-info {
+    width: 100%;
+    padding: 10px 14px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* certifica que timer e botão fiquem visíveis e não deslocados */
+  .promo-timer { justify-content:center; }
+  .promo-button { margin-left: auto; margin-right: auto; }
+}
+
+/* ajuste fino para telas muito pequenas */
+@media (max-width: 420px) {
+  .promo-image { max-height: 140px !important; }
+  #promoCarousel { height: clamp(160px, 52vw, 260px) !important; }
+  .promo-info { padding: 8px 10px; }
+  .promo-title { font-size: 1rem; }
+}
+
+/* assegura que nada esconda os controles do slide */
+.carousel-inner, .carousel-item { overflow: visible !important; }
+.carousel-control-prev, .carousel-control-next { z-index: 3; }
+
+/* ===== Correções: evitar corte da imagem, mostrar timer e botão ===== */
+
+.promo-carousel-container {
+  position: relative;
+  z-index: 1;
+  padding-top: 8px; /* separa do topo/categorias */
+}
+
+/* garante imagem sempre inteira e centralizada */
+.promo-image-container { display:flex; align-items:center; justify-content:center; overflow:visible; }
+.promo-image {
+  width: auto !important;
+  max-width: 100% !important;
+  max-height: calc(100% - 24px) !important; /* garante espaço para texto/botão */
+  object-fit: contain !important;
+  display: block;
+}
+
+/* forçar visibilidade do timer e do botão */
+.promo-timer {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  color: #d7263d;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.promo-button {
+  display: inline-block !important;
+  margin-top: 8px;
+  z-index: 2;
+}
+
+/* organiza infos em mobile sem esconder elementos */
+@media (max-width: 768px) {
+  /* altura suficiente para imagem + conteúdo */
+  #promoCarousel { height: clamp(200px, 44vw, 360px) !important; }
+
+  .promo-carousel-item { flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; padding-bottom: 6px; }
+
+  .promo-image { max-height: 180px !important; margin-top: 6px; }
+
+  .promo-info {
+    width: 100%;
+    padding: 10px 14px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* certifica que timer e botão fiquem visíveis e não deslocados */
+  .promo-timer { justify-content:center; }
+  .promo-button { margin-left: auto; margin-right: auto; }
+}
+
+/* ajuste fino para telas muito pequenas */
+@media (max-width: 420px) {
+  .promo-image { max-height: 140px !important; }
+  #promoCarousel { height: clamp(160px, 52vw, 260px) !important; }
+  .promo-info { padding: 8px 10px; }
+  .promo-title { font-size: 1rem; }
+}
+
+/* assegura que nada esconda os controles do slide */
+.carousel-inner, .carousel-item { overflow: visible !important; }
+.carousel-control-prev, .carousel-control-next { z-index: 3; }
+
+/* ===== Promoções: overlay clicável no mobile + organização das infos ===== */
+.carousel-item { position: relative; overflow: visible; }
+
+/* overlay link (aparece só no mobile) */
+.promo-overlay-link {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  /* mantém cursor de link */
+  cursor: pointer;
+  background: transparent;
+  text-decoration: none;
+}
+
+/* esconder botão "Ver Oferta" em mobile; manter no desktop */
+@media (max-width: 767px) {
+  .promo-button { display: none !important; }
+  .promo-overlay-link { display: block; }
+
+  /* reorganizar conteúdo dentro de .promo_info para mobile */
+  .promo-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 10px 14px;
+  }
+
+  .promo-title { order: 1; font-size: 1.15rem; font-weight:700; }
+  .promo-price-container { order: 2; display:flex; justify-content:center; gap:8px; align-items:center; }
+  .promo-timer { order: 3; justify-content:center; width:100%; }
+  .promo-description { order: 4; font-size:0.96rem; color: #444; }
+  /* garantir imagem visível e com espaço para texto abaixo */
+  .promo-image-container { padding-top: 6px; padding-bottom: 6px; }
+  .promo-image { max-height: 180px !important; width: auto; max-width: 86%; }
+
+  /* dar margem entre imagem e o título */
+  .promo-carousel-item { gap: 6px; align-items: flex-start; }
+}
+
+/* Desktop: alinhar infos à esquerda e garantir timer visível ao lado do preço */
+@media (min-width: 768px) {
+  .promo-info { text-align: left; align-items: flex-start; }
+  .promo-timer { margin-top: 6px; }
+  .promo-button { display: inline-block; }
+}
+
+/* pequena proteção para evitar overlap com categorias no topo */
+.promo-carousel-container { padding-top: 8px; }
+
+/* garantia: timer e botão sempre visíveis (se existirem) */
+.promo-timer, .promo-button { z-index: 6; position: relative; }
+
+/* Ajustes: descrição + timer à direita no desktop e espaço para os indicadores */
+@media (min-width: 768px) {
+  .promo-carousel-item {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .promo-image-container {
+    flex: 0 0 48%;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .promo-info {
+    flex: 1 1 52%;
+    padding: 30px 36px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    box-sizing: border-box;
+  }
+
+  .promo-title { margin-bottom: 6px; }
+
+  .promo-price-container { order: 2; margin-top: 4px; }
+
+  .promo-description {
+    order: 3;
+    margin-top: 8px;
+    color: #4a4a4a;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .promo-timer {
+    order: 4;
+    margin-top: 10px;
+    align-self: flex-start;
+    font-weight: 700;
+    color: #d7263d;
+  }
+}
+
+/* cria espaço visual abaixo do carrossel para as bolinhas não sobreporem */
+.promo-carousel-container {
+  padding-bottom: 48px; /* ajuste se precisar mais/menos */
+}
+
+/* empurra as bolinhas para baixo (visualmente fora do card) */
+.carousel-indicators {
+  position: absolute;
+  top: 280px
+}
+
+/* mais espaço em telas muito largas */
+@media (min-width: 1200px) {
+  .carousel-indicators { bottom: -34px; }
+}
+
+/* garante que indicadores não cubram conteúdo e fiquem clicáveis */
+.carousel-indicators, .carousel-indicators button {
+  z-index: 6;
+}
+
+/* mantém imagem sem corte e alinhada à esquerda */
+.promo-image {
+  object-fit: contain;
+  max-height: 100%;
+  width: auto;
+}
+
+/* ===== Ajustes finais: descrição à direita, espaçamento inferior e indicadores ===== */
+/* Valores fáceis de alterar abaixo (mude aqui para testar tamanhos) */
+:root {
+  --promo-height: clamp(400px, 28vw, 380px);  /* altura do carrossel (desktop -> mobile) */
+  --promo-padding-bottom: 64px;               /* espaço abaixo do carrossel p/ bolinhas */
+  --carousel-indicators-bottom: -42px;        /* deslocamento vertical das bolinhas */
+  --carousel-indicators-bottom-lg: -56px;     /* deslocamento em telas muito largas */
+}
+
+/* aplica novas variáveis */
+#promoCarousel {
+  height: var(--promo-height) !important;
+  min-height: 220px;
+  transition: height 220ms ease;
+}
+
+/* garante espaço para indicadores sem sobrepor conteúdo */
+.promo-carousel-container {
+  padding-bottom: var(--promo-padding-bottom);
+  overflow: visible;
+}
+
+/* organiza as infos: descrição fica à direita, preços/timer bem espaçados */
+@media (min-width: 768px) {
+  .promo-carousel-item { align-items: center; }
+  .promo-image-container { flex: 0 0 48%; padding: 18px; }
+  .promo-info {
+    flex: 1 1 52%;
+    padding: 28px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* empurra preço/timer para baixo se necessário */
+    gap: 10px;
+    box-sizing: border-box;
+    text-align: left;
+  }
+
+  /* descrição bem legível ao lado direito */
+  .promo-description {
+    margin: 0;
+    color: #4a4a4a;
+    line-height: 1.35;
+    font-size: 1rem;
+  }
+
+  /* mais espaço entre preço e fundo */
+  .promo-price-container { margin-bottom: 12px; }
+
+  /* timer posicionado abaixo do preço, alinhado à esquerda */
+  .promo-timer {
+    margin-top: 6px;
+    align-self: flex-start;
+  }
+}
+
+/* ===== Forçar ordem dos elementos da promoção e layout mobile lado-a-lado ===== */
+
+/* Variáveis fáceis de ajustar */
+:root {
+  --promo-height-fixed: clamp(300px, 28vw, 420px); /* altura do carrossel */
+  --promo-padding-bottom-fixed: 84px;              /* espaço abaixo p/ indicadores */
+}
+
+/* aplica variáveis */
+#promoCarousel { height: var(--promo-height-fixed) !important; }
+.promo-carousel-container { padding-bottom: var(--promo-padding-bottom-fixed); }
+
+/* Regra base: garantir que .promo-info use flex column para controlar ordem */
+.promo-info { display: flex; flex-direction: column; gap: 8px; }
+
+/* Ordem explícita (desktop) */
+@media (min-width: 768px) {
+  .promo-title           { order: 1; }
+  .promo-price-container { order: 2; }
+  .promo-description     { order: 3; }
+  .promo-timer           { order: 4; }
+  .promo-button          { order: 5; align-self: flex-start; } /* botão depois do timer */
+  /* layout: imagem esquerda, infos direita */
+  .promo-carousel-item { flex-direction: row; align-items: center; }
+  .promo-image-container { flex: 0 0 48%; padding: 18px; }
+  .promo-info { flex: 1 1 52%; padding: 28px 36px; justify-content: flex-start; }
+}
+
+/* Mobile: manter infos ao lado da imagem (row), descrição logo abaixo do preço, esconder botão */
+@media (max-width: 767px) {
+  /* layout lado-a-lado em telas pequenas (ajuste as porcentagens se quiser) */
+  .promo-carousel-item { flex-direction: row; align-items: center; gap: 8px; }
+  .promo-image-container { flex: 0 0 42%; padding: 8px; min-width: 120px; display:flex; justify-content:center; }
+  .promo-info { flex: 1 1 58%; padding: 8px 10px; text-align: left; }
+  /* forçar ordem no mobile (mesma que desktop, descrição abaixo do preço) */
+  .promo-title           { order: 1; font-size: 1.05rem; margin-left: -90px; }
+  .promo-price-container { order: 3; margin-left: -90px;}
+  .promo-description     { order: 2; font-size: 0.95rem; color: #444; margin-top: 6px; margin-left: -90px;}
+  .promo-timer           { order: 4; color: #d7263d; font-weight:700; margin-top: 6px; margin-left: -90px;}
+  .promo-button          { display: none !important; } /* botão removido visualmente no celular */
+  .promo-overlay-link    { display: block; } /* overlay ainda faz o clique no mobile */
+  /* reduzir a imagem para não sobrepor as categorias */
+  .promo-image { max-height: 160px !important; max-width: 100%; width: auto; }
+}
+
+/* indicadores (bolinhas) posicionamento mais abaixo para não cortar nada */
+.carousel-indicators { bottom: -32px !important; z-index: 9; }
+@media (min-width: 1200px) {
+  .carousel-indicators { bottom: -44px !important; }
+}
+
+/* garantir visibilidade e evitar overflow cortando conteúdo */
+.carousel-inner, .carousel-item { overflow: visible !important; }
+.carousel-control-prev, .carousel-control-next { z-index: 11; }
+
+/* Diminuir espaço entre carrossel de promoções e lista de produtos */
+.promo-carousel-container {
+  margin-bottom: -70px; /* reduz o espaço externo abaixo do carrossel */
+  /* mantém espaço interno para as bolinhas através da variável já definida */
+  padding-bottom: var(--promo-padding-bottom, 48px);
+}
+
+/* Sobrescrever margem aplicada pela classe mt-5 no container de produtos */
+#produtos {
+  margin-top: 1rem !important; /* ajuste fino: diminuir conforme necessário */
+}
+
+/* Ajustes responsivos menores */
+@media (max-width: 768px) {
+  .promo-carousel-container { margin-bottom: -70px; }
+  #produtos { margin-top: 0.75rem !important; }
 }

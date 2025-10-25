@@ -1,60 +1,121 @@
 <!-- filepath: views/partials/navbar.ejs -->
-<nav class="navbar navbar-expand-lg navbar-custom">
-    <div class="container">
-        <a class="navbar-brand logo-container" href="/">
-            <img src="/images/logo2.png" alt="Logomarca" class="logo-img" />
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
-            aria-label="Alternar navegação">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
-            <ul class="navbar-nav ms-auto">
-                <% if (typeof usuario !== 'undefined' && usuario) { %>
-                    <li class="nav-item d-flex align-items-center">
-                        <a href="/perfil" class="nav-link d-flex align-items-center" style="cursor:pointer;">
-                            <span class="me-2">Bem-vindo, <%= usuario.nome.split(' ')[0] %></span>
-                            <% if (usuario.avatar && usuario.avatar.match(/\.(jpg|jpeg|png|gif)$/i)) { %>
-                                <img src="<%= usuario.avatar %>" alt="Avatar" class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
-                            <% } else { %>
-                                <span class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width:32px; height:32px;">
-                                    <i class="fas fa-user" style="font-size: 1.3rem; color: #888;"></i>
-                                </span>
-                            <% } %>
-                        </a>
-                    </li>
-                <% } %>
-                <li class="nav-item">
-                    <a class="nav-link" href="/">
-                        <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/perfil">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/carrinho">
-                        <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
-                        <span id="cartCounter" class="cart-counter"></span>
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
-                        role="button" data-bs-toggle="dropdown">
-                        <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
-                            alt="Opções" class="nav-icon"/>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
-                        <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
-                        <li><a class="dropdown-item" href="/avaliacao">Minhas Avaliações</a></li>
-                        <li><a class="dropdown-item" href="/notificacoes">Notificações</a></li>
-                        <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
-                    </ul>
-                </li>
-            </ul>
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+  <div class="container d-flex align-items-center">
+    <a class="navbar-brand logo-container" href="/">
+      <img src="/images/logo2.png" alt="Logomarca" class="logo-img" />
+    </a>
+
+    <% /* Search + Admin serão renderizados somente se incluir com showSearch/showAdmin = true */ %>
+    <% if (typeof showSearch !== 'undefined' && showSearch) { %>
+      <div class="search-container ms-md-3 flex-grow-1">
+        <div class="input-group" style="max-width:420px;">
+          <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar produtos..." aria-label="Pesquisar produtos" aria-describedby="button-search">
+          <button class="btn btn-outline-light" type="button" id="button-search">
+            <i class="fas fa-search"></i>
+          </button>
         </div>
+        <!-- REMOVA ou COMENTE o admin aqui se for mover para a direita -->
+        <% /* <a href="/adm" class="btn btn-outline-light ms-2 d-none d-md-inline-flex" id="admin-button">
+              <i class="fas fa-user-shield"></i> Admin
+            </a> */ %>
+      </div>
+    <% } %>
+
+    <!-- botão abre offcanvas lateral esquerda no mobile -->
+    <button class="navbar-toggler d-lg-none ms-2" type="button" data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasMenuIndex" aria-controls="offcanvasMenuIndex" aria-expanded="false"
+      aria-label="Alternar navegação">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- offcanvas lateral esquerda -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenuIndex" aria-labelledby="offcanvasMenuIndexLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasMenuIndexLabel">
+          <img src="/images/logo2.png" alt="Logo" class="offcanvas-logo" />
+        </h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/">
+              <i class="fas fa-home me-2"></i>Início
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/carrinho">
+              <i class="fas fa-shopping-cart me-2"></i>Carrinho
+            </a>
+          </li>
+          <% if (typeof usuario !== 'undefined' && usuario) { %>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/perfil">
+              <i class="fas fa-user me-2"></i>Perfil
+            </a>
+          </li>
+          <% } %>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/avaliacao">
+              <i class="fas fa-star me-2"></i>Minhas Avaliações
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/notificacoes">
+              <i class="fas fa-bell me-2"></i>Notificações
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center" href="/opcoes">
+              <i class="fas fa-ellipsis-h me-2"></i>Opções
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
+
+    <!-- desktop collapse: mantém apenas o ícone de opções (remove botão grande duplicado) -->
+    <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNavMenuSuperior">
+      <ul class="navbar-nav ms-auto flex-row flex-nowrap align-items-center">
+        <!-- colocar admin como nav-item (aparece à direita junto com ícones) -->
+        <% if (typeof showAdmin !== 'undefined' && showAdmin) { %>
+          <li class="nav-item admin-nav-item d-none d-md-flex align-items-center">
+            <a class="nav-link" href="/adm" id="admin-button-desktop">
+              <i class="fas fa-user-shield"></i>
+            </a>
+          </li>
+        <% } %>
+        <% if (typeof usuario !== 'undefined' && usuario) { %>
+          <li class="nav-item d-flex align-items-center">
+            <a href="/perfil" class="nav-link d-flex align-items-center" style="cursor:pointer;">
+              <span class="me-2">Bem-vindo, <%= usuario.nome.split(' ')[0] %></span>
+              <% if (usuario.avatar && usuario.avatar.match(/\.(jpg|jpeg|png|gif)$/i)) { %>
+                <img src="<%= usuario.avatar %>" alt="Avatar" class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
+              <% } else { %>
+                <span class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width:32px; height:32px;">
+                  <i class="fas fa-user" style="font-size: 1.3rem; color: #888;"></i>
+                </span>
+              <% } %>
+            </a>
+          </li>
+        <% } %>
+
+        <li class="nav-item"><a class="nav-link" href="/"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" class="nav-icon" alt="Início"></a></li>
+        <li class="nav-item"><a class="nav-link" href="/perfil"><img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="nav-icon" alt="Perfil"></a></li>
+        <li class="nav-item"><a class="nav-link" href="/carrinho"><img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" class="nav-icon" alt="Carrinho"><span id="cartCounter" class="cart-counter"></span></a></li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes" role="button" data-bs-toggle="dropdown">
+            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png" alt="Opções" class="nav-icon"/>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
+            <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
+            <li><a class="dropdown-item" href="/avaliacao">Minhas Avaliações</a></li>
+            <li><a class="dropdown-item" href="/notificacoes">Notificações</a></li>
+            <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>

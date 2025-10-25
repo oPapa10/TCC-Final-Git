@@ -103,11 +103,18 @@
 
 /* Torna o menu superior horizontal e com rolagem no mobile */
 @media (max-width: 991px) {
+  /* manter collapse oculto por padrão (comportamento do Bootstrap) */
   .navbar-custom .navbar-collapse {
     flex-basis: 100%;
     flex-grow: 1;
+    /* não forçar display aqui — Bootstrap controla quando mostrar */
+    display: none;
+  }
+
+  /* quando o collapse estiver aberto (.show) exibimos em linha e com rolagem */
+  .navbar-custom .navbar-collapse.show {
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: row;
     overflow-x: auto;
     white-space: nowrap;
     align-items: center;
@@ -116,13 +123,15 @@
     padding: 0.5rem 0;
     border-radius: 0 0 12px 12px;
   }
+
   .navbar-custom .navbar-nav {
-    flex-direction: row !important;
+    /* estilo aplicado quando visível via .show */
     gap: 0.5rem;
     align-items: center;
     width: 100%;
     justify-content: flex-end;
   }
+
   .navbar-custom .nav-item {
     margin-bottom: 0 !important;
   }
@@ -130,3 +139,131 @@
     padding: 0.5rem 0.7rem;
   }
 }
+
+/* Offcanvas (mobile menu) styling - lateral esquerda, fundo cinza mais escuro */
+.offcanvas.offcanvas-start {
+  width: 360px;
+  max-width: 92%;
+  background: #d9dde0; /* cinza discreto, menos branco */
+  color: #111 !important;
+  box-shadow: 8px 0 34px rgba(0,0,0,0.2);
+  transition: transform 0.28s ease, opacity 0.22s ease;
+  box-sizing: border-box;
+}
+
+/* logo maior dentro do offcanvas */
+.offcanvas .offcanvas-logo {
+  height: 120px;
+  object-fit: contain;
+}
+
+/* Forçar links e ícones em preto/escuro dentro do offcanvas */
+.offcanvas .nav-link {
+  color: #111 !important;
+  font-weight: 500;
+}
+.offcanvas .nav-link i {
+  color: #111 !important;
+}
+.offcanvas .nav-link:hover,
+.offcanvas .nav-link:focus {
+  color: #000 !important;
+  background: rgba(0,0,0,0.04);
+  transform: translateX(6px);
+}
+
+/* backdrop mais escuro sutil */
+.offcanvas-backdrop.show {
+  background-color: rgba(0,0,0,0.45);
+}
+
+/* reduzir largura padrão da search para caber entre logo e toggler */
+.navbar .search-container .input-group { max-width: 420px; width: 100%; }
+
+/* garantir que o input-group do header use flex (botão grudado à direita) */
+.navbar .search-container .input-group {
+  display: flex;
+  align-items: stretch;
+  gap: 0; /* usamos margin-left negativo no botão, evitar gaps */
+}
+
+/* forçar comportamento do botão da search no header */
+.navbar .search-container .input-group .btn,
+.navbar .search-container .input-group .btn-outline-light {
+  margin-left: -1px;
+  border-left: none;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+/* input ocupa todo espaço restante no header */
+.navbar .search-container .input-group .form-control,
+.navbar .search-container .input-group input.form-control {
+  flex: 1 1 auto;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+/* pequena melhoria visual: remover cor azul padrão do link ativo no offcanvas */
+.offcanvas .nav-link.active {
+  color: #000 !important;
+  background: rgba(13,110,253,0.05);
+}
+
+/* diminuir espaçamento do logo no mobile */
+@media (max-width: 576px) {
+  .logo-img { height: 140%; }
+  .search-container { max-width: 160px; }
+}
+
+/* garantir toggler visível só no mobile (redundante com classe, mas seguro) */
+@media (min-width: 992px) {
+  .navbar-toggler { display: none !important; }
+}
+
+/* evitar que offcanvas estilos vazem para o header em desktop */
+.offcanvas.offcanvas-start {
+  /* já configurado: largura maior e fundo cinza */
+  box-sizing: border-box;
+}
+
+/* garantir layout com flex previsível no header */
+.navbar-custom .container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* logo não exagerada no header, mas maior no offcanvas */
+.logo-container { flex: 0 0 auto; }
+/* -- AUMENTE AQUI o tamanho da logo do cabeçalho (mude 88px para o valor que quiser) -- */
+.logo-img { height: 130px; }
+
+/* search ocupa espaço disponível porém limitada (desktop) */
+.search-container {
+  flex: 0 1 420px;
+  max-width: 420px;
+  margin: 0 8px;
+  display: flex;
+  align-items: center;
+}
+
+/* evitar que offcanvas apareça no desktop (se por algum motivo abrir) */
+@media (min-width: 992px) {
+  .offcanvas {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* reforçar ícones pretos no offcanvas */
+.offcanvas .nav-link, .offcanvas .nav-link i { color: #111 !important; }
+/* ajusta posição do botão ADM quando colocado como nav-item na direita */
+.admin-nav-item { margin-left: 8px; }
+#admin-button-desktop .fas { font-size: 1.05rem; color: #fff; } /* ícone branco */
+#admin-button-desktop { display: inline-flex; align-items:center; justify-content:center; padding: 6px 10px; }
+

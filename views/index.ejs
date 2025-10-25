@@ -30,78 +30,8 @@
     }
     %>
 <body>
-    <!-- Navbar Superior -->
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-        <div class="container">
-            <a class="navbar-brand logo-container" href="/">
-                <img src="/images/logo2.png" alt="Logomarca" class="logo-img" />
-            </a>
-            <div class="search-container ms-md-3 mx-auto mx-md-0">
-                <div class="input-group">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar produtos..." aria-label="Pesquisar produtos" aria-describedby="button-search">
-                    <button class="btn btn-outline-light" type="button" id="button-search">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <!-- Botão do Administrador -->
-                    <a href="/adm" class="btn btn-outline-light ms-2" id="admin-button">
-                        <i class="fas fa-user-shield"></i> Admin
-                    </a>
-                </div>
-            </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
-                aria-label="Alternar navegação">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
-                <ul class="navbar-nav ms-auto flex-row flex-nowrap align-items-center">
-                    <% if (typeof usuario !== 'undefined' && usuario) { %>
-                        <li class="nav-item d-flex align-items-center">
-                            <a href="/perfil" class="nav-link d-flex align-items-center" style="cursor:pointer;">
-                                <span class="me-2">Bem-vindo, <%= usuario.nome.split(' ')[0] %></span>
-                                <% if (usuario.avatar && usuario.avatar.match(/\.(jpg|jpeg|png|gif)$/i)) { %>
-                                    <img src="<%= usuario.avatar %>" alt="Avatar" class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
-                                <% } else { %>
-                                    <span class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width:32px; height:32px;">
-                                        <i class="fas fa-user" style="font-size: 1.3rem; color: #888;"></i>
-                                    </span>
-                                <% } %>
-                            </a>
-                        </li>
-                    <% } %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/perfil">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/carrinho">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
-                            <span id="cartCounter" class="cart-counter"></span>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
-                            role="button" data-bs-toggle="dropdown">
-                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
-                                alt="Opções" class="nav-icon"/>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
-                            <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
-                            <li><a class="dropdown-item" href="/avaliacao">Minhas Avaliações</a></li>
-                            <li><a class="dropdown-item" href="/notificacoes">Notificações</a></li>
-                            <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Navbar Superior (partial) - aqui mostramos search + admin apenas no index -->
+    <%- include('partials/navbar', { usuario: usuario, showSearch: true, showAdmin: true }) %>
 
     <% if (typeof msg !== 'undefined' && msg === 'avaliacao') { %>
      <div class="alert alert-success text-center mt-3">
@@ -161,10 +91,14 @@
                                     <span class="timer-text">Carregando...</span>
                                   </div>
                                 <% } %>
-                                <a href="/produtos/p/<%= promo.slug %>" class="btn promo-button">
+                                <a href="/produtos/p/<%= promo.slug %>" class="btn promo-button d-none d-md-inline-block">
                                     Ver Oferta <i class="fas fa-arrow-right ms-2"></i>
                                 </a>
                               </div>
+
+                              <!-- link overlay para mobile: cobre todo o slide e leva para o produto -->
+                              <a href="/produtos/p/<%= promo.slug %>" class="promo-overlay-link d-md-none" aria-hidden="true"></a>
+
                             </div>
                           </div>
                         <% }) %>
