@@ -43,11 +43,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#privacidade" onclick="showSection('privacidade')">
-                                <i class="fas fa-lock me-2"></i>Privacidade
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="#notificacoes" onclick="showSection('notificacoes')">
                                 <i class="fas fa-bell me-2"></i>Notificações
                             </a>
@@ -98,7 +93,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label mb-1"><i class="fas fa-id-card me-1"></i>CPF</label>
-                        <div class="fw-semibold"><%= usuario.CPF %></div>
+                        <div class="fw-semibold"><%= usuario && (usuario.CPF || usuario.cpf) ? (usuario.CPF || usuario.cpf) : '<span class="text-muted">CPF não informado</span>' %></div>
                     </div>
                 </div>
                 <div class="row g-3 mb-3">
@@ -110,68 +105,43 @@
                 <hr>
                 <h5 class="mb-3"><i class="fas fa-home me-2"></i>Endereço</h5>
                 <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label mb-1">Estado (UF)</label>
-                        <div class="fw-semibold"><%= usuario.estado || '' %></div>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label mb-1">Cidade</label>
-                        <div class="fw-semibold"><%= usuario.cidade || '' %></div>
-                    </div>
-                    <div class="col-md-8">
-                        <label class="form-label mb-1">Rua</label>
-                        <div class="fw-semibold"><%= usuario.rua || '' %></div>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label mb-1">Número</label>
-                        <div class="fw-semibold"><%= usuario.numero || '' %></div>
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label mb-1">Complemento</label>
-                        <div class="fw-semibold"><%= usuario.complemento || '' %></div>
-                    </div>
-                </div>
+  <div class="col-md-6">
+    <label class="form-label mb-1"><i class="fas fa-location-dot me-1"></i>Estado (UF)</label>
+    <div class="fw-semibold state-value"><%= usuario && usuario.estado ? usuario.estado : '<span class="text-muted">Estado não informado</span>' %></div>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label mb-1"><i class="fas fa-city me-1"></i>Cidade</label>
+    <div class="fw-semibold"><%= usuario && usuario.cidade ? usuario.cidade : '<span class="text-muted">Cidade não informada</span>' %></div>
+  </div>
+
+  <div class="col-md-8">
+    <label class="form-label mb-1"><i class="fas fa-road me-1"></i>Rua</label>
+    <% if (usuario && usuario.rua) { %>
+      <div class="fw-semibold account-address"><%= usuario.rua %></div>
+    <% } else { %>
+      <div class="missing-field">Rua não informada</div>
+    <% } %>
+  </div>
+
+  <div class="col-md-4 number-field">
+    <label class="form-label mb-1"><i class="fas fa-hashtag me-1"></i>Número</label>
+    <div class="fw-semibold"><%= usuario && usuario.numero ? usuario.numero : '<span class="text-muted">Nº não informado</span>' %></div>
+  </div>
+
+  <div class="col-md-12">
+    <label class="form-label mb-1"><i class="fas fa-info-circle me-1"></i>Complemento</label>
+    <% if (usuario && usuario.complemento) { %>
+      <div class="fw-semibold account-complement"><%= usuario.complemento %></div>
+    <% } else { %>
+      <div class="missing-field">Nenhum complemento cadastrado</div>
+    <% } %>
+  </div>
+</div>
                 <div class="d-flex justify-content-end mt-4">
                     <a href="/editar-perfil" class="btn btn-primary btn-lg px-4">
                         <i class="fas fa-edit me-2"></i>Editar Perfil
                     </a>
                 </div>
-            </div>
-        </div>
-    <% } else { %>
-        <div class="alert alert-warning mt-3">Você precisa estar logado para ver suas opções.</div>
-    <% } %>
-</section>
-
-                    <!-- Seção Privacidade -->
-                    <section id="privacidade" class="option-section" style="display: none;">
-                        <h2 class="section-title"><i class="fas fa-lock me-2"></i>Privacidade</h2>
-                        <% if (usuario) { %>
-        <div class="card">
-            <div class="card-body">
-                <form action="/usuarios/<%= usuario ? usuario.id : '' %>/privacidade?_method=PUT" method="POST">
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="perfil-publico" name="perfil_publico" <%= usuario && usuario.perfil_publico ? 'checked' : '' %>>
-                        <label class="form-check-label" for="perfil-publico">Perfil Público</label>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="mostrar-email" name="mostrar_email" <%= usuario && usuario.mostrar_email ? 'checked' : '' %>>
-                        <label class="form-check-label" for="mostrar-email">Mostrar email publicamente</label>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="mostrar-telefone" name="mostrar_telefone" <%= usuario && usuario.mostrar_telefone ? 'checked' : '' %>>
-                        <label class="form-check-label" for="mostrar-telefone">Mostrar telefone para vendedores</label>
-                    </div>
-                    <div class="mb-3">
-                        <label for="visibilidade-endereco" class="form-label">Visibilidade do Endereço</label>
-                        <select class="form-select" id="visibilidade-endereco" name="visibilidade_endereco">
-                            <option value="privado" <%= usuario && usuario.visibilidade_endereco === 'privado' ? 'selected' : '' %>>Privado</option>
-                            <option value="vendedores" <%= usuario && usuario.visibilidade_endereco === 'vendedores' ? 'selected' : '' %>>Apenas para vendedores</option>
-                            <option value="publico" <%= usuario && usuario.visibilidade_endereco === 'publico' ? 'selected' : '' %>>Público</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Atualizar Configurações</button>
-                </form>
             </div>
         </div>
     <% } else { %>

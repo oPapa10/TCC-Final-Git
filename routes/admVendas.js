@@ -2,26 +2,67 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // ajuste conforme seu arquivo de conexão
 
-// helper upsert para notificações (novo)
-async function upsertNotification(clienteId, vendaId, titulo, mensagem, status) {
-  return new Promise((resolve, reject) => {
-    db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
-      if (err) return reject(err);
-      if (rows && rows.length) {
-        db.query(
-          'UPDATE notificacoes SET cliente_id = ?, titulo = ?, mensagem = ?, status = ?, lida = 0, created_at = NOW() WHERE id = ?',
-          [clienteId, titulo, mensagem, status, rows[0].id],
-          (e, r) => e ? reject(e) : resolve(r)
-        );
-      } else {
-        db.query(
-          'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-          [clienteId, titulo, mensagem, status, vendaId],
-          (e, r) => e ? reject(e) : resolve(r)
-        );
+/* substitua a função upsertNotification por esta versão (logs + fallback) */
+let _adm_notificacoesHasVendaId = null;
+function admCheckNotificacoesHasVendaId() {
+  if (_adm_notificacoesHasVendaId !== null) return Promise.resolve(_adm_notificacoesHasVendaId);
+  return new Promise((resolve) => {
+    db.query("SHOW COLUMNS FROM notificacoes LIKE 'venda_id'", (err, rows) => {
+      if (err) {
+        console.warn('[ADM-NOTIF] SHOW COLUMNS error:', err && err.code ? err.code : err);
+        _adm_notificacoesHasVendaId = false;
+        return resolve(false);
       }
+      _adm_notificacoesHasVendaId = !!(rows && rows.length);
+      resolve(_adm_notificacoesHasVendaId);
     });
   });
+}
+
+async function upsertNotification(clienteId, vendaId, titulo, mensagem, status) {
+  try {
+    const hasVendaId = await admCheckNotificacoesHasVendaId();
+    // debug
+    db.query('SELECT DATABASE() AS db', (dberr, dbrows) => {
+      if (!dberr && dbrows && dbrows[0]) console.log('[ADM-NOTIF] DB conectado:', dbrows[0].db);
+    });
+    db.query('SHOW COLUMNS FROM notificacoes', (colErr, cols) => {
+      if (!colErr && cols) console.log('[ADM-NOTIF] colunas notificacoes:', cols.map(c => c.Field).join(', '));
+    });
+
+    return new Promise((resolve, reject) => {
+      if (hasVendaId) {
+        db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
+          if (err) {
+            console.warn('[ADM-NOTIF] SELECT por venda_id falhou:', err.code, err.sqlMessage || err.message);
+            return db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status) VALUES (?, ?, ?, ?)', [clienteId, titulo, mensagem, status], (e, r) => e ? reject(e) : resolve(r));
+          }
+          if (rows && rows.length) {
+            return db.query(
+              'UPDATE notificacoes SET cliente_id = ?, titulo = ?, mensagem = ?, status = ?, lida = 0, created_at = NOW() WHERE id = ?',
+              [clienteId, titulo, mensagem, status, rows[0].id],
+              (e, r) => e ? reject(e) : resolve(r)
+            );
+          }
+          db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)', [clienteId, titulo, mensagem, status, vendaId], (e, r) => {
+            if (e) {
+              console.error('[ADM-NOTIF] INSERT com venda_id falhou:', e.code, e.sqlMessage || e.message);
+              if (e.code === 'ER_BAD_FIELD_ERROR') {
+                return db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status) VALUES (?, ?, ?, ?)', [clienteId, titulo, mensagem, status], (e2, r2) => e2 ? reject(e2) : resolve(r2));
+              }
+              return reject(e);
+            }
+            return resolve(r);
+          });
+        });
+      } else {
+        db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status) VALUES (?, ?, ?, ?)', [clienteId, titulo, mensagem, status], (e, r) => e ? reject(e) : resolve(r));
+      }
+    });
+  } catch (ex) {
+    console.error('[ADM-NOTIF] upsertNotification catch:', ex);
+    throw ex;
+  }
 }
 
 // middleware simples para garantir admin (se tiver sistema de sessão/roles, troque)
@@ -108,11 +149,73 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
       db.query(sql, params, (err, rows) => err ? reject(err) : resolve(rows));
     });
 
-    res.render('adm-vendas', {
-      vendas,
-      years: yearsRows.map(r => r.ano).filter(Boolean),
-      filters: { year, month, day, search, priceMin, priceMax, rating, status }
+    // métricas GLOBAIS (independentes dos filtros) — garantem que os cards sempre exibam valores
+    const globalMetrics = await new Promise((resolve, reject) => {
+      db.query(
+        `SELECT
+           COUNT(*) AS totalVendas,
+           COALESCE(SUM(valor_venda),0) AS valorTotalVendas,
+           SUM(status = 'pendente') AS vendasPendentes,
+           SUM(status IN ('entregue','realizada')) AS vendasEntregues,
+           SUM(status = 'a_caminho') AS vendasCaminho,
+           SUM(status = 'pronto') AS vendasPronto
+         FROM VENDE`,
+        (err, rows) => err ? reject(err) : resolve((rows && rows[0]) || { totalVendas:0, valorTotalVendas:0, vendasPendentes:0, vendasEntregues:0, vendasCaminho:0, vendasPronto:0 })
+      );
     });
+
+    // usar métricas globais para os cards (sempre visíveis)
+    const totalVendas = Number(globalMetrics.totalVendas || 0);
+    const valorTotalVendas = Number(globalMetrics.valorTotalVendas || 0);
+    const vendasPendentes = Number(globalMetrics.vendasPendentes || 0);
+    const vendasEntregues = Number(globalMetrics.vendasEntregues || 0);
+
+    // métricas adicionais
+    const vendasCaminho = Number(globalMetrics.vendasCaminho || 0);
+    const vendasPronto = Number(globalMetrics.vendasPronto || 0);
+
+    // preparar card contextual: por padrão mostra Valor Total (moeda). Se o filtro status estiver ativo, mostrar contagem daquele status.
+    let contextualLabel = 'Valor Total';
+    let contextualValue = valorTotalVendas;
+    let contextualIsCurrency = true;
+    if (status === 'a_caminho') {
+      contextualLabel = 'A caminho';
+      contextualValue = vendasCaminho;
+      contextualIsCurrency = false;
+    } else if (status === 'pendente') {
+      contextualLabel = 'Pendentes';
+      contextualValue = vendasPendentes;
+      contextualIsCurrency = false;
+    } else if (status === 'pronto') {
+      contextualLabel = 'Prontos';
+      contextualValue = vendasPronto;
+      contextualIsCurrency = false;
+    } else if (status === 'entregue') {
+      contextualLabel = 'Entregues';
+      contextualValue = vendasEntregues;
+      contextualIsCurrency = false;
+    }
+
+    // preparar dados para renderização (evita re-declaração de variáveis)
+    const years = Array.isArray(yearsRows) ? yearsRows.map(r => r.ano).filter(Boolean) : [];
+    const filters = { year, month, day, status, search, priceMin, priceMax, rating };
+
+    const renderData = {
+      totalVendas,
+      valorTotalVendas,
+      contextualLabel,
+      contextualValue,
+      contextualIsCurrency,
+      vendasPendentes,
+      vendasEntregues,
+      vendasCaminho,
+      vendasPronto,
+      years,
+      filters,
+      vendas
+    };
+    
+    return res.render('adm-vendas', renderData);
   } catch (err) {
     console.error('admVendas error:', err);
     res.status(500).render('error', { error: err, message: 'Erro ao carregar vendas' });

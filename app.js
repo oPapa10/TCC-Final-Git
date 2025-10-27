@@ -33,6 +33,7 @@ const avaliacaoRouter = require('./routes/avaliacao');
 const pagamentoRouter = require('./routes/pagamento');
 const recuperarSenhaRouter = require('./routes/recuperarSenha');
 const notificacoesRouter = require('./routes/notificacoes'); // { changed code }
+const { router: adminAuthRouter } = require('./routes/adminAuth');
 
 const app = express();
 
@@ -69,6 +70,12 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware de logging
+app.use((req, res, next) => {
+  console.log(`[REQ] ${new Date().toISOString()} ${req.method} ${req.originalUrl} referer=${req.get('referer') || '-'}`);
+  next();
+});
+
 // Rotas
 
 app.use('/', indexRouter);
@@ -96,6 +103,10 @@ app.use('/avaliacao', avaliacaoRouter); // Nova rota adicionada
 app.use('/pagamento', pagamentoRouter);
 app.use('/', recuperarSenhaRouter); // Nova rota para recuperação de senha
 app.use('/', notificacoesRouter); // { changed code }
+app.use('/admin', adminAuthRouter); // rotas /admin/login e /admin/logout
+
+// monta a área administrativa em rota difícil:
+app.use('/centerrmotos4asda88a4admsdada4a4ADM', require('./routes/adm'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // catch 404 and forward to error handler
@@ -109,6 +120,13 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
   res.render('error', { error: err, message: err.message });
+});
+
+// handler 404 (último middleware)
+app.use((req, res, next) => {
+  console.warn(`[404] ${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
+  // redireciona para /perfil (não renderiza ejs inexistente)
+  return res.redirect('/perfil');
 });
 
 const PORT = process.env.PORT || 3000;

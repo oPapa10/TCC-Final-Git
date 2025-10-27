@@ -5,106 +5,246 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrada de Estoque | Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/entradaEstoque.css">
     <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
-
-    <style>
-.bloco-estoque {
-    border-radius: 18px;
-    background: #fff;
-    box-shadow: 0 8px 32px rgba(67, 97, 238, 0.10);
-    margin-top: 30px;
-}
-.bloco-estoque .form-label {
-    color: #4361ee;
-    font-size: 1rem;
-}
-.bloco-estoque input, .bloco-estoque select {
-    font-size: 1rem;
-    border-radius: 10px;
-}
-.bloco-estoque .btn-success {
-    font-size: 1.1rem;
-    padding: 0.8rem 0;
-}
-</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header-section mb-4">
-            <div class="d-flex justify-content-start align-items-center mt-3 mb-2">
-                <a href="/adm" class="btn btn-primary btn-voltar"><i class="fas fa-arrow-left"></i> Voltar</a>
-            </div>
-            <h2 class="text-center">Entrada e Alteração de Estoque</h2>
+    <div class="container-lg">
+        <!-- Cabeçalho -->
+        <div class="header-section">
+            <a href="/adm" class="btn-voltar">
+                <i class="fas fa-arrow-left"></i> Voltar ao ADM
+            </a>
+            <h1 class="header-title">
+                <i class="fas fa-boxes me-2"></i>Entrada de Estoque
+            </h1>
         </div>
+
+        <!-- Alertas -->
         <% if (sucesso) { %>
-            <div class="alert alert-success text-center">Estoque atualizado com sucesso!</div>
-        <% } %>
-        <div class="row justify-content-center">
-            <div class="col-lg-7 col-md-9">
-                <form id="estoqueForm" action="/entradaEstoque" method="POST" class="card p-4 mb-4 bloco-estoque shadow-lg">
-                    <div class="text-center mb-4">
-                        <span class="rounded-circle bg-success bg-opacity-10 p-3 mb-2 d-inline-block">
-                            <i class="fas fa-box-open fa-2x text-success"></i>
-                        </span>
-                        <h4 class="mb-0 fw-bold text-success">Adicionar ou Alterar Estoque</h4>
-                        <p class="text-muted mt-1 mb-0">Atualize o estoque dos produtos de forma simples e rápida.</p>
+            <div class="alert-custom alert-success-custom">
+                <div class="alert-content">
+                    <i class="fas fa-check-circle alert-icon"></i>
+                    <div>
+                        <h5>Estoque atualizado com sucesso!</h5>
+                        <p class="mb-0">As alterações foram salvas no sistema.</p>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Pesquisar Produto</label>
-                        <div class="row g-2">
-                            <div class="col-md-6">
-                                <label for="searchProduto" class="form-label">Por nome:</label>
-                                <input type="text" class="form-control" id="searchProduto" placeholder="Digite parte do nome do produto...">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="searchProdutoId" class="form-label">Por ID:</label>
-                                <input type="number" class="form-control" id="searchProdutoId" placeholder="Digite o ID do produto...">
+                </div>
+            </div>
+        <% } %>
+
+        <div class="row g-4">
+            <!-- Formulário de Entrada de Estoque -->
+            <div class="col-12 col-xl-6">
+                <div class="card-promocao h-100">
+                    <div class="card-header-custom">
+                        <div class="card-icon bg-success">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Adicionar ou Alterar Estoque</h3>
+                            <p class="card-subtitle">Atualize o estoque dos produtos de forma simples e rápida</p>
+                        </div>
+                    </div>
+
+                    <form id="estoqueForm" action="/entradaEstoque" method="POST">
+                        <!-- hidden para enviar o modo selecionado (adicionar | definir | vazio) -->
+                        <input type="hidden" id="modoEstoqueHidden" name="modoEstoque" value="">
+                        
+                        <!-- Pesquisa de Produto -->
+                        <div class="form-group">
+                            <label class="form-label">PESQUISAR PRODUTO</label>
+                            <div class="search-container">
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" id="searchProduto" placeholder="Digite parte do nome...">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="number" class="form-control" id="searchProdutoId" placeholder="Digite o ID do produto...">
+                                    </div>
+                                </div>
+                                <select class="form-control" id="produto" name="produto" required>
+                                    <option value="">Selecione o produto</option>
+                                    <% produtos.forEach(function(produto) { %>
+                                        <option value="<%= produto.ID %>" data-estoque="<%= produto.estoque %>">
+                                            <%= produto.nome %> (ID: <%= produto.ID %>, Estoque: <%= produto.estoque %>)
+                                        </option>
+                                    <% }) %>
+                                </select>
                             </div>
                         </div>
-                        <select class="form-select mt-2" id="produto" name="produto" required>
-                            <option value="">Selecione o produto</option>
-                            <% produtos.forEach(function(produto) { %>
-                                <option value="<%= produto.ID %>"><%= produto.nome %> (ID: <%= produto.ID %>, Estoque atual: <%= produto.estoque %>)</option>
-                            <% }) %>
-                        </select>
+
+                        <!-- Informações do Produto Selecionado -->
+                        <div id="produtoInfo" class="produto-info-card" style="display: none;">
+                            <div class="produto-info-header">
+                                <h5>Informações do Produto</h5>
+                            </div>
+                            <div class="produto-info-body">
+                                <div class="info-item">
+                                    <span class="info-label">Nome:</span>
+                                    <span id="infoNome" class="info-value"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">ID:</span>
+                                    <span id="infoId" class="info-value"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Estoque Atual:</span>
+                                    <span id="infoEstoqueAtual" class="info-value estoque-atual"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantidade a Adicionar -->
+                        <div class="form-group">
+                            <label class="form-label" for="quantidade">QUANTIDADE A ADICIONAR</label>
+                            <div class="input-with-preview">
+                                <input type="number" class="form-control" id="quantidade" name="quantidade" min="1" placeholder="Ex: 10">
+                                <div class="preview-value">
+                                    <span id="previewAdicionar">+0</span>
+                                </div>
+                            </div>
+                            <small class="text-muted">Digite a quantidade que deseja adicionar ao estoque atual</small>
+                        </div>
+
+                        <!-- Alterar Estoque Diretamente -->
+                        <div class="form-group">
+                            <label class="form-label" for="novoEstoque">ALTERAR ESTOQUE DIRETAMENTE</label>
+                            <div class="input-with-preview">
+                                <input type="number" class="form-control" id="novoEstoque" name="novoEstoque" min="0" placeholder="Ex: 50">
+                                <div class="preview-value">
+                                    <span id="previewNovo">=0</span>
+                                </div>
+                            </div>
+                            <small class="text-muted">Defina o valor exato do estoque (substitui o valor atual)</small>
+                        </div>
+
+                        <!-- Preview do Resultado -->
+                        <div id="resultadoPreview" class="resultado-preview" style="display: none;">
+                            <div class="preview-header">
+                                <i class="fas fa-calculator me-2"></i>
+                                <span>Preview do Resultado</span>
+                            </div>
+                            <div class="preview-body">
+                                <div class="preview-item">
+                                    <span>Estoque Atual:</span>
+                                    <span id="previewAtual">0</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Quantidade a Adicionar:</span>
+                                    <span id="previewQuantidade" class="text-success">+0</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span>Novo Estoque Definido:</span>
+                                    <span id="previewDefinido" class="text-primary">=0</span>
+                                </div>
+                                <div class="preview-total">
+                                    <span>Estoque Final:</span>
+                                    <span id="previewFinal" class="total-value">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-salvar">
+                            <i class="fas fa-save"></i> SALVAR ALTERAÇÕES NO ESTOQUE
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de Produtos e Estoque -->
+            <div class="col-12 col-xl-6">
+                <div class="card-promocao h-100">
+                    <div class="card-header-custom">
+                        <div class="card-icon bg-primary">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Produtos e Estoque Atual</h3>
+                            <p class="card-subtitle">Visão geral do estoque disponível</p>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="quantidade" class="form-label fw-semibold">Quantidade a adicionar</label>
-                        <input type="number" class="form-control" id="quantidade" name="quantidade" min="1">
+
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-hover estoque-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nome do Produto</th>
+                                        <th class="text-center">Estoque</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% produtos.forEach(function(produto) { %>
+                                        <tr class="produto-row" data-id="<%= produto.ID %>">
+                                            <td class="fw-bold">#<%= produto.ID %></td>
+                                            <td class="produto-nome"><%= produto.nome %></td>
+                                            <td class="text-center">
+                                                <span class="estoque-badge <%= produto.estoque > 10 ? 'estoque-alto' : (produto.estoque > 0 ? 'estoque-medio' : 'estoque-baixo') %>">
+                                                    <%= produto.estoque %>
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <% if (produto.estoque > 10) { %>
+                                                    <span class="status-badge status-alto">
+                                                        <i class="fas fa-check-circle me-1"></i>Disponível
+                                                    </span>
+                                                <% } else if (produto.estoque > 0) { %>
+                                                    <span class="status-badge status-medio">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>Baixo
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="status-badge status-baixo">
+                                                        <i class="fas fa-times-circle me-1"></i>Esgotado
+                                                    </span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="novoEstoque" class="form-label fw-semibold">Alterar estoque diretamente</label>
-                        <input type="number" class="form-control" id="novoEstoque" name="novoEstoque" min="0">
+
+                    <!-- Resumo do Estoque -->
+                    <div class="estoque-resumo">
+                        <div class="resumo-item">
+                            <div class="resumo-icon bg-success">
+                                <i class="fas fa-boxes"></i>
+                            </div>
+                            <div class="resumo-info">
+                                <h4><%= produtos.reduce((total, p) => total + p.estoque, 0) %></h4>
+                                <p>Total em Estoque</p>
+                            </div>
+                        </div>
+                        <div class="resumo-item">
+                            <div class="resumo-icon bg-primary">
+                                <i class="fas fa-cube"></i>
+                            </div>
+                            <div class="resumo-info">
+                                <h4><%= produtos.filter(p => p.estoque > 0).length %></h4>
+                                <p>Produtos Disponíveis</p>
+                            </div>
+                        </div>
+                        <div class="resumo-item">
+                            <div class="resumo-icon bg-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="resumo-info">
+                                <h4><%= produtos.filter(p => p.estoque === 0).length %></h4>
+                                <p>Produtos Esgotados</p>
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-success w-100 fw-bold"><i class="fas fa-save"></i> Salvar</button>
-                </form>
+                </div>
             </div>
         </div>
-        <div class="card p-4 mt-4">
-            <h4 class="mb-3">Produtos e Estoque Atual</h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Estoque</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% produtos.forEach(function(produto) { %>
-                        <tr>
-                            <td><%= produto.ID %></td>
-                            <td><%= produto.nome %></td>
-                            <td><%= produto.estoque %></td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="/javascripts/entradaEstoque.js"></script>
 </body>
 </html>

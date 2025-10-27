@@ -30,14 +30,21 @@ router.post('/', (req, res) => {
     req.session.usuario = {
       ID: usuario.ID,
       nome: usuario.nome,
-      cpf: usuario.cpf,
+      // tenta várias capitalizações para garantir que pega do resultado do DB
+      cpf: usuario.cpf || usuario.CPF || usuario.Cpf || null,
+      CPF: usuario.cpf || usuario.CPF || usuario.Cpf || null,
       email: usuario.email,
+      telefone: usuario.telefone || null,
+      genero: usuario.genero || null,
       cep: usuario.cep,
-      endereco: usuario.endereco,
-      numero: usuario.numero,
-      bairro: usuario.bairro,
-      cidade: usuario.cidade,
-      estado: usuario.estado
+      rua: usuario.rua || usuario.endereco || null,
+      endereco: usuario.endereco || null,
+      numero: usuario.numero || null,
+      bairro: usuario.bairro || null,
+      cidade: usuario.cidade || null,
+      estado: usuario.estado || null,
+      complemento: usuario.complemento || null,
+      avatar: usuario.avatar || null
     };
 
     // Após autenticar o usuário:

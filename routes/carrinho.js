@@ -240,83 +240,72 @@ router.post('/pedido/finalizar', (req, res) => {
 
     let carrinho = req.session.carrinho || [];
     // Filtra apenas os itens ativos (não ocultos)
-    const ativos = carrinho.filter(item => !item.oculto);
-
-    console.log('[FINALIZAR COMPRA] Carrinho:', carrinho);
-    console.log('[FINALIZAR COMPRA] Ativos para avaliar:', ativos);
+    const ativos = carrinho.filter(item => !item.oculto && !item.semEstoque);
 
     if (ativos.length === 0) {
-        console.log('[FINALIZAR COMPRA] Nenhum produto ativo para avaliar.');
         return res.redirect('/carrinho');
     }
 
-    // Salva os produtos ativos para avaliação
-    req.session.produtosParaAvaliar = ativos.map(item => ({ produtoId: item.produtoId, quantidade: item.quantidade }));
-    console.log('[FINALIZAR COMPRA] Salvo em req.session.produtosParaAvaliar:', req.session.produtosParaAvaliar);
+    // salva itens para checkout na sessão (serão usados na página de pagamento)
+    req.session.checkout = {
+        itens: ativos.map(it => ({
+            produtoId: Number(it.produtoId),
+            quantidade: Number(it.quantidade),
+            nome: it.nome,
+            imagem: it.imagem,
+            precoUnitario: Number(it.preco) || 0
+        })),
+        criadoEm: Date.now()
+    };
 
-    // Para cada item ativo, diminui o estoque
-    const promises = ativos.map(item => {
-        return new Promise((resolve, reject) => {
-            db.query(
-                'UPDATE Produto SET estoque = estoque - ? WHERE ID = ? AND estoque >= ?',
-                [item.quantidade, item.produtoId, item.quantidade],
-                (err, result) => {
-                    if (err) return reject(err);
-                    resolve();
-                }
-            );
-        });
-    });
-
-    Promise.all(promises)
-        .then(() => {
-            const usuarioId = req.session.usuario.ID;
-            const insertPromises = ativos.map(item => {
-                return new Promise((resolve, reject) => {
-                    db.query(
-                        'INSERT INTO PEDIDO_ITENS (usuario_id, produto_id, quantidade) VALUES (?, ?, ?)',
-                        [usuarioId, item.produtoId, item.quantidade],
-                        (err2) => {
-                            if (err2) {
-    console.error('[PEDIDO_ITENS] ERRO:', err2);
-    return res.status(500).send('Erro ao registrar pedido: ' + (err2.sqlMessage || err2.message));
-}
-                            resolve();
-                        }
-                    );
-                });
-            });
-            Promise.all(insertPromises)
-                .then(() => {
-                    req.session.carrinho = carrinho.filter(item => item.oculto);
-                    // Remove do banco se quiser
-                    if (req.session.usuario) {
-                        const ativosIds = ativos.map(item => item.produtoId);
-                        if (ativosIds.length > 0) {
-                            db.query(
-                                `DELETE FROM CARRINHO WHERE usuario_id = ? AND produto_id IN (${ativosIds.map(() => '?').join(',')})`,
-                                [req.session.usuario.ID, ...ativosIds]
-                            );
-                        }
-                    }
-                    res.redirect('/?msg=avaliacao');
-                })
-                .catch(err => {
-                    res.status(500).send('Erro ao registrar pedido');
-                });
-        })
-        .catch(err => {
-            console.error('Erro ao finalizar pedido:', err);
-            res.status(500).send('Erro ao finalizar pedido');
-        });
+    // redireciona para a página de pagamento (onde o usuário confirma método)
+    return res.redirect('/pagamento');
 });
 
 // Exemplo para rota POST /comprar-agora
 router.post('/comprar-agora', (req, res) => {
-    if (!req.session.usuario) {
-        return res.status(401).render('error', { error: { status: 401 }, message: 'Você precisa estar logado para finalizar a compra.' });
+    if (!req.session || !req.session.usuario) {
+        // redireciona para login e volta para a confirmação depois
+        const redirectTo = encodeURIComponent('/comprar-confirmacao/' + (req.body.produtoId || ''));
+        return res.redirect('/login?redirect=' + redirectTo);
     }
-    // ...restante do fluxo...
+
+    const produtoId = Number(req.body.produtoId || req.query.produtoId || 0);
+    const quantidade = Math.max(1, Number(req.body.quantidade || req.query.quantidade || 1));
+
+    if (!produtoId) return res.status(400).render('error', { error: {}, message: 'Produto inválido' });
+
+    // busca dados do produto para preencher o checkout (preço, imagem, nome)
+    db.query(
+      `SELECT p.ID, p.nome, p.imagem, p.valor, COALESCE(pr.valor_promocional, NULL) AS valor_promocional, p.estoque
+       FROM Produto p LEFT JOIN Promocao pr ON pr.produto_id = p.ID WHERE p.ID = ? LIMIT 1`,
+      [produtoId],
+      (err, rows) => {
+        if (err || !rows || rows.length === 0) {
+          console.error('[comprar-agora] erro ao buscar produto:', err);
+          return res.status(500).render('error', { error: err || {}, message: 'Erro ao buscar produto' });
+        }
+
+        const p = rows[0];
+        const precoUnitario = (p.valor_promocional !== null && p.valor_promocional !== undefined) ? Number(p.valor_promocional) : Number(p.valor || 0);
+        const qtd = Math.min(quantidade, p.estoque ?? quantidade);
+
+        // monta checkout na sessão com apenas este item
+        req.session.checkout = {
+          itens: [{
+            produtoId: Number(p.ID),
+            quantidade: Number(qtd),
+            nome: p.nome,
+            imagem: p.imagem,
+            precoUnitario
+          }],
+          criadoEm: Date.now()
+        };
+
+        // redireciona para a página de pagamento (mostrará apenas este item)
+        return res.redirect('/pagamento');
+      }
+    );
 });
 
 module.exports = router;

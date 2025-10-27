@@ -41,37 +41,45 @@
                     <div class="pix-container">
                         <p class="mb-1">Valor a pagar:</p>
                         <h3 class="mb-3 text-success">R$ <%= Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></h3>
+
+                        <!-- Lista de itens (se houver) -->
+                        <% if (itens && itens.length) { %>
+                          <div class="mb-3 pagamento-itens-list">
+                            <% itens.forEach(function(it){ %>
+                              <div class="d-flex align-items-center mb-2">
+                                <img src="<%= it.imagem %>" style="width:56px;height:56px;object-fit:cover;border-radius:6px;margin-right:10px;">
+                                <div class="flex-fill">
+                                  <div class="fw-bold"><%= it.nome %></div>
+                                  <div class="small text-muted">Qtd: <%= it.quantidade %> × R$ <%= Number(it.precoUnitario).toLocaleString('pt-BR', {minimumFractionDigits:2}) %> = <strong>R$ <%= Number(it.lineTotal).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></strong></div>
+                                </div>
+                              </div>
+                            <% }) %>
+                          </div>
+                        <% } %>
+
                         <div class="pix-qrcode">
                             <img src="<%= qrCodeImage %>" alt="QR Code PIX" width="220" height="220" class="rounded shadow-sm">
                         </div>
                         <p class="mb-2">Escaneie o QR Code ou copie o código abaixo:</p>
                         <textarea class="pix-copiaecola" readonly onclick="this.select()"><%= payload %></textarea>
 
-                        <form action="/pagamento/pix-confirm" method="POST" class="mt-3">
+                        <form action="/pagamento/compraConfirmacao" method="POST" class="mt-3">
                             <input type="hidden" name="valor" value="<%= valor %>">
                             <input type="hidden" name="descricao" value="<%= descricao %>">
-                            <!-- hidden com produtoId e opcional produtoNome/imagem -->
-                            <input type="hidden" name="produtoId" value="<%= typeof produtoId !== 'undefined' ? produtoId : '' %>">
-                            <input type="hidden" name="produtoNome" value="<%= descricao %>">
-                        <!-- opcional: mostrar resumo do produto ao lado do QR -->
-                        <% if (typeof produtoId !== 'undefined' && produtoId) { %>
-                          <div class="mb-3 small d-flex align-items-center">
-                            <% if (typeof produtoImagem !== 'undefined' && produtoImagem) { %>
-                              <img src="<%= produtoImagem %>" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:6px;margin-right:10px;">
+                            <!-- envia itens ou fallback para produto único (quando vem via ?produtoId=...) -->
+                            <% if (itens && itens.length) { %>
+                              <% itens.forEach(function(it, idx){ %>
+                                <input type="hidden" name="itens[<%= idx %>][produtoId]" value="<%= it.produtoId %>">
+                                <input type="hidden" name="itens[<%= idx %>][quantidade]" value="<%= it.quantidade %>">
+                              <% }) %>
+                            <% } else if (typeof produtoId !== 'undefined' && produtoId) { %>
+                              <input type="hidden" name="produtoId" value="<%= produtoId %>">
+                              <input type="hidden" name="quantidade" value="<%= quantidade || 1 %>">
                             <% } %>
-                            <div>
-                              <div class="fw-bold"><%= descricao %></div>
-                              <div class="text-success">R$ <%= Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
-                            </div>
-                          </div>
-                        <% } %>
-
-                            <button type="submit" class="btn btn-success w-100 mt-2">
-                                <i class="fa fa-check-circle me-2"></i>Confirmar Pedido (PIX)
-                            </button>
-                        </form>
-
-                        <p class="mt-3 text-muted small">Após confirmar, você receberá e-mail com o status: "em preparação".</p>
+                             <button type="submit" class="btn btn-success w-100 mt-2">
+                                 <i class="fa fa-check-circle me-2"></i>Confirmar Pedido (PIX)
+                             </button>
+                         </form>
                     </div>
                 </div>
 
@@ -81,9 +89,15 @@
                         <form id="formCartao" action="/pagamento/cartao" method="POST">
                             <input type="hidden" name="valor" value="<%= valor %>">
                             <input type="hidden" name="descricao" value="<%= descricao %>">
-                            <!-- hidden com produtoId e opcional produtoNome/imagem -->
-                            <input type="hidden" name="produtoId" value="<%= typeof produtoId !== 'undefined' ? produtoId : '' %>">
-                            <input type="hidden" name="produtoNome" value="<%= descricao %>">
+                            <% if (itens && itens.length) { %>
+                              <% itens.forEach(function(it, idx){ %>
+                                <input type="hidden" name="itens[<%= idx %>][produtoId]" value="<%= it.produtoId %>">
+                                <input type="hidden" name="itens[<%= idx %>][quantidade]" value="<%= it.quantidade %>">
+                              <% }) %>
+                            <% } else if (produtoId) { %>
+                              <input type="hidden" name="produtoId" value="<%= produtoId %>">
+                              <input type="hidden" name="quantidade" value="<%= quantidade || 1 %>">
+                            <% } %>
 
                             <div class="row">
                                 <div class="col-md-6">

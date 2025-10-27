@@ -1,140 +1,212 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Editar Perfil</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/stylesheets/menu-superior.css">
-    <link rel="stylesheet" href="/stylesheets/theme.css">
-    <link rel="stylesheet" href="/stylesheets/footer.css">
-    <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
-    <script src="https://kit.fontawesome.com/7c5e6e8e7a.js" crossorigin="anonymous"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Editar Perfil</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/menu-superior.css">
+  <link rel="stylesheet" href="/stylesheets/editar-perfil.css">
+  <link rel="stylesheet" href="/stylesheets/theme.css">
+  <link rel="stylesheet" href="/stylesheets/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navbar Superior igual ao index.ejs -->
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-        <div class="container">
-            <a class="navbar-brand logo-container" href="/">
-                <img src="/images/logo.png" alt="Logomarca" class="logo-img" />
+  <%- include('partials/navbar', { usuario: usuario }) %>
+
+  <main class="container mt-5 pt-5">
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="card profile-card shadow-lg">
+          <div class="card-body text-center">
+            <div class="avatar mb-3">
+              <% if (usuario && usuario.avatar) { %>
+                <img src="<%= usuario.avatar %>" alt="avatar" class="rounded-circle">
+              <% } else { %>
+                <i class="fas fa-user-circle default-avatar"></i>
+              <% } %>
+            </div>
+            <h5 class="mb-0"><%= usuario ? usuario.nome : '' %></h5>
+            <p class="text-muted small mb-2"><i class="fas fa-envelope me-1"></i> <%= usuario ? usuario.email : '' %></p>
+            <a href="/perfil" class="btn btn-outline-secondary btn-sm mt-2">
+              <i class="fas fa-arrow-left me-1"></i> Voltar ao Perfil
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNavMenuSuperior" aria-controls="navbarNavMenuSuperior" aria-expanded="false"
-                aria-label="Alternar navegação">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavMenuSuperior">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="GitHub" class="nav-icon"/>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/perfil">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" alt="Perfil" class="nav-icon"/>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/carrinho">
-                            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" alt="Carrinho" class="nav-icon"/>
-                            <span id="cartCounter" class="cart-counter"></span>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes"
-                            role="button" data-bs-toggle="dropdown">
-                            <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png"
-                                alt="Opções" class="nav-icon"/>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">
-                            <li><a class="dropdown-item" href="/opcoes">Opções</a></li>
-                            <li><a class="dropdown-item" href="#funcionalidade3">Notificações</a></li>
-                            <li><a class="dropdown-item" href="/ajuda">Central de Ajuda</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+          </div>
         </div>
-    </nav>
-    <main class="container cadastro-container py-5">
-        <div class="cadastro-card mx-auto p-4" style="max-width: 650px;">
-            <div class="text-center mb-4">
-                <i class="fas fa-user-circle fa-4x text-primary mb-2"></i>
-                <h2 class="cadastro-title mb-1">Editar Perfil</h2>
-                <p class="text-muted">Atualize suas informações pessoais</p>
-            </div>
-            <form action="/editar-perfil" method="POST" class="cadastro-form">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="nome" class="form-label">Nome Completo</label>
-                        <input type="text" class="form-control" id="nome" name="nome" value="<%= usuario.nome %>" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">E-mail</label>
-                        <input type="email" class="form-control" id="email" name="email" value="<%= usuario.email %>" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="telefone" class="form-label">Telefone</label>
-                        <input type="text" class="form-control" id="telefone" name="telefone" value="<%= usuario.telefone %>">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="cpf" class="form-label">CPF</label>
-                        <input type="text" class="form-control" id="cpf" name="cpf" value="<%= usuario.CPF %>" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="genero" class="form-label">Gênero</label>
-                        <select class="form-select" id="genero" name="genero">
-                            <option value="Masculino" <%= usuario.genero === 'Masculino' ? 'selected' : '' %>>Masculino</option>
-                            <option value="Feminino" <%= usuario.genero === 'Feminino' ? 'selected' : '' %>>Feminino</option>
-                            <option value="Outro" <%= usuario.genero === 'Outro' ? 'selected' : '' %>>Outro</option>
-                            <option value="Prefiro não informar" <%= usuario.genero === 'Prefiro não informar' ? 'selected' : '' %>>Prefiro não informar</option>
+      </div>
+
+      <div class="col-lg-8">
+        <% if (status && msg) { %>
+          <div class="alert alert-<%= status === 'success' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+            <i class="fas <%= status === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle' %> me-2"></i>
+            <%= msg %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        <% } %>
+
+        <div class="card shadow-lg">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i> Editar Perfil</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="accordion" id="editAccordion">
+              <!-- Perfil -->
+              <div class="accordion-item border-0 mb-3">
+                <h2 class="accordion-header" id="headingProfile">
+                  <button class="accordion-button rounded" type="button" data-bs-toggle="collapse" data-bs-target="#profile-section" aria-expanded="true">
+                    <i class="fas fa-user me-2"></i> Informações pessoais
+                  </button>
+                </h2>
+                <div id="profile-section" class="accordion-collapse collapse show" data-bs-parent="#editAccordion">
+                  <div class="accordion-body pt-3">
+                    <form action="/editar-perfil" method="POST" class="row g-3">
+                      <input type="hidden" name="section" value="profile">
+                      <div class="col-md-12">
+                        <label class="form-label fw-semibold">Nome completo</label>
+                        <input name="nome" class="form-control form-control-lg" required value="<%= usuario ? usuario.nome : '' %>">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input name="email" type="email" class="form-control form-control-lg" required value="<%= usuario ? usuario.email : '' %>">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Telefone</label>
+                        <input name="telefone" class="form-control form-control-lg" value="<%= usuario ? usuario.telefone : '' %>">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Gênero</label>
+                        <select name="genero" class="form-select form-select-lg">
+                          <option value="">Prefiro não informar</option>
+                          <option value="Masculino" <%= usuario && usuario.genero==='Masculino' ? 'selected' : '' %>>Masculino</option>
+                          <option value="Feminino" <%= usuario && usuario.genero==='Feminino' ? 'selected' : '' %>>Feminino</option>
+                          <option value="Outro" <%= usuario && usuario.genero==='Outro' ? 'selected' : '' %>>Outro</option>
                         </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="estado" class="form-label">Estado</label>
-                        <input type="text" class="form-control" id="estado" name="estado" value="<%= usuario.estado %>">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="cidade" class="form-label">Cidade</label>
-                        <input type="text" class="form-control" id="cidade" name="cidade" value="<%= usuario.cidade %>">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="rua" class="form-label">Rua</label>
-                        <input type="text" class="form-control" id="rua" name="rua" value="<%= usuario.rua %>">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="numero" class="form-label">Número</label>
-                        <input type="text" class="form-control" id="numero" name="numero" value="<%= usuario.numero %>">
-                    </div>
-                    <div class="col-md-8">
-                        <label for="complemento" class="form-label">Complemento</label>
-                        <input type="text" class="form-control" id="complemento" name="complemento" value="<%= usuario.complemento %>">
-                    </div>
+                      </div>
+                      <div class="col-12 d-flex justify-content-end mt-4">
+                        <button class="btn btn-primary btn-lg px-4">
+                          <i class="fas fa-save me-2"></i> Salvar informações
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-                <div class="d-grid gap-3 mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save me-2"></i>Salvar Alterações</button>
-                    <a href="/perfil" class="btn btn-outline-secondary btn-lg"><i class="fas fa-times me-2"></i>Cancelar</a>
+              </div>
+
+              <!-- Segurança / senha -->
+              <div class="accordion-item border-0 mb-3">
+                <h2 class="accordion-header" id="headingSecurity">
+                  <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#security-section">
+                    <i class="fas fa-lock me-2"></i> Segurança
+                  </button>
+                </h2>
+                <div id="security-section" class="accordion-collapse collapse" data-bs-parent="#editAccordion">
+                  <div class="accordion-body pt-3">
+                    <form action="/editar-perfil" method="POST" class="row g-3" onsubmit="return validatePasswordForm(this);">
+                      <input type="hidden" name="section" value="password">
+                      <div class="col-md-12">
+                        <label class="form-label fw-semibold">Senha atual</label>
+                        <input name="currentPassword" type="password" class="form-control form-control-lg" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Nova senha</label>
+                        <input name="newPassword" id="newPassword" type="password" class="form-control form-control-lg" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Confirmar nova senha</label>
+                        <input name="newPasswordConfirm" id="newPasswordConfirm" type="password" class="form-control form-control-lg" required>
+                      </div>
+                      <div class="col-12 d-flex justify-content-end mt-4">
+                        <button class="btn btn-primary btn-lg px-4">
+                          <i class="fas fa-key me-2"></i> Alterar senha
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-            </form>
+              </div>
+
+              <!-- Endereço -->
+              <div class="accordion-item border-0">
+                <h2 class="accordion-header" id="headingAddress">
+                  <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#address-section">
+                    <i class="fas fa-home me-2"></i> Endereço
+                  </button>
+                </h2>
+                <div id="address-section" class="accordion-collapse collapse" data-bs-parent="#editAccordion">
+                  <div class="accordion-body pt-3">
+                    <form action="/editar-perfil" method="POST" class="row g-3">
+                      <input type="hidden" name="section" value="address">
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Estado (UF)</label>
+                        <input name="estado" class="form-control form-control-lg" value="<%= usuario ? usuario.estado : '' %>">
+                      </div>
+                      <div class="col-md-8">
+                        <label class="form-label fw-semibold">Cidade</label>
+                        <input name="cidade" class="form-control form-control-lg" value="<%= usuario ? usuario.cidade : '' %>">
+                      </div>
+                      <div class="col-md-8">
+                        <label class="form-label fw-semibold">Bairro</label>
+                        <input name="rua" class="form-control form-control-lg" value="<%= usuario ? usuario.rua : '' %>" required>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Número</label>
+                        <input name="numero" class="form-control form-control-lg" value="<%= usuario ? usuario.numero : '' %>">
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label fw-semibold">Complemento</label>
+                        <input name="complemento" class="form-control form-control-lg" value="<%= usuario ? usuario.complemento : '' %>">
+                      </div>
+                      <div class="col-12 d-flex justify-content-end mt-4">
+                        <button class="btn btn-primary btn-lg px-4">
+                          <i class="fas fa-map-marker-alt me-2"></i> Salvar endereço
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+            </div> <!-- accordion -->
+          </div>
         </div>
-    </main>
-    <footer class="footer mt-auto">
-        <div class="copyright text-center">
-            <small>© <%= new Date().getFullYear() %> Todos os direitos reservados</small>
-        </div>
-    </footer>
-    <script>
-        // Ativa modo escuro se necessário
-        (function() {
-            var theme = localStorage.getItem('theme');
-            if (theme === 'escuro') {
-                document.body.classList.add('dark-theme');
-            } else {
-                document.body.classList.remove('dark-theme');
+
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function validatePasswordForm(form) {
+      const a = form.newPassword.value.trim();
+      const b = form.newPasswordConfirm.value.trim();
+      if (a.length < 6) {
+        alert('A nova senha deve ter ao menos 6 caracteres.');
+        return false;
+      }
+      if (a !== b) {
+        alert('Confirmação de senha não corresponde.');
+        return false;
+      }
+      return true;
+    }
+    // atalhos para abrir seção via links
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.options-sidebar .nav-link, .link-primary').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const href = el.getAttribute('href');
+          if (href && href.startsWith('#')) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) {
+              const bsCollapse = new bootstrap.Collapse(target, { toggle: true });
+              target.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-        })();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

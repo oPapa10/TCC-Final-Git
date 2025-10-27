@@ -5,26 +5,75 @@ const QRCode = require('qrcode');
 const nodemailer = require('nodemailer');
 const db = require('../config/db'); // ajuste conforme seu arquivo de conexão
 
-// helper upsert local (pode reutilizar o mesmo padrão)
-async function upsertNotification(clienteId, vendaId, titulo, mensagem, status) {
-  return new Promise((resolve, reject) => {
-    db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
-      if (err) return reject(err);
-      if (rows && rows.length) {
-        db.query(
-          'UPDATE notificacoes SET cliente_id = ?, titulo = ?, mensagem = ?, status = ?, lida = 0, created_at = NOW() WHERE id = ?',
-          [clienteId, titulo, mensagem, status, rows[0].id],
-          (e, r) => e ? reject(e) : resolve(r)
-        );
-      } else {
-        db.query(
-          'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
-          [clienteId, titulo, mensagem, status, vendaId],
-          (e, r) => e ? reject(e) : resolve(r)
-        );
+/* substitua a função upsertNotification por esta versão mais robusta (logs + fallback) */
+let _notificacoesHasVendaId = null;
+function checkNotificacoesHasVendaId() {
+  if (_notificacoesHasVendaId !== null) return Promise.resolve(_notificacoesHasVendaId);
+  return new Promise((resolve) => {
+    db.query("SHOW COLUMNS FROM notificacoes LIKE 'venda_id'", (err, rows) => {
+      if (err) {
+        console.warn('[NOTIF] SHOW COLUMNS error:', err && err.code ? err.code : err);
+        _notificacoesHasVendaId = false;
+        return resolve(false);
       }
+      _notificacoesHasVendaId = !!(rows && rows.length);
+      resolve(_notificacoesHasVendaId);
     });
   });
+}
+
+async function upsertNotification(clienteId, vendaId, titulo, mensagem, status) {
+  try {
+    const hasVendaId = await checkNotificacoesHasVendaId();
+    // debug info
+    db.query('SELECT DATABASE() AS db', (dberr, dbrows) => {
+      if (!dberr && dbrows && dbrows[0]) console.log('[NOTIF] DB conectado:', dbrows[0].db);
+    });
+    db.query('SHOW COLUMNS FROM notificacoes', (colErr, cols) => {
+      if (!colErr && cols) console.log('[NOTIF] colunas notificacoes:', cols.map(c => c.Field).join(', '));
+    });
+
+    return new Promise((resolve, reject) => {
+      if (hasVendaId) {
+        db.query('SELECT id FROM notificacoes WHERE venda_id = ? LIMIT 1', [vendaId], (err, rows) => {
+          if (err) {
+            console.warn('[NOTIF] SELECT por venda_id falhou:', err.code, err.sqlMessage || err.message);
+            // fallback inserir sem venda_id
+            return db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status) VALUES (?, ?, ?, ?)', [clienteId, titulo, mensagem, status], (e, r) => e ? reject(e) : resolve(r));
+          }
+          if (rows && rows.length) {
+            const id = rows[0].id;
+            return db.query(
+              'UPDATE notificacoes SET cliente_id = ?, titulo = ?, mensagem = ?, status = ?, lida = 0, created_at = NOW() WHERE id = ?',
+              [clienteId, titulo, mensagem, status, id],
+              (e, r) => e ? reject(e) : resolve(r)
+            );
+          }
+          // insere com venda_id (tratando erro se a coluna estiver ausente por algum motivo)
+          db.query(
+            'INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) VALUES (?, ?, ?, ?, ?)',
+            [clienteId, titulo, mensagem, status, vendaId],
+            (e, r) => {
+              if (e) {
+                console.error('[NOTIF] INSERT com venda_id falhou:', e.code, e.sqlMessage || e.message);
+                if (e.code === 'ER_BAD_FIELD_ERROR') {
+                  return db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status) VALUES (?, ?, ?, ?)', [clienteId, titulo, mensagem, status], (e2, r2) => e2 ? reject(e2) : resolve(r2));
+                }
+                return reject(e);
+              }
+              return resolve(r);
+            }
+          );
+        });
+      } else {
+        // tabela sem venda_id -> insere simples
+        db.query('INSERT INTO notificacoes (cliente_id, titulo, mensagem, status) VALUES (?, ?, ?, ?)', [clienteId, titulo, mensagem, status], (e, r) => e ? reject(e) : resolve(r));
+      }
+    });
+  } catch (ex) {
+    console.error('[NOTIF] upsertNotification catch:', ex);
+    throw ex;
+  }
 }
 
 const CHAVE_PIX = process.env.PIX_KEY || '11147464952';
@@ -98,114 +147,236 @@ function exigeLogin(req, res, next) {
   next();
 }
 
-// Rota GET para exibir a página de pagamento (aceita ?valor=...&descricao=...)
+/* --- helper: checar existência de coluna em tabela (cache) --- */
+const _tableColumnCache = {};
+function tableHasColumn(table, column) {
+  const key = `${table}.${column}`;
+  if (typeof _tableColumnCache[key] !== 'undefined') return Promise.resolve(_tableColumnCache[key]);
+  return new Promise((resolve) => {
+    db.query(`SHOW COLUMNS FROM \`${table}\` LIKE ?`, [column], (err, rows) => {
+      if (err) {
+        console.warn(`[DB-CHECK] SHOW COLUMNS ${table}.${column} erro:`, err.code || err);
+        _tableColumnCache[key] = false;
+        return resolve(false);
+      }
+      _tableColumnCache[key] = !!(rows && rows.length);
+      console.log(`[DB-CHECK] ${table}.${column} => ${_tableColumnCache[key]}`);
+      resolve(_tableColumnCache[key]);
+    });
+  });
+}
+
+/* helper: insere item em PEDIDO_ITENS de forma adaptativa (detecta colunas) */
+async function insertPedidoItem(usuarioId, produtoId, quantidade, vendaId, precoUnit) {
+  return new Promise((resolve, reject) => {
+    db.query('SHOW COLUMNS FROM PEDIDO_ITENS', (err, cols) => {
+      if (err) {
+        console.warn('[DB-ADAPT] SHOW COLUMNS PEDIDO_ITENS erro:', err && err.code ? err.code : err);
+        return reject(err);
+      }
+      const fields = cols.map(c => c.Field);
+      console.log('[DB-ADAPT] PEDIDO_ITENS colunas detectadas:', fields.join(', '));
+
+      const insertCols = [];
+      const params = [];
+
+      if (fields.includes('usuario_id')) { insertCols.push('usuario_id'); params.push(usuarioId); }
+      if (fields.includes('produto_id')) { insertCols.push('produto_id'); params.push(produtoId); }
+      if (fields.includes('quantidade')) { insertCols.push('quantidade'); params.push(quantidade); }
+      // venda_id é opcional
+      if (vendaId !== undefined && vendaId !== null && fields.includes('venda_id')) { insertCols.push('venda_id'); params.push(vendaId); }
+      // detecta alguma coluna para armazenar preço (valor_unitario, valor, preco_unitario, preco)
+      const possiblePriceCols = ['valor_unitario','valor','preco_unitario','preco','valor_venda'];
+      const priceCol = possiblePriceCols.find(c => fields.includes(c));
+      if (priceCol) { insertCols.push(priceCol); params.push(precoUnit); }
+
+      if (!insertCols.length) {
+        console.warn('[DB-ADAPT] PEDIDO_ITENS sem colunas esperadas para inserção.');
+        return reject(new Error('Tabela PEDIDO_ITENS não possui colunas compatíveis'));
+      }
+
+      const sql = `INSERT INTO PEDIDO_ITENS (${insertCols.join(',')}) VALUES (${insertCols.map(()=>'?').join(',')})`;
+      console.log('[DB-ADAPT] INSERT PEDIDO_ITENS SQL:', sql, 'PARAMS:', params);
+
+      db.query(sql, params, (e, r) => {
+        if (e) {
+          console.error('[DB-ADAPT] INSERT PEDIDO_ITENS falhou:', e.code, e.sqlMessage || e.message);
+          return reject(e);
+        }
+        resolve(r);
+      });
+    });
+  });
+}
+
+// Rota GET para exibir a página de pagamento (aceita checkout na sessão ou ?valor=... como antes)
 router.get('/', exigeLogin, async (req, res) => {
     try {
-        const valor = req.query.valor ? Number(req.query.valor) : 0;
-        const descricao = req.query.descricao || '';
         const usuario = req.session.usuario || null;
 
-        // gera payload e QR localmente (funciona em apps que aceitam QR com CRC)
+        // se existir checkout na sessão, usamos ele
+        const sessionCheckout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
+
+        let itensParaMostrar = [];
+        let valorTotal = 0;
+        let descricao = '';
+
+        if (sessionCheckout) {
+          // buscar dados atualizados dos produtos no DB (preço/promocao/imagem)
+          const ids = sessionCheckout.map(i => i.produtoId);
+          const placeholders = ids.length ? ids.map(()=>'?').join(',') : '0';
+          const rows = await new Promise((resolve, reject) => {
+            db.query(
+              `SELECT p.ID, p.nome, p.imagem, p.valor AS valorOriginal, COALESCE(pr.valor_promocional, NULL) AS valor_promocional
+               FROM Produto p LEFT JOIN Promocao pr ON pr.produto_id = p.ID WHERE p.ID IN (${placeholders})`,
+              ids,
+              (err, r) => err ? reject(err) : resolve(r || [])
+            );
+          });
+
+          itensParaMostrar = sessionCheckout.map(si => {
+            const prod = rows.find(r => r.ID === si.produtoId) || {};
+            const precoUnit = (prod.valor_promocional !== null && prod.valor_promocional !== undefined) ? Number(prod.valor_promocional) : Number(prod.valorOriginal || si.precoUnitario || 0);
+            const lineTotal = precoUnit * si.quantidade;
+            valorTotal += lineTotal;
+            return {
+              produtoId: si.produtoId,
+              nome: prod.nome || si.nome,
+              imagem: prod.imagem || si.imagem,
+              quantidade: si.quantidade,
+              precoUnitario: precoUnit,
+              lineTotal
+            };
+          });
+
+          descricao = `Compra de ${itensParaMostrar.length} item(s)`;
+        } else {
+          // fallback: comportamento antigo (um produto via query) -> tenta carregar dados do produto para mostrar foto/nome
+          const produtoIdQuery = req.query.produtoId ? Number(req.query.produtoId) : null;
+          const quantidadeQuery = req.query.quantidade ? Number(req.query.quantidade) : 1;
+          const descricaoQ = req.query.descricao || '';
+          descricao = descricaoQ;
+
+          if (produtoIdQuery) {
+            // busca produto e promoção
+            const rowsProd = await new Promise((resolve, reject) => {
+              db.query(
+                `SELECT p.ID, p.nome, p.imagem, p.valor AS valorOriginal,
+                        (SELECT valor_promocional FROM Promocao WHERE produto_id = ? LIMIT 1) AS valor_promocional
+                 FROM Produto p WHERE p.ID = ? LIMIT 1`,
+                [produtoIdQuery, produtoIdQuery],
+                (err, r) => err ? reject(err) : resolve(r || [])
+              );
+            }).catch(e => { console.warn('[pagamento] erro buscando produto via query:', e); return []; });
+
+            if (rowsProd && rowsProd[0]) {
+              const prod = rowsProd[0];
+              const precoUnit = (prod.valor_promocional !== null && prod.valor_promocional !== undefined) ? Number(prod.valor_promocional) : Number(prod.valorOriginal || 0);
+              const lineTotal = precoUnit * quantidadeQuery;
+              valorTotal = lineTotal;
+              itensParaMostrar = [{
+                produtoId: prod.ID,
+                nome: prod.nome,
+                imagem: prod.imagem,
+                quantidade: quantidadeQuery,
+                precoUnitario: precoUnit,
+                lineTotal
+              }];
+              descricao = descricao || `Compra de ${itensParaMostrar.length} item(s)`;
+            } else {
+              // sem produto encontrado — usa valor genérico se passado
+              valorTotal = req.query.valor ? Number(req.query.valor) : 0;
+            }
+          } else {
+            // sem produtoId — usa valor direto do querystring
+            valorTotal = req.query.valor ? Number(req.query.valor) : 0;
+          }
+        }
+
         const txid = 'pedido-' + Date.now();
         const payload = buildPixPayload({
           chave: CHAVE_PIX,
           nome: NOME_RECEBEDOR,
           cidade: CIDADE_RECEBEDOR,
-          valor: valor,
+          valor: valorTotal,
           txid,
           complemento: descricao
         });
-
         const qrCodeImage = await QRCode.toDataURL(payload);
 
-        // { changed code }
-        const produtoIdQuery = req.query.produtoId ? Number(req.query.produtoId) : null;
-        // opcional: buscar imagem do produto para mostrar na view
-        let produtoImagem = null;
-        if (produtoIdQuery) {
-          try {
-            const rows = await new Promise((resolve, reject) => {
-              db.query('SELECT imagem FROM PRODUTO WHERE ID = ?', [produtoIdQuery], (err, r) => err ? reject(err) : resolve(r));
-            });
-            if (rows && rows.length) produtoImagem = rows[0].imagem;
-          } catch (e) {
-            console.error('Erro ao buscar imagem do produto:', e);
-          }
-        }
-        res.render('pagamento', { valor, descricao, payload, qrCodeImage, usuario, produtoId: produtoIdQuery, produtoImagem });
+        res.render('pagamento', {
+          valor: valorTotal,
+          descricao,
+          payload,
+          qrCodeImage,
+          usuario,
+          itens: itensParaMostrar, // lista de itens para exibir na view
+          // garante que produtoId/quantidade existam (evita ReferenceError na view)
+          produtoId: req.query && req.query.produtoId ? Number(req.query.produtoId) : null,
+          quantidade: req.query && req.query.quantidade ? Number(req.query.quantidade) : 1
+        });
     } catch (err) {
         console.error('Erro gerando QR/Payload:', err);
         return res.status(500).render('error', { error: err, message: 'Erro ao gerar QR Code' });
     }
 });
 
-// Rota para confirmar pedido via PIX (sem upload)
-router.post('/pix-confirm', exigeLogin, async (req, res) => {
+// Rota para confirmar pedido via PIX (usa req.session.checkout quando presente)
+router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
     try {
-        const { valor, descricao, produtoId: produtoIdBody } = req.body;
         const usuario = req.session.usuario;
+        const checkout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
+        const valorFormulario = req.body.valor ? Number(req.body.valor) : 0;
+        const descricao = req.body.descricao || '';
 
-        const enderecoTexto = usuario ? `${usuario.endereco || ''} ${usuario.numero || ''} ${usuario.bairro || ''} ${usuario.cidade || ''} ${usuario.estado || ''}`.trim() : 'Endereço não cadastrado';
-        const produtoTexto = descricao || 'Item(s) do pedido';
-
-        const mailOptions = {
-            from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-            // envia para o e-mail do usuário quando disponível; bcc para o e-mail da loja
-            to: (usuario && usuario.email) ? usuario.email : (process.env.EMAIL_USER || ''),
-            bcc: process.env.EMAIL_USER || undefined,
-            subject: `Pedido recebido — ${produtoTexto}`,
-            text:
-`Olá ${usuario && usuario.nome ? usuario.nome : 'cliente'},
-
-Recebemos seu pedido: ${produtoTexto}
-Valor: R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}
-
-Seu pedido está em preparação. Quando o item estiver pronto para envio para o endereço:
-${enderecoTexto}
-
-Avisaremos por e-mail quando o envio for realizado.
-
-Obrigado por comprar conosco!
-`,
-        };
-        // Se o e-mail do usuário não existir, registrar warn
-        if (!usuario || !usuario.email) {
-          console.warn('[pagamento] usuário sem e-mail em sessão — enviando apenas para EMAIL_USER');
+        // determina itens a processar: preferir sessão, senão usa produtoId do form (antigo)
+        let itensProcessar = [];
+        if (checkout) {
+          itensProcessar = checkout;
+        } else if (req.body.produtoId) {
+          itensProcessar = [{ produtoId: Number(req.body.produtoId), quantidade: Number(req.body.quantidade || 1) }];
+        } else {
+          return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
         }
 
-        try {
-          const info = await transporter.sendMail(mailOptions);
-          console.log('[pix-confirm] e-mail enviado:', info && info.response);
-        } catch (mailErr) {
-          console.error('[pix-confirm] falha ao enviar e-mail:', mailErr);
-          return res.render('pagamento-confirmado', { valor, descricao, usuario, mensagemErroEmail: 'Pedido registrado, mas falha ao enviar e-mail de confirmação. Verifique as configurações de e-mail.' });
-        }
+        // busca preços atuais e insere VENDE por item; insere também PEDIDO_ITENS e notificação
+        let vendaIds = [];
+        for (const it of itensProcessar) {
+          const produtoId = Number(it.produtoId);
+          const quantidade = Number(it.quantidade || 1);
 
-        // grava VENDE (se veio produtoId) ANTES de inserir a notificação
-        const produtoId = produtoIdBody ? Number(produtoIdBody) : null;
-        let vendaId = null;
-        console.log('[pagamento] produtoId do form:', produtoId, 'usuario.ID:', usuario && usuario.ID);
+          // buscar produto e preço atual
+          const produtos = await new Promise((resolve, reject) => {
+            db.query('SELECT ID, nome, imagem, valor, estoque, (SELECT valor_promocional FROM Promocao WHERE produto_id = ? LIMIT 1) AS valor_promocional FROM Produto WHERE ID = ?', [produtoId, produtoId], (err, rows) => err ? reject(err) : resolve(rows || []));
+          });
+          const produto = produtos[0] || {};
+          const precoUnit = (produto.valor_promocional !== null && produto.valor_promocional !== undefined) ? Number(produto.valor_promocional) : Number(produto.valor || 0);
+          const valorVenda = precoUnit * quantidade;
 
-        if (produtoId && usuario && usuario.ID) {
+          // insere VENDE
+          const resInsert = await new Promise((resolve, reject) => {
+            db.query('INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)', [usuario.ID, produtoId, valorVenda, 'pendente'], (err, result) => err ? reject(err) : resolve(result));
+          });
+          const vendaId = resInsert.insertId;
+          vendaIds.push(vendaId);
+
+          // insere PEDIDO_ITENS (registro do item comprado)
+          // usa helper adaptativo que detecta corretamente o nome da coluna de preço
           try {
-            const resInsert = await new Promise((resolve, reject) => {
-              db.query(
-                'INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)',
-                [usuario.ID, produtoId, valor, 'pendente'],
-                (err, result) => err ? reject(err) : resolve(result)
-              );
-            });
-            vendaId = resInsert.insertId;
-            console.log('[pagamento] venda gravada id=', vendaId);
+            await insertPedidoItem(usuario.ID, produtoId, quantidade, vendaId, precoUnit);
           } catch (e) {
-            console.error('[pagamento] erro ao gravar VENDE:', e);
+            console.error('[PEDIDO_ITENS] falha ao inserir item adaptativo:', e);
+            // opcional: decidir rollback ou continuar — por enquanto registra erro e continua
           }
-        }
 
-        // agora insere a notificação referenciando venda_id e com status 'pendente'
-        if (usuario && usuario.ID) {
+          // atualiza estoque (tenta decrementar)
+          await new Promise((resolve, reject) => {
+            db.query('UPDATE Produto SET estoque = GREATEST(0, estoque - ?) WHERE ID = ?', [quantidade, produtoId], (err) => err ? reject(err) : resolve());
+          });
+
+          // notificação
           const titulo = 'Pagamento Recebido';
-          const mensagem = `Recebemos seu pagamento no valor de R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}. Em breve seu pedido será processado.`;
+          const mensagem = `Recebemos seu pagamento para ${produto.nome || 'produto'}. Valor: R$ ${valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
           try {
             await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente');
           } catch(e) {
@@ -213,80 +384,166 @@ Obrigado por comprar conosco!
           }
         }
 
-        return res.render('pagamento-confirmado', { valor, descricao, usuario });
+        // enviar e-mail (mantém comportamento anterior)
+        try {
+          const mailOptions = {
+            from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+            to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
+            bcc: process.env.EMAIL_USER || undefined,
+            subject: `Pagamento recebido — ${descricao || 'Pedido'}`,
+            text: `Olá ${usuario && usuario.nome ? usuario.nome : 'cliente'},\n\nRecebemos seu pedido. Valor: R$ ${Number(valorFormulario || 0).toLocaleString('pt-BR', {minimumFractionDigits:2})}\n\nObrigado!`
+          };
+          await transporter.sendMail(mailOptions);
+        } catch (mailErr) {
+          console.error('[compraConfirmacao] falha ao enviar e-mail:', mailErr);
+        }
+
+        // limpar carrinho: remove itens comprados
+        if (req.session.carrinho && Array.isArray(req.session.carrinho)) {
+          const compradosIds = itensProcessar.map(i => Number(i.produtoId));
+          req.session.carrinho = req.session.carrinho.filter(ci => !compradosIds.includes(Number(ci.produtoId)));
+        }
+        // limpar checkout
+        delete req.session.checkout;
+
+        return res.render('pagamento-confirmado', { valor: valorFormulario, descricao, usuario });
     } catch (err) {
-        console.error('Erro em /pagamento/pix-confirm:', err);
+        console.error('Erro em /pagamento/compraConfirmacao:', err);
         return res.status(500).render('error', { error: err, message: 'Erro ao confirmar pedido via PIX' });
     }
 });
 
-router.post('/cartao', exigeLogin, async (req, res) => {
+// extrai o handler existente para função reutilizável
+async function handlePixConfirm(req, res) {
   try {
-    const { valor, descricao, cep, endereco, numero, bairro, cidade, estado, nomeTitular, produtoId: produtoIdBody } = req.body;
+    // cópia do código atual de /pix-confirm (mantém lógica)
     const usuario = req.session.usuario;
+    const checkout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
+    const valorFormulario = req.body.valor ? Number(req.body.valor) : 0;
+    const descricao = req.body.descricao || '';
 
-    const enderecoTexto = `${endereco || ''} ${numero || ''} ${bairro || ''} ${cidade || ''} ${estado || ''} ${cep || ''}`.trim();
-    const produtoTexto = descricao || 'Item(s) do pedido';
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-      to: (usuario && usuario.email) ? usuario.email : (process.env.EMAIL_USER || ''),
-      bcc: process.env.EMAIL_USER || undefined,
-      subject: `Pedido recebido — ${produtoTexto}`,
-      text:
-`Olá ${usuario && usuario.nome ? usuario.nome : nomeTitular || 'cliente'},
-
-Recebemos sua compra: ${produtoTexto}
-Valor: R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}
-
-Endereço de entrega:
-${enderecoTexto}
-
-Seu pedido está em preparação. Avisaremos por e-mail quando estiver pronto para envio.
-
-Obrigado!
-`
-    };
-
-    try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log('[cartao] e-mail enviado:', info && info.response);
-    } catch (mailErr) {
-      console.error('[cartao] falha ao enviar e-mail:', mailErr);
-      return res.render('pagamento-confirmado', { valor, descricao, usuario, mensagemErroEmail: 'Pedido registrado, mas falha ao enviar e-mail de confirmação.' });
+    let itensProcessar = [];
+    if (checkout) {
+      itensProcessar = checkout;
+    } else if (req.body.produtoId) {
+      itensProcessar = [{ produtoId: Number(req.body.produtoId), quantidade: Number(req.body.quantidade || 1) }];
+    } else {
+      return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
     }
 
-    const produtoId = produtoIdBody ? Number(produtoIdBody) : null;
-    let vendaId = null;
-    console.log('[cartao] produtoId do form:', produtoId, 'usuario.ID:', usuario && usuario.ID);
+    // processa cada item (mesma lógica já existente)
+    let vendaIds = [];
+    for (const it of itensProcessar) {
+      const produtoId = Number(it.produtoId);
+      const quantidade = Number(it.quantidade || 1);
 
-    if (produtoId && usuario && usuario.ID) {
-      try {
-        const resInsert = await new Promise((resolve, reject) => {
-          db.query(
-            'INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)',
-            [usuario.ID, produtoId, valor, 'pendente'],
-            (err, result) => err ? reject(err) : resolve(result)
-          );
-        });
-        vendaId = resInsert.insertId;
-        console.log('[pagamento] venda gravada id=', vendaId);
-      } catch (e) {
-        console.error('[pagamento] erro ao gravar VENDE (cartao):', e);
-      }
-    }
+      const produtos = await new Promise((resolve, reject) => {
+        db.query('SELECT ID, nome, imagem, valor, estoque, (SELECT valor_promocional FROM Promocao WHERE produto_id = ? LIMIT 1) AS valor_promocional FROM Produto WHERE ID = ?', [produtoId, produtoId], (err, rows) => err ? reject(err) : resolve(rows || []));
+      });
+      const produto = produtos[0] || {};
+      const precoUnit = (produto.valor_promocional !== null && produto.valor_promocional !== undefined) ? Number(produto.valor_promocional) : Number(produto.valor || 0);
+      const valorVenda = precoUnit * quantidade;
 
-    if (usuario && usuario.ID) {
-      const titulo = 'Pedido Recebido';
-      const mensagem = `Recebemos sua compra: ${produtoTexto} no valor de R$ ${Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2})}. Em breve seu pedido será processado.`;
+      const resInsert = await new Promise((resolve, reject) => {
+        db.query('INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)', [usuario.ID, produtoId, valorVenda, 'pendente'], (err, result) => err ? reject(err) : resolve(result));
+      });
+      const vendaId = resInsert.insertId;
+      vendaIds.push(vendaId);
+
+      // insere PEDIDO_ITENS (registro do item comprado)
+      await insertPedidoItem(usuario.ID, produtoId, quantidade, vendaId, precoUnit);
+
+      // atualiza estoque (tenta decrementar)
+      await new Promise((resolve, reject) => {
+        db.query('UPDATE Produto SET estoque = GREATEST(0, estoque - ?) WHERE ID = ?', [quantidade, produtoId], (err) => err ? reject(err) : resolve());
+      });
+
+      const titulo = 'Pagamento Recebido';
+      const mensagem = `Recebemos seu pagamento para ${produto.nome || 'produto'}. Valor: R$ ${valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
       try {
         await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente');
       } catch(e) {
-        console.error('Erro ao gravar notificação (cartao):', e);
+        console.error('Erro ao gravar notificação:', e);
       }
     }
 
-    return res.render('pagamento-confirmado', { valor, descricao, usuario });
+    // envio de e-mail (mantém)
+    try {
+      const mailOptions = {
+        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+        to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
+        bcc: process.env.EMAIL_USER || undefined,
+        subject: `Pagamento recebido — ${descricao || 'Pedido'}`,
+        text: `Olá ${usuario && usuario.nome ? usuario.nome : 'cliente'},\n\nRecebemos seu pedido. Valor: R$ ${Number(valorFormulario || 0).toLocaleString('pt-BR', {minimumFractionDigits:2})}\n\nObrigado!`
+      };
+      await transporter.sendMail(mailOptions);
+    } catch (mailErr) {
+      console.error('[compraConfirmacao] falha ao enviar e-mail:', mailErr);
+    }
+
+    // limpa carrinho dos itens comprados e checkout
+    if (req.session.carrinho && Array.isArray(req.session.carrinho)) {
+      const compradosIds = itensProcessar.map(i => Number(i.produtoId));
+      req.session.carrinho = req.session.carrinho.filter(ci => !compradosIds.includes(Number(ci.produtoId)));
+    }
+    delete req.session.checkout;
+
+    return res.render('pagamento-confirmado', { valor: valorFormulario, descricao, usuario });
+  } catch (err) {
+    console.error('Erro em /pagamento/compraConfirmacao (handler):', err);
+    return res.status(500).render('error', { error: err, message: 'Erro ao confirmar pedido via PIX' });
+  }
+}
+
+// associa o handler às rotas existentes e ao novo alias /confirmar
+router.post('/compraConfirmacao', exigeLogin, handlePixConfirm);
+router.post('/confirmar', exigeLogin, handlePixConfirm);
+
+// Rota cartao - mesma lógica de leitura de checkout
+router.post('/cartao', exigeLogin, async (req, res) => {
+  try {
+    const usuario = req.session.usuario;
+    const checkout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
+    const descricao = req.body.descricao || '';
+
+    let itensProcessar = checkout || (req.body.produtoId ? [{ produtoId: Number(req.body.produtoId), quantidade: Number(req.body.quantidade || 1) }] : []);
+    if (!itensProcessar.length) return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
+
+    for (const it of itensProcessar) {
+      const produtoId = Number(it.produtoId);
+      const quantidade = Number(it.quantidade || 1);
+      const produtos = await new Promise((resolve, reject) => {
+        db.query('SELECT ID, nome, valor, (SELECT valor_promocional FROM Promocao WHERE produto_id = ? LIMIT 1) AS valor_promocional FROM Produto WHERE ID = ?', [produtoId, produtoId], (err, rows) => err ? reject(err) : resolve(rows || []));
+      });
+      const produto = produtos[0] || {};
+      const precoUnit = (produto.valor_promocional !== null && produto.valor_promocional !== undefined) ? Number(produto.valor_promocional) : Number(produto.valor || 0);
+      const valorVenda = precoUnit * quantidade;
+
+      const resInsert = await new Promise((resolve, reject) => {
+        db.query('INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)', [usuario.ID, produtoId, valorVenda, 'pendente'], (err, result) => err ? reject(err) : resolve(result));
+      });
+      const vendaId = resInsert.insertId;
+
+      // insere PEDIDO_ITENS (registro do item comprado)
+      await insertPedidoItem(usuario.ID, produtoId, quantidade, vendaId, precoUnit);
+
+      await new Promise((resolve, reject) => {
+        db.query('UPDATE Produto SET estoque = GREATEST(0, estoque - ?) WHERE ID = ?', [quantidade, produtoId], (err) => err ? reject(err) : resolve());
+      });
+
+      const titulo = 'Pedido Recebido';
+      const mensagem = `Recebemos sua compra: ${produto.nome || 'produto'} no valor de R$ ${valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2})}.`;
+      try { await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente'); } catch(e) { console.error('Erro notificação:', e); }
+    }
+
+    // limpar carrinho e checkout
+    if (req.session.carrinho && Array.isArray(req.session.carrinho)) {
+      const compradosIds = itensProcessar.map(i => Number(i.produtoId));
+      req.session.carrinho = req.session.carrinho.filter(ci => !compradosIds.includes(Number(ci.produtoId)));
+    }
+    delete req.session.checkout;
+
+    return res.render('pagamento-confirmado', { valor: req.body.valor || 0, descricao, usuario });
   } catch (err) {
     console.error('Erro em /pagamento/cartao:', err);
     return res.status(500).render('error', { error: err, message: 'Erro ao processar pagamento por cartão' });

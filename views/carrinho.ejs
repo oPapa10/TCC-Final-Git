@@ -115,9 +115,15 @@
                     </div>
                     <div class="cart-actions d-flex justify-content-between mt-3">
                         <a class="cart-continue-btn btn btn-outline-primary" href="/">Continuar Comprando</a>
-                        <form action="/carrinho/pedido/finalizar" method="POST" class="mb-0" id="formFinalizarCompra">
-                            <button type="submit" class="cart-checkout-btn btn btn-success">Finalizar Compra</button>
-                        </form>
+                        <% if (typeof usuario !== 'undefined' && usuario) { %>
+                          <form action="/carrinho/pedido/finalizar" method="POST" class="mb-0" id="formFinalizarCompra">
+                              <button type="submit" class="cart-checkout-btn btn btn-success">Finalizar Compra</button>
+                          </form>
+                        <% } else { %>
+                          <a href="/perfil" class="cart-checkout-btn btn btn-outline-success" title="Faça login para finalizar sua compra">
+                            <i class="fas fa-sign-in-alt me-1"></i>Fazer login para finalizar compra
+                          </a>
+                        <% } %>
                     </div>
                 </div>
             <% } %>
@@ -200,11 +206,13 @@ function ativarFormAlterar() {
 ativarFormOcultarMostrar();
 ativarFormAlterar();
 
-document.getElementById('formFinalizarCompra').addEventListener('submit', function(e) {
-    setTimeout(function() {
-        alert('Compra efetuada com sucesso!');
-    }, 100); // Pequeno delay para garantir que o submit ocorra
-});
+// Removeu-se o alert "Compra efetuada com sucesso!" para evitar popup — listener permanece sem notificação.
+const formFinalizar = document.getElementById('formFinalizarCompra');
+if (formFinalizar) {
+    formFinalizar.addEventListener('submit', function(e) {
+        // submit normal — sem alert
+    });
+}
 
 window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {

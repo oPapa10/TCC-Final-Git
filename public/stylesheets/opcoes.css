@@ -284,7 +284,110 @@ body {
   background-color: #f9f9f9;
 }
 
-/* Responsividade */
+/* ===== Estética específica: seção "Minha Conta" ===== */
+.option-section#conta .card {
+  border-radius: 12px;
+  padding: 0;
+  overflow: visible;
+  background: linear-gradient(180deg,#ffffff,#fbfdff);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.option-section#conta .card-body {
+  padding: 1.5rem 1.75rem;
+}
+
+.option-section#conta .fw-semibold {
+  color: #111827;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+/* campos não informados */
+.option-section#conta .missing-field {
+  color: #6c757d;
+  font-style: italic;
+  padding: 6px 0;
+}
+
+/* controla quebras longas de rua/complemento */
+.option-section#conta .account-address,
+.option-section#conta .account-complement {
+  max-width: 100%;
+  white-space: normal;
+  word-break: break-word;
+  color: #1f2937;
+}
+
+/* espaçamento e visual do bloco de endereço */
+.option-section#conta h5 {
+  margin-top: 0.15rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Ajustes de alinhamento e destaque sutis para "Minha Conta" */
+
+/* garante que linhas de campos tenham alinhamento pelo topo (evita desalinhamento quando um campo quebra linha) */
+.option-section#conta .card-body .row.g-3 {
+  align-items: flex-start; /* força colunas a alinhar pelo topo */
+}
+
+/* ícones sutis ao lado dos rótulos e alinhamento das colunas */
+.option-section#conta .form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.2px;
+}
+
+.option-section#conta .form-label i {
+  color: var(--secondary-color);
+  width: 20px;
+  text-align: center;
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+/* força cada coluna a empilhar label + valor e alinhar pelo topo */
+.option-section#conta .card-body .row.g-3 > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* garante espaçamento consistente entre label e valor */
+.option-section#conta .fw-semibold {
+  margin-top: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* ajuste específico para o valor do estado (destaque sutil) */
+.option-section#conta .state-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* quando o texto do campo for longo (ex: Balneário Gaivota) não estoura layout */
+.option-section#conta .fw-semibold,
+.option-section#conta .account-address,
+.option-section#conta .account-complement {
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* pequenas correções responsivas */
+@media (max-width: 576px) {
+  .option-section#conta .card-body .row.g-3 > [class*="col-"] {
+    align-items: stretch;
+  }
+  .option-section#conta .form-label { gap: 6px; }
+}
+
 @media (max-width: 992px) {
   .options-sidebar {
     margin-bottom: 2rem;
@@ -314,4 +417,22 @@ body {
     margin-left: 0;
     margin-top: 1rem;
   }
+  
+  .option-section#conta .card-body { padding: 1rem; }
+  .option-section#conta .fw-semibold { font-size: 0.95rem; }
 }
+
+/* Removida a regra com margin-left negativa e substituída por ajuste específico */
+.number-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centraliza verticalmente em relação às colunas vizinhas */
+  align-items: flex-end;    /* alinha o valor à direita dentro da coluna */
+  margin-left: -100px;
+}
+
+.number-field .fw-semibold {
+  margin-top: 6px;
+  width: 100%;
+}
+

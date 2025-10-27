@@ -12,16 +12,71 @@
 </head>
 <body>
 
-  <main class="container mt-4 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h3><i class="fas fa-chart-line me-2"></i>Controle de Vendas</h3>
-      <a href="/adm" class="btn btn-outline-secondary">
-        <i class="fas fa-arrow-left me-2"></i>Voltar ao ADM
+  <main class="container-lg mt-4 mb-5">
+    <!-- Cabeçalho -->
+    <div class="header-section">
+      <a href="/adm" class="btn-voltar">
+        <i class="fas fa-arrow-left"></i> Voltar ao ADM
       </a>
+      <h1 class="header-title">
+        <i class="fas fa-chart-line me-2"></i>Controle de Vendas
+      </h1>
     </div>
 
-    <div class="card filters-card p-3">
-      <form class="row g-2" method="GET" action="/adm/vendas">
+    <!-- Cards de Métricas -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="metric-card">
+          <div class="metric-icon total-vendas">
+            <i class="fas fa-shopping-bag"></i>
+          </div>
+          <div class="metric-info">
+            <h3><%= totalVendas || 0 %></h3>
+            <p>Total de Vendas</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="metric-card">
+          <div class="metric-icon pendentes">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="metric-info">
+            <h3><%= vendasPendentes || 0 %></h3>
+            <p>Pendentes</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="metric-card">
+          <div class="metric-icon caminho">
+            <i class="fas fa-cart-shopping moving-cart" aria-hidden="true"></i>
+          </div>
+          <div class="metric-info">
+            <h3><%= vendasCaminho || 0 %></h3>
+            <p>A caminho</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="metric-card">
+          <div class="metric-icon entregues">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="metric-info">
+            <h3><%= vendasEntregues || 0 %></h3>
+            <p>Entregues</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card-promocao filters-card">
+      <h3 class="filters-title mb-3">
+        <i class="fas fa-filter me-2"></i>Filtros de Vendas
+      </h3>
+      <form class="row g-3" method="GET" action="/adm/vendas">
         <div class="col-md-2">
           <label class="form-label">Ano</label>
           <select name="year" class="form-select">
@@ -65,12 +120,12 @@
           </select>
         </div>
 
-        <div class="col-md-2 d-flex">
-          <div class="me-2">
+        <div class="col-md-2 d-flex gap-2">
+          <div class="flex-fill">
             <label class="form-label">Preço min</label>
             <input type="number" step="0.01" name="priceMin" class="form-control" value="<%= filters.priceMin || '' %>" placeholder="R$ 0,00">
           </div>
-          <div>
+          <div class="flex-fill">
             <label class="form-label">Preço max</label>
             <input type="number" step="0.01" name="priceMax" class="form-control" value="<%= filters.priceMax || '' %>" placeholder="R$ 0,00">
           </div>
@@ -87,17 +142,25 @@
       </form>
     </div>
 
-    <div class="mb-3">
-      <ul class="nav nav-pills">
-        <li class="nav-item"><a class="nav-link <%= (!filters.status || filters.status==='entregue')?'' : (filters.status==='entregue'?'active':'') %>" href="/adm/vendas?status=entregue">Vendas realizadas</a></li>
-        <li class="nav-item ms-2"><a class="nav-link <%= (filters.status==='a_caminho') ? 'active' : '' %>" href="/adm/vendas?status=a_caminho">Vendas em trajeto</a></li>
-        <li class="nav-item ms-2"><a class="nav-link <%= (!filters.status || filters.status==='pendente' || filters.status==='pronto') ? 'active' : '' %>" href="/adm/vendas?status=pendente">Vendas pendentes</a></li>
-      </ul>
+    <!-- Navegação por status -->
+    <div class="mb-4">
+      <div class="status-nav">
+        <a class="status-nav-item <%= (!filters.status || filters.status==='entregue')?'active':'' %>" href="/adm/vendas?status=entregue">
+          <i class="fas fa-check-circle me-2"></i>Vendas realizadas
+        </a>
+        <a class="status-nav-item <%= (filters.status==='a_caminho') ? 'active' : '' %>" href="/adm/vendas?status=a_caminho">
+          <i class="fas fa-shipping-fast me-2"></i>Vendas em trajeto
+        </a>
+        <a class="status-nav-item <%= (!filters.status || filters.status==='pendente' || filters.status==='pronto') ? 'active' : '' %>" href="/adm/vendas?status=pendente">
+          <i class="fas fa-clock me-2"></i>Vendas pendentes
+        </a>
+      </div>
     </div>
 
-    <div class="card">
+    <!-- Tabela de Vendas -->
+    <div class="card-promocao">
       <div class="table-responsive">
-        <table class="table table-striped vendas-table mb-0">
+        <table class="table table-hover vendas-table mb-0">
           <thead>
             <tr>
               <th>Foto</th>
@@ -113,12 +176,14 @@
           <tbody>
             <% if (vendas && vendas.length) { %>
               <% vendas.forEach(function(v){ %>
-                <tr>
+                <tr class="venda-row">
                   <td style="width:80px">
                     <% if (v.produto_imagem) { %>
                       <img src="<%= v.produto_imagem %>" alt="Foto" class="prod-thumb rounded">
                     <% } else { %>
-                      <div class="prod-thumb placeholder rounded d-flex align-items-center justify-content-center text-muted">—</div>
+                      <div class="prod-thumb placeholder rounded d-flex align-items-center justify-content-center text-muted">
+                        <i class="fas fa-image"></i>
+                      </div>
                     <% } %>
                   </td>
                   <td><strong>#<%= v.ID %></strong></td>
@@ -136,39 +201,63 @@
                   </td>
                   <td class="align-middle text-center">
                     <% if (v.produto_qtd_avaliacoes && v.produto_qtd_avaliacoes > 0) { %>
-                      <div><span class="text-warning"><i class="fas fa-star"></i> <%= Number(v.produto_media).toFixed(1) %></span></div>
-                      <div class="text-muted small"><%= v.produto_qtd_avaliacoes %> avaliação<%= v.produto_qtd_avaliacoes>1 ? 's' : '' %></div>
+                      <div class="rating-stars">
+                        <% for(let i=1; i<=5; i++) { %>
+                          <i class="fas fa-star <%= i <= Math.round(v.produto_media) ? 'text-warning' : 'text-muted' %>"></i>
+                        <% } %>
+                      </div>
+                      <div class="text-muted small mt-1"><%= v.produto_qtd_avaliacoes %> avaliação<%= v.produto_qtd_avaliacoes>1 ? 's' : '' %></div>
                     <% } else { %>
                       <span class="text-muted">-</span>
                     <% } %>
                   </td>
-                  <td class="align-middle text-end">
-                    <!-- status badge -->
-                    <% if (v.status === 'pendente') { %>
-                      <span class="badge bg-warning text-dark me-2">Pendente</span>
-                    <% } else if (v.status === 'pronto') { %>
-                      <span class="badge bg-secondary text-dark me-2">Pronto</span>
-                    <% } else if (v.status === 'a_caminho') { %>
-                      <span class="badge bg-info text-dark me-2">A caminho</span>
-                    <% } else if (v.status === 'entregue') { %>
-                      <span class="badge bg-success me-2">Entregue</span>
-                    <% } else if (v.status === 'realizada') { %>
-                      <span class="badge bg-success me-2">Realizada</span>
-                    <% } else { %>
-                      <span class="badge bg-secondary me-2"><%= v.status || '—' %></span>
-                    <% } %>
+                  <td class="align-middle">
+                    <div class="d-flex flex-column gap-2">
+                      <!-- status badge -->
+                      <div class="status-badge-container">
+                        <% if (v.status === 'pendente') { %>
+                          <span class="status-badge status-pendente">
+                            <i class="fas fa-clock me-1"></i>Pendente
+                          </span>
+                        <% } else if (v.status === 'pronto') { %>
+                          <span class="status-badge status-pronto">
+                            <i class="fas fa-box me-1"></i>Pronto
+                          </span>
+                        <% } else if (v.status === 'a_caminho') { %>
+                          <span class="status-badge status-caminho">
+                            <i class="fas fa-shipping-fast me-1"></i>A caminho
+                          </span>
+                        <% } else if (v.status === 'entregue') { %>
+                          <span class="status-badge status-entregue">
+                            <i class="fas fa-check-circle me-1"></i>Entregue
+                          </span>
+                        <% } else if (v.status === 'realizada') { %>
+                          <span class="status-badge status-entregue">
+                            <i class="fas fa-check-circle me-1"></i>Realizada
+                          </span>
+                        <% } else { %>
+                          <span class="status-badge status-desconhecido">
+                            <i class="fas fa-question-circle me-1"></i><%= v.status || '—' %>
+                          </span>
+                        <% } %>
+                      </div>
 
-                    <!-- ações conforme status -->
-                    <div class="d-inline-block">
-                      <% if (v.status === 'pendente') { %>
-                        <form method="POST" action="/adm/vendas/<%= v.ID %>/pronto" style="display:inline">
-                          <button class="btn btn-sm btn-outline-warning">Pronto para envio</button>
-                        </form>
-                      <% } else if (v.status === 'pronto') { %>
-                        <form method="POST" action="/adm/vendas/<%= v.ID %>/caminho" style="display:inline">
-                          <button class="btn btn-sm btn-outline-primary">Enviar (A caminho)</button>
-                        </form>
-                      <% } %>
+                      <!-- ações conforme status -->
+                      <div class="action-buttons">
+                        <% if (v.status === 'pendente') { %>
+                          <form method="POST" action="/adm/vendas/<%= v.ID %>/pronto" class="d-inline">
+                            <button class="btn-action btn-action-ready">
+                              <i class="fas fa-box me-1"></i>Pronto para envio
+                            </button>
+                          </form>
+                        <% } else if (v.status === 'pronto') { %>
+                          <form method="POST" action="/adm/vendas/<%= v.ID %>/caminho" class="d-inline">
+                            <button class="btn-action btn-action-ship">
+                              <i class="fas fa-shipping-fast me-1"></i>Enviar
+                            </button>
+                          </form>
+                        <% } %>
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -176,7 +265,7 @@
             <% } else { %>
               <tr>
                 <td colspan="8" class="text-center py-5">
-                  <i class="fas fa-receipt fa-2x mb-3" style="color: #dee2e6;"></i>
+                  <i class="fas fa-receipt fa-3x mb-3" style="color: #dee2e6;"></i>
                   <h5 class="text-muted">Nenhuma venda encontrada</h5>
                   <p class="text-muted mb-0">Tente ajustar os filtros para ver mais resultados.</p>
                 </td>

@@ -138,16 +138,16 @@
 
                 <!-- ÁREA DE COMPRA AGORA COM CONFIRMAÇÃO -->
                 <div class="buy-now-section">
-                    <!-- Botão que abre o modal -->
+                    <!-- Botão que abre o modal / exige login -->
                     <% if (usuario) { %>
                       <a href="/pagamento?valor=<%= produto.valor_promocional && Number(produto.valor_promocional) > 0 ? produto.valor_promocional : produto.valor %>&descricao=Compra+de+<%= encodeURIComponent(produto.nome) %>&produtoId=<%= produto.ID %>"
-                         class="btn btn-outline-primary btn-buy-now">
+                         class="btn btn-primary btn-buy-now">
                         <i class="fas fa-bolt me-2"></i>Comprar Agora
                       </a>
                     <% } else { %>
-                      <a href="/login?redirect=<%= encodeURIComponent('/pagamento?valor=' + (produto.valor_promocional && Number(produto.valor_promocional) > 0 ? produto.valor_promocional : produto.valor) + '&descricao=' + encodeURIComponent('Compra de ' + produto.nome)) %>"
-                         class="btn btn-outline-primary btn-buy-now">
-                        <i class="fas fa-bolt me-2"></i>Comprar Agora
+                      <a href="/perfil"
+                         class="btn btn-outline-primary btn-buy-now" title="Faça login para finalizar a compra">
+                        <i class="fas fa-sign-in-alt me-2"></i>Fazer login para finalizar compra
                       </a>
                     <% } %>
                 </div>
