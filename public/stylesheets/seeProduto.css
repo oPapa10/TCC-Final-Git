@@ -282,11 +282,11 @@ body {
     vertical-align: middle;
     border-bottom: 1px solid var(--border-color);
     background: var(--card-bg);
-    transition: background-color 0.2s ease;
 }
 
+/* ===== REMOVIDO EFEITO HOVER NAS LINHAS ===== */
 .produtos-table tbody tr:hover td {
-    background-color: rgba(67, 97, 238, 0.03);
+    background-color: var(--card-bg);
 }
 
 /* ===== COLUNAS FIXAS ===== */
@@ -316,16 +316,21 @@ body {
     position: sticky;
     right: 0;
     background: var(--card-bg);
-    z-index: 5;
+    z-index: 20;
     min-width: 140px;
     width: 140px;
     border-left: 1px solid var(--border-color);
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.15);
 }
 
 .produtos-table thead .fixed-column-id,
 .produtos-table thead .fixed-column-img {
     z-index: 15;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.produtos-table thead .fixed-column-action {
+    z-index: 25;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
 }
 
@@ -347,31 +352,6 @@ body {
     object-fit: cover;
     border-radius: 10px;
     border: 2px solid var(--border-color);
-    transition: all 0.3s ease;
-}
-
-.produto-img-container:hover .produto-img {
-    transform: scale(1.05);
-}
-
-.img-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    color: white;
-}
-
-.produto-img-container:hover .img-overlay {
-    opacity: 1;
 }
 
 .produto-img-placeholder {
@@ -411,12 +391,6 @@ body {
     object-fit: cover;
     border-radius: 4px;
     border: 1px solid var(--border-color);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.thumbnail-img:hover {
-    transform: scale(1.2);
 }
 
 .thumbnail-more {

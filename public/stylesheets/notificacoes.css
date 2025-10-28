@@ -1,0 +1,193 @@
+/* ===== ESTILOS PARA PÁGINA DE NOTIFICAÇÕES ===== */
+
+/* Container principal */
+.container.mt-5.mb-5 {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Cabeçalho da página */
+.d-flex.justify-content-between.align-items-center.mb-3 h3 {
+    color: var(--primary-dark);
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+body.dark-theme .d-flex.justify-content-between.align-items-center.mb-3 h3 {
+    color: var(--text-light);
+}
+
+/* Lista de notificações */
+.list-group {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 16px 20px;
+    transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-theme .list-group-item {
+    background-color: #1e1e1e;
+    border-bottom: 1px solid #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-theme .list-group-item:hover {
+    background-color: #2d2d2d;
+}
+
+/* Imagem da notificação */
+.list-group-item img.rounded {
+    border-radius: 6px !important;
+    flex-shrink: 0;
+}
+
+/* Conteúdo da notificação */
+.list-group-item .d-flex > div:last-child {
+    flex: 1;
+}
+
+.fw-bold {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+    color: var(--primary-dark);
+}
+
+body.dark-theme .fw-bold {
+    color: #ffffff;
+}
+
+.text-muted {
+    font-size: 0.9rem;
+}
+
+body.dark-theme .text-muted {
+    color: #b0b0b0 !important;
+}
+
+/* Badges de status */
+.badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+.badge.bg-info {
+    background-color: #0dcaf0 !important;
+    color: #000000 !important;
+}
+
+.badge.bg-success {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+}
+
+/* Botão de confirmação de entrega */
+.btn-sm.btn-success {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-sm.btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Card de notificações vazias */
+.card.p-4.text-center.text-muted {
+    border-radius: 8px;
+    border: 1px dashed #dee2e6;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-style: italic;
+}
+
+body.dark-theme .card.p-4.text-center.text-muted {
+    background-color: #1e1e1e;
+    border-color: #2d2d2d;
+    color: #b0b0b0;
+}
+
+/* Alert de usuário não logado */
+.alert.alert-warning {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.alert.alert-warning .btn-primary {
+    font-weight: 500;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .list-group-item {
+        padding: 12px 15px;
+        flex-direction: column;
+    }
+    
+    .list-group-item .d-flex.justify-content-between {
+        flex-direction: column;
+    }
+    
+    .list-group-item .text-end {
+        text-align: left !important;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    body.dark-theme .list-group-item .text-end {
+        border-top-color: #2d2d2d;
+    }
+    
+    .list-group-item .d-flex {
+        width: 100%;
+    }
+    
+    .fw-bold {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container.mt-5.mb-5 {
+        padding: 0 10px;
+    }
+    
+    .list-group-item {
+        padding: 10px 12px;
+    }
+    
+    .list-group-item img.rounded {
+        width: 48px !important;
+        height: 48px !important;
+        margin-right: 10px;
+    }
+}

@@ -55,9 +55,27 @@
             <div class="col-md-6">
                 <h1 class="product-title"><%= produto.nome %></h1>
                 <div class="rating mb-3">
-                    <% for(var i=1; i<=5; i++) { %>
-                        <span class="fa fa-star <%= i <= Math.round(media) ? 'checked' : '' %>"></span>
+                    <% 
+                        var fullStars = Math.floor(media);
+                        var hasHalfStar = media % 1 >= 0.3 && media % 1 <= 0.7;
+                        var emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                    %>
+                    
+                    <!-- Estrelas completas -->
+                    <% for(var i=0; i < fullStars; i++) { %>
+                        <span class="fa fa-star checked"></span>
                     <% } %>
+                    
+                    <!-- Meia estrela -->
+                    <% if (hasHalfStar) { %>
+                        <span class="fa fa-star-half-alt checked"></span>
+                    <% } %>
+                    
+                    <!-- Estrelas vazias -->
+                    <% for(var i=0; i < emptyStars; i++) { %>
+                        <span class="fa fa-star"></span>
+                    <% } %>
+                    
                     <span class="ms-2"><%= media.toFixed(1) %> (<%= totalAvaliacoes %> avaliação<%= totalAvaliacoes === 1 ? '' : 's' %>)</span>
                 </div>
                 <div class="price-container mb-3">
@@ -175,8 +193,25 @@
                     <div class="col-md-3 text-center">
                         <div class="average-rating"><%= media.toFixed(1) %></div>
                         <div class="stars mb-2">
-                            <% for(var i=1; i<=5; i++) { %>
-                                <span class="fa fa-star <%= i <= Math.round(media) ? 'checked' : '' %>"></span>
+                            <% 
+                                var fullStars = Math.floor(media);
+                                var hasHalfStar = media % 1 >= 0.3 && media % 1 <= 0.7;
+                                var emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                            %>
+                            
+                            <!-- Estrelas completas -->
+                            <% for(var i=0; i < fullStars; i++) { %>
+                                <span class="fa fa-star checked"></span>
+                            <% } %>
+                            
+                            <!-- Meia estrela -->
+                            <% if (hasHalfStar) { %>
+                                <span class="fa fa-star-half-alt checked"></span>
+                            <% } %>
+                            
+                            <!-- Estrelas vazias -->
+                            <% for(var i=0; i < emptyStars; i++) { %>
+                                <span class="fa fa-star"></span>
                             <% } %>
                         </div>
                         <div class="total-reviews"><%= totalAvaliacoes %> avaliação<%= totalAvaliacoes === 1 ? '' : 's' %></div>

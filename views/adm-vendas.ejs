@@ -111,7 +111,7 @@
         </div>
 
         <div class="col-md-1">
-          <label class="form-label"><i class="fas fa-star me-1"></i>Avaliação ≥</label>
+          <label class="form-label"><i class="fas fa-star me-1"></i>Avaliação</label>
           <select name="rating" class="form-select">
             <option value="">-</option>
             <% for(let r=1;r<=5;r++){ %>
@@ -197,7 +197,18 @@
                     <div class="small-muted"><%= v.cliente_email %></div>
                   </td>
                   <td class="text-center align-middle">
-                    <div class="valor-mais">R$ <%= Number(v.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+                    <div class="valor-mais">
+                      <% 
+                        const valorVenda = Number(v.valor_venda || 0);
+                        const valorProduto = Number(v.produto_valor || 0);
+                      %>
+                      <% if (valorProduto && valorVenda < valorProduto) { %>
+                        <div class="small-muted text-decoration-line-through">R$ <%= valorProduto.toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+                        <div class="fw-bold">R$ <%= valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+                      <% } else { %>
+                        R$ <%= valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2}) %>
+                      <% } %>
+                    </div>
                   </td>
                   <td class="align-middle text-center">
                     <% if (v.produto_qtd_avaliacoes && v.produto_qtd_avaliacoes > 0) { %>

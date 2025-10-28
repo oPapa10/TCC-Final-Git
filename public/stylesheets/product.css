@@ -51,23 +51,29 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    height: 400px;
+    /* Altura maior para ficar menos retangular */
+    height: 425px; /* Aumentei de 300px para 380px */
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #f8f9fa;
+    margin-bottom: 15px;
 }
 
 .main-image img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
+    /* Imagem maior dentro do container */
+    max-width: 95%; /* Aumentei de 85% para 92% */
+    max-height: 95%; /* Aumentei de 85% para 92% */
+    object-fit: contain; /* Mostra a imagem inteira sem cortar e sem esticar */
+    display: block;
+    transition: transform .25s ease;
 }
 
 .thumbnail-container {
     display: flex;
     gap: 10px;
     margin-top: 15px;
+    flex-wrap: wrap;
 }
 
 .thumbnail-item {
@@ -75,8 +81,8 @@
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,6 +91,10 @@
 
 .thumbnail-item.active {
     border-color: var(--accent-color);
+}
+
+.thumbnail-item:hover {
+    border-color: #ccc;
 }
 
 .thumbnail-item img {
@@ -109,6 +119,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    margin-bottom: 1.5rem;
 }
 
 .current-price {
@@ -142,6 +153,7 @@
     background-color: #f8f9fa;
     padding: 15px;
     border-radius: 8px;
+    margin-bottom: 1.5rem;
 }
 
 .section-title {
@@ -158,6 +170,11 @@
 
 .details-list li {
     margin-bottom: 8px;
+    color: #495057;
+}
+
+.details-list li strong {
+    color: var(--primary-dark);
 }
 
 /* Seletor de Quantidade */
@@ -193,6 +210,7 @@
     padding: 12px;
     font-size: 1.1rem;
     font-weight: 600;
+    margin-bottom: 1rem;
 }
 
 .btn-buy-now {
@@ -334,43 +352,6 @@
     border-top: 1px solid #eee;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .main-image {
-        height: 300px;
-    }
-    
-    .product-title {
-        font-size: 1.5rem;
-    }
-    
-    .current-price {
-        font-size: 1.5rem;
-    }
-    
-    .original-price {
-        font-size: 1rem;
-    }
-    
-    .review-summary .row {
-        flex-direction: column;
-    }
-    
-    .review-summary .col-md-3 {
-        margin-bottom: 20px;
-    }
-    
-    .buy-confirmation-alert .d-flex {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .buy-confirmation-alert .btn {
-        width: 100%;
-        min-width: auto;
-    }
-}
-
 /* ==================Estilo para o container do preço total */
 .total-price-container {
     background-color: #f8f9fa;
@@ -424,4 +405,74 @@ body.dark-theme .buy-confirmation-alert h5 {
 
 body.dark-theme .buy-confirmation-alert p {
     color: #b0b0b0 !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .main-image {
+        height: 300px; /* Altura maior em mobile também */
+    }
+    
+    .product-title {
+        font-size: 1.5rem;
+    }
+    
+    .current-price {
+        font-size: 1.5rem;
+    }
+    
+    .original-price {
+        font-size: 1rem;
+    }
+    
+    .review-summary .row {
+        flex-direction: column;
+    }
+    
+    .review-summary .col-md-3 {
+        margin-bottom: 20px;
+    }
+    
+    .buy-confirmation-alert .d-flex {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .buy-confirmation-alert .btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .thumbnail-item {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Estrelas vazias com borda amarela e fundo branco */
+.fa-star:not(.checked) {
+    color: white !important;
+    -webkit-text-stroke: 1px #ffc107;
+    text-stroke: 1px #ffc107;
+    position: relative;
+}
+
+/* Fallback para navegadores que não suportam text-stroke */
+.fa-star:not(.checked)::before {
+    color: white;
+    text-shadow: 
+        -1px -1px 0 #ffc107,
+        1px -1px 0 #ffc107,
+        -1px 1px 0 #ffc107,
+        1px 1px 0 #ffc107;
+}
+
+/* Estrelas cheias (mantém o estilo original) */
+.checked {
+    color: #ffc107;
+}
+
+/* Meia estrela (mantém o estilo original) */
+.fa-star-half-alt.checked {
+    color: #ffc107;
 }

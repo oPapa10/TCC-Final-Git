@@ -125,17 +125,44 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Adicionar efeitos de hover nas linhas
+    // remover transform hover (comportamento anterior) — manter sem destaque visual
     produtoRows.forEach(row => {
-        row.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateX(5px)';
-            this.style.transition = 'transform 0.2s ease';
-        });
-        
-        row.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateX(0)';
-        });
+        row.addEventListener('mouseenter', function() { /* noop */ });
+        row.addEventListener('mouseleave', function() { /* noop */ });
     });
     
+    // CONFIRMAÇÃO DE EXCLUSÃO (modal)
+    const confirmModalEl = document.getElementById('confirmDeleteModal');
+    const confirmDeleteText = document.getElementById('confirmDeleteText');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    let formToDelete = null;
+
+    const bsConfirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
+
+    document.querySelectorAll('.btn-delete-prod').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            // localizar o form pai correspondente
+            formToDelete = this.closest('form');
+            const nome = this.getAttribute('data-nome') || this.getAttribute('data-id') || 'este produto';
+            // atualizar texto do modal
+            if (confirmDeleteText) {
+                confirmDeleteText.textContent = `Deseja excluir "${nome}"? Esta ação não pode ser desfeita.`;
+            }
+            if (bsConfirmModal) bsConfirmModal.show();
+        });
+    });
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function () {
+            if (formToDelete) {
+                // submeter o form (POST)
+                formToDelete.submit();
+            }
+            if (bsConfirmModal) bsConfirmModal.hide();
+        });
+    }
+
     // Foco automático na busca
     searchInput.focus();
 });

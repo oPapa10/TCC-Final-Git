@@ -212,7 +212,9 @@ async function insertPedidoItem(usuarioId, produtoId, quantidade, vendaId, preco
 // Rota GET para exibir a página de pagamento (aceita checkout na sessão ou ?valor=... como antes)
 router.get('/', exigeLogin, async (req, res) => {
     try {
-        const usuario = req.session.usuario || null;
++        console.log('[pagamento][GET /] query=', req.query || {});
++        console.log('[pagamento][GET /] session.checkout=', req.session && req.session.checkout ? req.session.checkout : null);
+         const usuario = req.session.usuario || null;
 
         // se existir checkout na sessão, usamos ele
         const sessionCheckout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
@@ -324,27 +326,36 @@ router.get('/', exigeLogin, async (req, res) => {
 // Rota para confirmar pedido via PIX (usa req.session.checkout quando presente)
 router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
     try {
+        console.log('[pagamento][POST /compraConfirmacao] inicio. req.get(referer)=', req.get('referer'));
+        console.log('[pagamento][POST /compraConfirmacao] req.body=', req.body);
+        console.log('[pagamento][POST /compraConfirmacao] session.checkout=', req.session && req.session.checkout ? req.session.checkout : null);
         const usuario = req.session.usuario;
         const checkout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
         const valorFormulario = req.body.valor ? Number(req.body.valor) : 0;
         const descricao = req.body.descricao || '';
-
-        // determina itens a processar: preferir sessão, senão usa produtoId do form (antigo)
+ 
+        // determina itens a processar: preferir sessão, senão usa produtoId do form (antigo) / fallback
         let itensProcessar = [];
         if (checkout) {
           itensProcessar = checkout;
-        } else if (req.body.produtoId) {
-          itensProcessar = [{ produtoId: Number(req.body.produtoId), quantidade: Number(req.body.quantidade || 1) }];
+        } else if (req.body && (req.body.produtoId || req.body.produtoID || req.body.produtoid)) {
+          itensProcessar = [{ produtoId: Number(req.body.produtoId || req.body.produtoID || req.body.produtoid), quantidade: Number(req.body.quantidade || 1) }];
         } else {
-          return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
+          console.log('[pagamento][compraConfirmacao] sem checkout e sem produtoId no body. tentando extractItemsFromReq');
+          itensProcessar = extractItemsFromReq(req);
+          console.log('[pagamento][compraConfirmacao] extractItemsFromReq retornou:', itensProcessar);
+          if (!itensProcessar || !itensProcessar.length) {
+            console.error('[pagamento][compraConfirmacao] Nenhum item para processar. Verifique body, query, referer e session.');
+            return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
+          }
         }
-
+ 
         // busca preços atuais e insere VENDE por item; insere também PEDIDO_ITENS e notificação
         let vendaIds = [];
         for (const it of itensProcessar) {
           const produtoId = Number(it.produtoId);
           const quantidade = Number(it.quantidade || 1);
-
+ 
           // buscar produto e preço atual
           const produtos = await new Promise((resolve, reject) => {
             db.query('SELECT ID, nome, imagem, valor, estoque, (SELECT valor_promocional FROM Promocao WHERE produto_id = ? LIMIT 1) AS valor_promocional FROM Produto WHERE ID = ?', [produtoId, produtoId], (err, rows) => err ? reject(err) : resolve(rows || []));
@@ -352,14 +363,14 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
           const produto = produtos[0] || {};
           const precoUnit = (produto.valor_promocional !== null && produto.valor_promocional !== undefined) ? Number(produto.valor_promocional) : Number(produto.valor || 0);
           const valorVenda = precoUnit * quantidade;
-
+ 
           // insere VENDE
           const resInsert = await new Promise((resolve, reject) => {
             db.query('INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)', [usuario.ID, produtoId, valorVenda, 'pendente'], (err, result) => err ? reject(err) : resolve(result));
           });
           const vendaId = resInsert.insertId;
           vendaIds.push(vendaId);
-
+ 
           // insere PEDIDO_ITENS (registro do item comprado)
           // usa helper adaptativo que detecta corretamente o nome da coluna de preço
           try {
@@ -368,12 +379,12 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
             console.error('[PEDIDO_ITENS] falha ao inserir item adaptativo:', e);
             // opcional: decidir rollback ou continuar — por enquanto registra erro e continua
           }
-
+ 
           // atualiza estoque (tenta decrementar)
           await new Promise((resolve, reject) => {
             db.query('UPDATE Produto SET estoque = GREATEST(0, estoque - ?) WHERE ID = ?', [quantidade, produtoId], (err) => err ? reject(err) : resolve());
           });
-
+ 
           // notificação
           const titulo = 'Pagamento Recebido';
           const mensagem = `Recebemos seu pagamento para ${produto.nome || 'produto'}. Valor: R$ ${valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
@@ -383,7 +394,7 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
             console.error('Erro ao gravar notificação:', e);
           }
         }
-
+ 
         // enviar e-mail (mantém comportamento anterior)
         try {
           const mailOptions = {
@@ -397,7 +408,7 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
         } catch (mailErr) {
           console.error('[compraConfirmacao] falha ao enviar e-mail:', mailErr);
         }
-
+ 
         // limpar carrinho: remove itens comprados
         if (req.session.carrinho && Array.isArray(req.session.carrinho)) {
           const compradosIds = itensProcessar.map(i => Number(i.produtoId));
@@ -405,110 +416,122 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
         }
         // limpar checkout
         delete req.session.checkout;
-
+ 
         return res.render('pagamento-confirmado', { valor: valorFormulario, descricao, usuario });
     } catch (err) {
         console.error('Erro em /pagamento/compraConfirmacao:', err);
         return res.status(500).render('error', { error: err, message: 'Erro ao confirmar pedido via PIX' });
     }
 });
-
+ 
 // extrai o handler existente para função reutilizável
 async function handlePixConfirm(req, res) {
   try {
-    // cópia do código atual de /pix-confirm (mantém lógica)
-    const usuario = req.session.usuario;
-    const checkout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
-    const valorFormulario = req.body.valor ? Number(req.body.valor) : 0;
-    const descricao = req.body.descricao || '';
-
-    let itensProcessar = [];
-    if (checkout) {
-      itensProcessar = checkout;
-    } else if (req.body.produtoId) {
-      itensProcessar = [{ produtoId: Number(req.body.produtoId), quantidade: Number(req.body.quantidade || 1) }];
-    } else {
-      return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
-    }
-
-    // processa cada item (mesma lógica já existente)
-    let vendaIds = [];
-    for (const it of itensProcessar) {
-      const produtoId = Number(it.produtoId);
-      const quantidade = Number(it.quantidade || 1);
-
-      const produtos = await new Promise((resolve, reject) => {
-        db.query('SELECT ID, nome, imagem, valor, estoque, (SELECT valor_promocional FROM Promocao WHERE produto_id = ? LIMIT 1) AS valor_promocional FROM Produto WHERE ID = ?', [produtoId, produtoId], (err, rows) => err ? reject(err) : resolve(rows || []));
-      });
-      const produto = produtos[0] || {};
-      const precoUnit = (produto.valor_promocional !== null && produto.valor_promocional !== undefined) ? Number(produto.valor_promocional) : Number(produto.valor || 0);
-      const valorVenda = precoUnit * quantidade;
-
-      const resInsert = await new Promise((resolve, reject) => {
-        db.query('INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)', [usuario.ID, produtoId, valorVenda, 'pendente'], (err, result) => err ? reject(err) : resolve(result));
-      });
-      const vendaId = resInsert.insertId;
-      vendaIds.push(vendaId);
-
-      // insere PEDIDO_ITENS (registro do item comprado)
-      await insertPedidoItem(usuario.ID, produtoId, quantidade, vendaId, precoUnit);
-
-      // atualiza estoque (tenta decrementar)
-      await new Promise((resolve, reject) => {
-        db.query('UPDATE Produto SET estoque = GREATEST(0, estoque - ?) WHERE ID = ?', [quantidade, produtoId], (err) => err ? reject(err) : resolve());
-      });
-
-      const titulo = 'Pagamento Recebido';
-      const mensagem = `Recebemos seu pagamento para ${produto.nome || 'produto'}. Valor: R$ ${valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
-      try {
-        await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente');
-      } catch(e) {
-        console.error('Erro ao gravar notificação:', e);
-      }
-    }
-
-    // envio de e-mail (mantém)
-    try {
-      const mailOptions = {
-        from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-        to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
-        bcc: process.env.EMAIL_USER || undefined,
-        subject: `Pagamento recebido — ${descricao || 'Pedido'}`,
-        text: `Olá ${usuario && usuario.nome ? usuario.nome : 'cliente'},\n\nRecebemos seu pedido. Valor: R$ ${Number(valorFormulario || 0).toLocaleString('pt-BR', {minimumFractionDigits:2})}\n\nObrigado!`
-      };
-      await transporter.sendMail(mailOptions);
-    } catch (mailErr) {
-      console.error('[compraConfirmacao] falha ao enviar e-mail:', mailErr);
-    }
-
-    // limpa carrinho dos itens comprados e checkout
-    if (req.session.carrinho && Array.isArray(req.session.carrinho)) {
-      const compradosIds = itensProcessar.map(i => Number(i.produtoId));
-      req.session.carrinho = req.session.carrinho.filter(ci => !compradosIds.includes(Number(ci.produtoId)));
-    }
-    delete req.session.checkout;
-
-    return res.render('pagamento-confirmado', { valor: valorFormulario, descricao, usuario });
-  } catch (err) {
-    console.error('Erro em /pagamento/compraConfirmacao (handler):', err);
-    return res.status(500).render('error', { error: err, message: 'Erro ao confirmar pedido via PIX' });
-  }
+    console.log('[pagamento][handlePixConfirm] inicio. referer=', req.get('referer'));
+    console.log('[pagamento][handlePixConfirm] req.body=', req.body);
+    console.log('[pagamento][handlePixConfirm] session.checkout=', req.session && req.session.checkout ? req.session.checkout : null);
+     // cópia do código atual de /pix-confirm (mantém lógica)
+     const usuario = req.session.usuario;
+     const checkout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
+     const valorFormulario = req.body.valor ? Number(req.body.valor) : 0;
+     const descricao = req.body.descricao || '';
+ 
+     // preferir checkout da sessão, caso contrário extrair do request
+     let itensProcessar = [];
+     if (checkout) {
+       itensProcessar = checkout;
+     } else {
+       itensProcessar = extractItemsFromReq(req);
+       console.log('[pagamento][handlePixConfirm] extractItemsFromReq retornou:', itensProcessar);
+     }
+     if (!itensProcessar || !itensProcessar.length) {
+      console.error('[pagamento][handlePixConfirm] Nenhum item para processar. conferir logs: req.body, req.query, referer, session above.');
+       return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
+     }
+ 
+     // processa cada item (mesma lógica já existente)
+     let vendaIds = [];
+     for (const it of itensProcessar) {
+       const produtoId = Number(it.produtoId);
+       const quantidade = Number(it.quantidade || 1);
+ 
+       const produtos = await new Promise((resolve, reject) => {
+         db.query('SELECT ID, nome, imagem, valor, estoque, (SELECT valor_promocional FROM Promocao WHERE produto_id = ? LIMIT 1) AS valor_promocional FROM Produto WHERE ID = ?', [produtoId, produtoId], (err, rows) => err ? reject(err) : resolve(rows || []));
+       });
+       const produto = produtos[0] || {};
+       const precoUnit = (produto.valor_promocional !== null && produto.valor_promocional !== undefined) ? Number(produto.valor_promocional) : Number(produto.valor || 0);
+       const valorVenda = precoUnit * quantidade;
+ 
+       const resInsert = await new Promise((resolve, reject) => {
+         db.query('INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)', [usuario.ID, produtoId, valorVenda, 'pendente'], (err, result) => err ? reject(err) : resolve(result));
+       });
+       const vendaId = resInsert.insertId;
+       vendaIds.push(vendaId);
+ 
+       // insere PEDIDO_ITENS (registro do item comprado)
+       await insertPedidoItem(usuario.ID, produtoId, quantidade, vendaId, precoUnit);
+ 
+       // atualiza estoque (tenta decrementar)
+       await new Promise((resolve, reject) => {
+         db.query('UPDATE Produto SET estoque = GREATEST(0, estoque - ?) WHERE ID = ?', [quantidade, produtoId], (err) => err ? reject(err) : resolve());
+       });
+ 
+       const titulo = 'Pagamento Recebido';
+       const mensagem = `Recebemos seu pagamento para ${produto.nome || 'produto'}. Valor: R$ ${valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+       try {
+         await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente');
+       } catch(e) {
+         console.error('Erro ao gravar notificação:', e);
+       }
+     }
+ 
+     // envio de e-mail (mantém)
+     try {
+       const mailOptions = {
+         from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+         to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
+         bcc: process.env.EMAIL_USER || undefined,
+         subject: `Pagamento recebido — ${descricao || 'Pedido'}`,
+         text: `Olá ${usuario && usuario.nome ? usuario.nome : 'cliente'},\n\nRecebemos seu pedido. Valor: R$ ${Number(valorFormulario || 0).toLocaleString('pt-BR', {minimumFractionDigits:2})}\n\nObrigado!`
+       };
+       await transporter.sendMail(mailOptions);
+     } catch (mailErr) {
+       console.error('[compraConfirmacao] falha ao enviar e-mail:', mailErr);
+     }
+ 
+     // limpa carrinho dos itens comprados e checkout
+     if (req.session.carrinho && Array.isArray(req.session.carrinho)) {
+       const compradosIds = itensProcessar.map(i => Number(i.produtoId));
+       req.session.carrinho = req.session.carrinho.filter(ci => !compradosIds.includes(Number(ci.produtoId)));
+     }
+     delete req.session.checkout;
+ 
+     return res.render('pagamento-confirmado', { valor: valorFormulario, descricao, usuario });
+   } catch (err) {
+     console.error('Erro em /pagamento/compraConfirmacao (handler):', err);
+     return res.status(500).render('error', { error: err, message: 'Erro ao confirmar pedido via PIX' });
+   }
 }
-
+ 
 // associa o handler às rotas existentes e ao novo alias /confirmar
 router.post('/compraConfirmacao', exigeLogin, handlePixConfirm);
 router.post('/confirmar', exigeLogin, handlePixConfirm);
-
+ 
 // Rota cartao - mesma lógica de leitura de checkout
 router.post('/cartao', exigeLogin, async (req, res) => {
   try {
+    console.log('[pagamento][POST /cartao] inicio. req.body=', req.body, 'session.checkout=', req.session && req.session.checkout ? req.session.checkout : null, 'referer=', req.get('referer'));
     const usuario = req.session.usuario;
     const checkout = req.session.checkout && Array.isArray(req.session.checkout.itens) ? req.session.checkout.itens : null;
     const descricao = req.body.descricao || '';
-
-    let itensProcessar = checkout || (req.body.produtoId ? [{ produtoId: Number(req.body.produtoId), quantidade: Number(req.body.quantidade || 1) }] : []);
-    if (!itensProcessar.length) return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
-
+ 
+    let itensProcessar = checkout || extractItemsFromReq(req);
+    console.log('[pagamento][POST /cartao] itensProcessar=', itensProcessar);
+    if (!itensProcessar || !itensProcessar.length) {
+      console.error('[pagamento][POST /cartao] Nenhum item para processar');
+      return res.status(400).render('error', { error: {}, message: 'Nenhum item para processar' });
+    }
+ 
     for (const it of itensProcessar) {
       const produtoId = Number(it.produtoId);
       const quantidade = Number(it.quantidade || 1);
@@ -518,80 +541,102 @@ router.post('/cartao', exigeLogin, async (req, res) => {
       const produto = produtos[0] || {};
       const precoUnit = (produto.valor_promocional !== null && produto.valor_promocional !== undefined) ? Number(produto.valor_promocional) : Number(produto.valor || 0);
       const valorVenda = precoUnit * quantidade;
-
+ 
       const resInsert = await new Promise((resolve, reject) => {
         db.query('INSERT INTO VENDE (Cliente_ID, Produto_ID, hora_venda, valor_venda, status) VALUES (?, ?, NOW(), ?, ?)', [usuario.ID, produtoId, valorVenda, 'pendente'], (err, result) => err ? reject(err) : resolve(result));
       });
       const vendaId = resInsert.insertId;
-
+ 
       // insere PEDIDO_ITENS (registro do item comprado)
       await insertPedidoItem(usuario.ID, produtoId, quantidade, vendaId, precoUnit);
-
+ 
       await new Promise((resolve, reject) => {
         db.query('UPDATE Produto SET estoque = GREATEST(0, estoque - ?) WHERE ID = ?', [quantidade, produtoId], (err) => err ? reject(err) : resolve());
       });
-
+ 
       const titulo = 'Pedido Recebido';
       const mensagem = `Recebemos sua compra: ${produto.nome || 'produto'} no valor de R$ ${valorVenda.toLocaleString('pt-BR', {minimumFractionDigits:2})}.`;
       try { await upsertNotification(usuario.ID, vendaId, titulo, mensagem, 'pendente'); } catch(e) { console.error('Erro notificação:', e); }
     }
-
+ 
     // limpar carrinho e checkout
     if (req.session.carrinho && Array.isArray(req.session.carrinho)) {
       const compradosIds = itensProcessar.map(i => Number(i.produtoId));
       req.session.carrinho = req.session.carrinho.filter(ci => !compradosIds.includes(Number(ci.produtoId)));
     }
     delete req.session.checkout;
-
+ 
     return res.render('pagamento-confirmado', { valor: req.body.valor || 0, descricao, usuario });
   } catch (err) {
     console.error('Erro em /pagamento/cartao:', err);
     return res.status(500).render('error', { error: err, message: 'Erro ao processar pagamento por cartão' });
   }
 });
-
-router.post('/:id/pronto', async (req, res) => {
-  const id = Number(req.params.id);
-  try {
-    await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['pronto', id], (e,r)=> e?reject(e):resolve(r)));
-    const rows = await new Promise((resolve, reject) => {
-      db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
-                FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
-                (err, r) => err ? reject(err) : resolve(r));
-    });
-    if (rows && rows[0]) {
-      const venda = rows[0];
-      const titulo = 'Pedido pronto para envio';
-      const mensagem = `Seu pedido (${venda.produto_nome}) está pronto para envio. Em breve será despachado.`;
-      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'pronto');
-    }
-    return res.redirect(req.get('referer') || '/adm/vendas');
-  } catch (err) {
-    console.error('Erro marcar pronto:', err);
-    return res.status(500).send('Erro ao marcar pronto');
-  }
-});
-
-router.post('/:id/caminho', async (req, res) => {
-  const id = Number(req.params.id);
-  try {
-    await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['a_caminho', id], (e,r)=> e?reject(e):resolve(r)));
-    const rows = await new Promise((resolve, reject) => {
-      db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
-                FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
-                (err, r) => err ? reject(err) : resolve(r));
-    });
-    if (rows && rows[0]) {
-      const venda = rows[0];
-      const titulo = 'Pedido a caminho';
-      const mensagem = `Seu pedido (${venda.produto_nome}) está a caminho. Ao receber, confirme a entrega no app para avaliá-lo.`;
-      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'a_caminho');
-    }
-    return res.redirect(req.get('referer') || '/adm/vendas');
-  } catch (err) {
-    console.error('Erro marcar a caminho:', err);
-    return res.status(500).send('Erro ao marcar a caminho');
-  }
-});
+ 
+function extractItemsFromReq(req) {
+  console.log('[pagamento][extractItemsFromReq] entrada. body=', req.body, 'query=', req.query, 'referer=', req.get('referer'), 'session.checkout=', req.session && req.session.checkout ? req.session.checkout : null);
+   // 1) itens vindo do body (formulário com itens)
+   if (req.body && req.body.itens) {
+     try {
+       // pode vir como objeto/array dependendo do form
+       const raw = req.body.itens;
+       if (Array.isArray(raw)) {
+        console.log('[pagamento][extractItemsFromReq] encontrou req.body.itens como array:', raw);
+         return raw.map(it => ({ produtoId: Number(it.produtoId), quantidade: Number(it.quantidade || 1) }));
+       } else if (typeof raw === 'object') {
+        console.log('[pagamento][extractItemsFromReq] encontrou req.body.itens como objeto:', raw);
+         // objeto com chaves numéricas ou único item
+         const arr = [];
+         Object.keys(raw).forEach(k => {
+           const entry = raw[k];
+           if (entry && (entry.produtoId || entry.produtoId === 0 || entry.produtoId === '0')) {
+             arr.push({ produtoId: Number(entry.produtoId), quantidade: Number(entry.quantidade || 1) });
+           }
+         });
+         if (arr.length) return arr;
+       }
+     } catch (e) {
+      console.error('[pagamento][extractItemsFromReq] erro processando req.body.itens:', e);
+       // ignore e continue fallback
+     }
+   }
+ 
+   // 2) produtoId direto no body (nome pode variar em maiúsculas/minúsculas)
+   const pid = (req.body && (req.body.produtoId || req.body.produtoID || req.body.produtoid));
+   if (typeof pid !== 'undefined' && pid !== null && String(pid).trim() !== '') {
+    console.log('[pagamento][extractItemsFromReq] encontrou produtoId no body:', pid, 'quantidade:', req.body.quantidade || req.body.qtd || 1);
+     return [{ produtoId: Number(pid), quantidade: Number(req.body.quantidade || req.body.qtd || 1) }];
+   }
+ 
+   // 3) produtoId na query (caso o form não tenha enviado mas o referer possua)
+   if (req.query && req.query.produtoId) {
+    console.log('[pagamento][extractItemsFromReq] encontrou produtoId na query:', req.query);
+     return [{ produtoId: Number(req.query.produtoId), quantidade: Number(req.query.quantidade || 1) }];
+   }
+ 
+   // 4) extrair do referer (fallback para links /pagamento?produtoId=...)
+   const ref = req.get('referer') || '';
+   try {
+     const m = ref.match(/[?&]produtoId=(\d+)/i);
+     if (m && m[1]) {
+      console.log('[pagamento][extractItemsFromReq] extraindo produtoId do referer:', ref);
+       const q = {};
+       const qstr = ref.split('?')[1] || '';
+       qstr.split('&').forEach(pair => {
+         const [k, v] = pair.split('=');
+         if (k && v) q[decodeURIComponent(k)] = decodeURIComponent(v);
+       });
+      console.log('[pagamento][extractItemsFromReq] querystring do referer =', q);
+       return [{ produtoId: Number(m[1]), quantidade: Number(q.quantidade || q.qty || q.qtd || 1) }];
+     }
+   } catch (e) {
+    console.error('[pagamento][extractItemsFromReq] erro extraindo do referer:', e);
+     // nada
+   }
+ 
+  console.log('[pagamento][extractItemsFromReq] nenhum item encontrado.');
+   // nenhum item encontrado
+   return [];
+ }
 
 module.exports = router;

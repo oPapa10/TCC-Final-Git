@@ -78,7 +78,8 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     const year = q.year ? Number(q.year) : null;
     const month = q.month ? Number(q.month) : null;
     const day = q.day ? Number(q.day) : null;
-    const status = q.status ? String(q.status) : null;
+    // status padrão: 'entregue' para que "Vendas realizadas" venha selecionado ao entrar na página
+    const status = q.status ? String(q.status) : 'entregue';
     const search = q.search ? q.search.trim() : null;
     const priceMin = q.priceMin ? Number(q.priceMin) : null;
     const priceMax = q.priceMax ? Number(q.priceMax) : null;
@@ -119,7 +120,10 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     if (status) {
       if (status === 'entregue') {
         // tratar "entregue" como entregue + realizada (vendas finalizadas)
-        where.push("(v.status = 'entregue' OR v.status = 'realizada')"); 
+        where.push("(v.status = 'entregue' OR v.status = 'realizada')");
+      } else if (status === 'pendente') {
+        // exibir tanto pendentes quanto prontos na aba "Vendas pendentes"
+        where.push("(v.status = 'pendente' OR v.status = 'pronto')");
       } else {
         where.push('v.status = ?'); params.push(status);
       }
@@ -130,7 +134,7 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     const sql = `
       SELECT v.ID, v.hora_venda, v.valor_venda, v.status,
              c.nome AS cliente_nome, c.email AS cliente_email,
-             p.nome AS produto_nome, p.ID AS produto_id, p.imagem AS produto_imagem,
+             p.nome AS produto_nome, p.ID AS produto_id, p.imagem AS produto_imagem, p.valor AS produto_valor,
              COALESCE(ar.avg_rating, 0) AS produto_media, COALESCE(ar.cnt, 0) AS produto_qtd_avaliacoes
       FROM VENDE v
       LEFT JOIN CLIENTE c ON v.Cliente_ID = c.ID
@@ -238,7 +242,10 @@ router.post('/:id/pronto', async (req, res) => {
       const mensagem = `Seu pedido (${venda.produto_nome}) está pronto para envio. Em breve será despachado.`;
       await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'pronto');
     }
-    return res.redirect(req.get('referer') || '/adm/vendas');
+    // preferir voltar ao referer se mantiver a aba; caso contrário, direcionar para pendentes
+    const ref = req.get('referer') || '';
+    if (ref.includes('/adm/vendas') && ref.includes('status=')) return res.redirect(ref);
+    return res.redirect('/adm/vendas?status=pendente');
   } catch (err) {
     console.error('Erro marcar pronto:', err);
     return res.status(500).send('Erro ao marcar pronto');
@@ -260,7 +267,9 @@ router.post('/:id/caminho', async (req, res) => {
       const mensagem = `Seu pedido (${venda.produto_nome}) está a caminho. Ao receber, confirme a entrega no app para avaliá-lo.`;
       await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'a_caminho');
     }
-    return res.redirect(req.get('referer') || '/adm/vendas');
+    const ref = req.get('referer') || '';
+    if (ref.includes('/adm/vendas') && ref.includes('status=')) return res.redirect(ref);
+    return res.redirect('/adm/vendas?status=a_caminho');
   } catch (err) {
     console.error('Erro marcar a caminho:', err);
     return res.status(500).send('Erro ao marcar a caminho');
@@ -272,7 +281,20 @@ router.post('/:id/entregue', async (req, res) => {
   const id = Number(req.params.id);
   try {
     await new Promise((resolve, reject) => db.query('UPDATE VENDE SET status = ? WHERE ID = ?', ['entregue', id], (e,r)=> e?reject(e):resolve(r)));
-    return res.redirect(req.get('referer') || '/adm/vendas');
+    const rows = await new Promise((resolve, reject) => {
+      db.query(`SELECT v.Cliente_ID, v.ID AS venda_id, p.nome AS produto_nome, v.valor_venda
+                FROM VENDE v LEFT JOIN PRODUTO p ON v.Produto_ID = p.ID WHERE v.ID = ?`, [id],
+                (err, r) => err ? reject(err) : resolve(r));
+    });
+    if (rows && rows[0]) {
+      const venda = rows[0];
+      const titulo = 'Pedido entregue';
+      const mensagem = `Seu pedido (${venda.produto_nome}) foi entregue. Obrigado por comprar conosco!`;
+      await upsertNotification(venda.Cliente_ID, venda.venda_id, titulo, mensagem, 'entregue');
+    }
+    const ref = req.get('referer') || '';
+    if (ref.includes('/adm/vendas') && ref.includes('status=')) return res.redirect(ref);
+    return res.redirect('/adm/vendas?status=entregue');
   } catch (err) {
     console.error('Erro marcar entregue:', err);
     return res.status(500).send('Erro ao marcar entregue');
