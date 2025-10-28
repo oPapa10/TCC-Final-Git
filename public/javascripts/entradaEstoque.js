@@ -134,23 +134,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Função para filtrar produtos
     function filterProdutos(term, type) {
-        const options = produtoSelect.options;
-        
-        for (let i = 1; i < options.length; i++) {
-            const option = options[i];
-            let match = false;
-            
-            if (type === 'nome') {
-                match = option.text.toLowerCase().includes(term);
-            } else if (type === 'id') {
-                match = option.value === term || option.text.includes(`ID: ${term}`);
-            }
-            
-            option.style.display = match ? '' : 'none';
+        if (!term) {
+            // limpar filtro
+            Array.from(produtoSelect.options).forEach(opt => opt.hidden = false);
+            return;
         }
-        
-        // Se há apenas uma opção visível, selecione-a automaticamente
-        const visibleOptions = Array.from(options).filter(opt => opt.style.display !== 'none' && opt.value !== '');
+
+        term = term.toString().trim();
+        const isNumeric = /^\d+$/.test(term);
+
+        Array.from(produtoSelect.options).forEach((option, idx) => {
+            if (option.value === '') {
+                option.hidden = false;
+                return;
+            }
+
+            let match = false;
+            if (type === 'nome') {
+                match = option.text.toLowerCase().includes(term.toLowerCase());
+            } else if (type === 'id') {
+                // comparar com value, atributo data-estoque/data-id e texto que contenha "ID: X"
+                const dataId = option.getAttribute('data-id') || option.value;
+                if (option.value === term) match = true;
+                else if (dataId && dataId.toString() === term) match = true;
+                else if (option.text.includes(`ID: ${term}`)) match = true;
+                else if (isNumeric && option.text.match(new RegExp(`\\b${term}\\b`))) match = true;
+            }
+
+            option.hidden = !match;
+        });
+
+        // selecionar automaticamente se só restar uma opção válida
+        const visibleOptions = Array.from(produtoSelect.options).filter(opt => !opt.hidden && opt.value !== '');
         if (visibleOptions.length === 1) {
             produtoSelect.value = visibleOptions[0].value;
             produtoSelect.dispatchEvent(new Event('change'));

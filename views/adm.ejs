@@ -8,106 +8,166 @@
     <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ===== ESTILOS APENAS PARA O BOTÃO DE SAIR ===== */
-        .btn-logout {
-            background: #5536f0;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-logout:active {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
-        }
-
-        .btn-logout::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-   
-        .btn-logout i {
-            font-size: 1.1rem;
-            transition: transform 0.3s ease;
-        }
-
-        /* ===== RESPONSIVIDADE DO BOTÃO ===== */
-        @media (max-width: 768px) {
-            .btn-logout {
-                width: 100%;
-                max-width: 200px;
-                padding: 10px 20px;
-                font-size: 0.95rem;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="admin-container">
-        <div class="logo">
-            <h1>Center Motos</h1>
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Center Motos</h1>
+                        <p>Painel Administrativo</p>
+                    </div>
+                </div>
+                <form action="/admin/logout" method="POST" class="logout-form">
+                    <button type="submit" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sair do ADM
+                    </button>
+                </form>
+            </div>
         </div>
-        <div class="admin-header d-flex justify-content-between align-items-center">
-            <h1>Área Administrativa</h1>
-            <form action="/admin/logout" method="POST" style="margin:0;">
-                <button type="submit" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Sair do ADM
-                </button>
-            </form>
-        </div>
+
+        <!-- Main Content -->
         <div class="admin-main">
-            <div class="admin-card">
-                <div class="admin-card-icon">📦</div>
-                <div class="admin-card-title">Entrada de Estoque</div>
-                <button class="admin-card-button" onclick="window.location.href='/entradaEstoque'">Acessar</button>
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h2>Bem-vindo ao Painel Administrativo</h2>
+                <p>Gerencie todos os aspectos da sua loja em um só lugar</p>
             </div>
-              <div class="admin-card">
-                <div class="admin-card-icon">🧾</div>
-                <div class="admin-card-title">Controle de Vendas</div>
-                <button class="admin-card-button" onclick="window.location.href='/adm/vendas'">Acessar</button>
+
+            <!-- Quick Stats no Topo -->
+            <div class="quick-stats-top">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= promocoesAtivas || 0 %></h3>
+                        <p>Promoções Ativas</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtosEstoqueBaixo || 0 %></h3>
+                        <p>Produtos com Estoque Baixo</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= vendasPendentes || 0 %></h3>
+                        <p>Vendas Pendentes</p>
+                    </div>
+                </div>
             </div>
-            <div class="admin-card">
-                <div class="admin-card-icon">👀</div>
-                <div class="admin-card-title">Ver Produtos</div>
-                <button class="admin-card-button" onclick="window.location.href='/seeProduto'">Acessar</button>
+
+            <!-- Dashboard Grid Reorganizado -->
+            <div class="dashboard-grid">
+                <!-- Grupo 1: Entrada de Estoque + Controle de Vendas -->
+                <div class="dashboard-group">
+                    <div class="admin-card card-primary">
+                        <div class="card-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Entrada de Estoque</h4>
+                            <p>Controle e atualize o estoque dos produtos</p>
+                        </div>
+                        <button class="card-button" onclick="window.location.href='/entradaEstoque'">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="admin-card card-warning">
+                        <div class="card-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Controle de Vendas</h4>
+                            <p>Monitore e gerencie todas as vendas</p>
+                        </div>
+                        <button class="card-button" onclick="window.location.href='/adm/vendas'">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grupo 2: Ver Produtos + Cadastrar Promoção -->
+                <div class="dashboard-group">
+                    <div class="admin-card card-info">
+                        <div class="card-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Ver Produtos</h4>
+                            <p>Visualize e gerencie todos os produtos</p>
+                        </div>
+                        <button class="card-button" onclick="window.location.href='/seeProduto'">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="admin-card card-accent">
+                        <div class="card-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Cadastrar Promoção</h4>
+                            <p>Crie e gerencie promoções especiais</p>
+                        </div>
+                        <button class="card-button" onclick="window.location.href='/cadastrarPromocao'">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grupo 3: Cadastrar Item + Cadastrar Categoria -->
+                <div class="dashboard-group">
+                    <div class="admin-card card-success">
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Cadastrar Item</h4>
+                            <p>Adicione novos produtos ao catálogo</p>
+                        </div>
+                        <button class="card-button" onclick="window.location.href='/createItens'">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="admin-card card-secondary">
+                        <div class="card-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <div class="card-content">
+                            <h4>Cadastrar Categoria</h4>
+                            <p>Organize produtos em categorias</p>
+                        </div>
+                        <button class="card-button" onclick="window.location.href='/createCategoria'">
+                            Acessar <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="admin-card">
-                <div class="admin-card-icon">🎉</div>
-                <div class="admin-card-title">Cadastrar Promoção</div>
-                <button class="admin-card-button" onclick="window.location.href='/cadastrarPromocao'">Acessar</button>
-            </div>
-            <div class="admin-card">
-                <div class="admin-card-icon">🛒</div>
-                <div class="admin-card-title">Cadastrar Item</div>
-                <button class="admin-card-button" onclick="window.location.href='/createItens'">Acessar</button>
-            </div>
-            <div class="admin-card">
-                <div class="admin-card-icon">📁</div>
-                <div class="admin-card-title">Cadastrar Categoria</div>
-                <button class="admin-card-button" onclick="window.location.href='/createCategoria'">Acessar</button>
-            </div>
-          
         </div>
-        <div class="admin-footer"></div>
+
+        <!-- Footer -->
+        <div class="admin-footer">
+            <div class="footer-content">
+                <p>&copy; 2025 Center Motos. Todos os direitos reservados.</p>
+            </div>  
+        </div>
     </div>
 
     <script>
@@ -121,9 +181,28 @@
                     e.preventDefault();
                 }
             });
-        });
 
-        
+            // Adiciona efeitos de hover nos cards
+            const cards = document.querySelectorAll('.admin-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Atualiza estatísticas em tempo real (exemplo)
+            function updateStats() {
+                // Aqui você pode adicionar chamadas AJAX para atualizar as estatísticas
+                console.log('Atualizando estatísticas...');
+            }
+
+            // Atualiza a cada 30 segundos
+            setInterval(updateStats, 30000);
+        });
     </script>
 </body>
 </html>

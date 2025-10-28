@@ -22,60 +22,106 @@
             <!-- Formulário de criar promoção (esquerda) -->
             <div class="col-12 col-xl-6">
                 <div class="card-promocao h-100">
+                    <div class="card-header-custom">
+                        <div class="card-icon bg-accent">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Criar Nova Promoção</h3>
+                            <p class="card-subtitle">Configure uma promoção especial para seus produtos</p>
+                        </div>
+                    </div>
+
                     <form id="formPromocao" action="/cadastrarPromocao" method="POST" enctype="multipart/form-data">
+                        <!-- Seleção do Produto -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-box me-2"></i>
+                                Selecionar Produto
+                            </h4>
+                            
+                            <div class="form-group produto-busca-container">
+                                <label class="form-label" for="produtoBusca">PESQUISAR PRODUTO</label>
+                                <div class="search-container">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" class="form-control" id="produtoBusca" placeholder="Digite o nome do produto...">
+                                </div>
+                                <div id="produtosLista" class="produtos-lista"></div>
+                            </div>
 
-                        <div class="form-group produto-busca-container">
-                            <label class="form-label" for="produtoBusca">PESQUISAR PRODUTO</label>
-                            <input type="text" class="form-control" id="produtoBusca" placeholder="Digite o nome do produto...">
-                            <div id="produtosLista" class="produtos-lista"></div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">PRODUTO SELECIONADO</label>
-                            <ul id="produtosSelecionados" class="produtos-selecionados"></ul>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label file-input-required" for="imagem">IMAGEM DA PROMOÇÃO</label>
-                            <div class="file-input-container imagem-upload-box" id="fileInputPreview">
-                                <input type="file" id="imagem" name="imagem" accept="image/*" style="display:none;">
-                                <label for="imagem" id="imagemLabel" class="imagem-label">
-                                    <div id="imagemPreviewBg" class="imagem-preview-bg"></div>
-                                    <div id="imagemPreviewOverlay" class="imagem-preview-overlay">
-                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
-                                        <div class="file-input-label">Clique para selecionar a imagem</div>
-                                        <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
-                                    </div>
-                                </label>
-                                <button type="button" id="btnUsarImagemProduto" class="btn btn-outline-primary w-100 mt-2">
-                                    Usar imagem do produto selecionado
-                                </button>
+                            <div class="form-group">
+                                <label class="form-label">PRODUTO SELECIONADO</label>
+                                <div id="produtosSelecionados" class="produtos-selecionados"></div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="descricao">DESCRIÇÃO DA PROMOÇÃO (OPCIONAL)</label>
-                            <textarea class="form-control" id="descricao" name="descricao" maxlength="255" placeholder="Descreva os detalhes da promoção..."></textarea>
+                        <!-- Configuração da Promoção -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-cog me-2"></i>
+                                Configuração da Promoção
+                            </h4>
+
+                            <div class="form-group">
+                                <label class="form-label file-input-required" for="imagem">IMAGEM DA PROMOÇÃO</label>
+                                <div class="file-input-container imagem-upload-box" id="fileInputPreview">
+                                    <input type="file" id="imagem" name="imagem" accept="image/*" style="display:none;">
+                                    <label for="imagem" id="imagemLabel" class="imagem-label">
+                                        <div id="imagemPreviewBg" class="imagem-preview-bg"></div>
+                                        <div id="imagemPreviewOverlay" class="imagem-preview-overlay">
+                                            <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                                            <div class="file-input-label">Clique para selecionar a imagem</div>
+                                            <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
+                                        </div>
+                                    </label>
+                                    <button type="button" id="btnUsarImagemProduto" class="btn btn-outline-primary w-100 mt-2">
+                                        <i class="fas fa-image me-2"></i> Usar imagem do produto selecionado
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="descricao">DESCRIÇÃO DA PROMOÇÃO (OPCIONAL)</label>
+                                <textarea class="form-control" id="descricao" name="descricao" maxlength="255" 
+                                          placeholder="Descreva os detalhes da promoção..."></textarea>
+                                <div class="char-counter">
+                                    <span id="charCount">0</span>/255 caracteres
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="dataFim">DATA DE TÉRMINO DA PROMOÇÃO</label>
-                            <input type="date" class="form-control" id="dataFim" name="dataFim" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="horaFim">HORA DE TÉRMINO</label>
-                            <div class="d-flex gap-2 align-items-center">
-                                <select id="horaFim" name="horaFim" class="form-control" style="width:auto;display:inline-block;">
-                                    <% for(let h=0; h<24; h++) { %>
-                                        <option value="<%= h.toString().padStart(2,'0') %>"><%= h.toString().padStart(2,'0') %> h</option>
-                                    <% } %>
-                                </select>
-                                :
-                                <select id="minutoFim" name="minutoFim" class="form-control" style="width:auto;display:inline-block;">
-                                    <% for(let m=0; m<60; m++) { %>
-                                        <option value="<%= m.toString().padStart(2,'0') %>"><%= m.toString().padStart(2,'0') %> min</option>
-                                    <% } %>
-                                </select>
+                        <!-- Valores e Prazos -->
+                        <div class="form-section">
+                            <h4 class="section-title">
+                                <i class="fas fa-dollar-sign me-2"></i>
+                                Valores e Prazos
+                            </h4>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="dataFim">DATA DE TÉRMINO</label>
+                                        <input type="date" class="form-control" id="dataFim" name="dataFim" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">HORA DE TÉRMINO</label>
+                                        <div class="time-inputs">
+                                            <select id="horaFim" name="horaFim" class="form-control time-select">
+                                                <% for(let h=0; h<24; h++) { %>
+                                                    <option value="<%= h.toString().padStart(2,'0') %>"><%= h.toString().padStart(2,'0') %>h</option>
+                                                <% } %>
+                                            </select>
+                                            <span class="time-separator">:</span>
+                                            <select id="minutoFim" name="minutoFim" class="form-control time-select">
+                                                <% for(let m=0; m<60; m+=5) { %>
+                                                    <option value="<%= m.toString().padStart(2,'0') %>"><%= m.toString().padStart(2,'0') %>min</option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -86,27 +132,75 @@
                 </div>
             </div>
             
-            <!-- Lista de exclusão de promoções (direita) -->
+            <!-- Lista de promoções (direita) -->
             <div class="col-12 col-xl-6">
                 <div class="card-promocao h-100">
-                    <h2 class="mb-4" style="font-size:1.3rem;font-weight:600;color:var(--text-dark);">PROMOÇÕES CADASTRADAS</h2>
-                    <ul id="listaPromocoes" class="lista-promocoes">
-                        <li class="lista-item">
-                            <div class="d-flex flex-wrap align-items-center gap-2 w-100">
-                                <span class="produto-nome">Nome do Produto Muito Grande Que Quebra Linha</span>
-                                <span class="text-muted ms-md-3">Preço atual: R$ 999,99</span>
-                                <span class="novo-valor-label me-2">Porcentagem (%)</span>
-                                <input type="number" class="form-control ms-md-3" ...>
-                                <span class="novo-valor-label me-2">Valor Promocional</span>
-                                <input type="number" class="form-control ms-md-3" ...>
-                                <button class="btn btn-sm btn-danger ms-md-3 mt-2 mt-md-0">Remover</button>
+                    <div class="card-header-custom">
+                        <div class="card-icon bg-primary">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Promoções Ativas</h3>
+                            <p class="card-subtitle">Gerencie todas as promoções cadastradas</p>
+                        </div>
+                    </div>
+
+                    <!-- Stats das Promoções -->
+                    <div class="promo-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon total">
+                                <i class="fas fa-tags"></i>
                             </div>
-                        </li>
-                    </ul>
+                            <div class="stat-info">
+                                <h3 id="totalPromocoes">0</h3>
+                                <p>Total Ativas</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon expiring">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="promocoesExpiram">0</h3>
+                                <p>Expiram Hoje</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <ul id="listaPromocoes" class="lista-promocoes">
+                            <li class="lista-item loading">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Carregando promoções...</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja remover esta promoção?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/cadastrarPromocao.js"></script>
 </body>

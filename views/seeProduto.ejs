@@ -8,124 +8,203 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/seeProduto.css">
     <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
-    
 </head>
 <body>
-    <div class="container">
+    <div class="container-lg">
+        <!-- Header Section -->
         <div class="header-section">
-            <div class="d-flex align-items-center">
-                <a href="/adm" class="btn-voltar">
-                    <i class="fas fa-arrow-left"></i> Voltar
-                </a>
-                <h2 class="mb-0 ms-3">Produtos Cadastrados</h2>
-            </div>
-            <a href="/createItens" class="btn btn-novo">
+            <a href="/adm" class="btn-voltar">
+                <i class="fas fa-arrow-left"></i> Voltar ao ADM
+            </a>
+            <h1 class="header-title">
+                <i class="fas fa-boxes me-2"></i>Produtos Cadastrados
+            </h1>
+            <a href="/createItens" class="btn-novo">
                 <i class="fas fa-plus me-2"></i> Novo Produto
             </a>
         </div>
 
-        <div class="search-bar-container mb-3">
-            <input type="text" class="form-control search-bar" id="searchProduto" placeholder="Pesquisar produto por nome, categoria ou ID...">
+        <!-- Search and Stats -->
+        <div class="search-stats-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control search-input" id="searchProduto" placeholder="Pesquisar produto por nome, categoria ou ID...">
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-icon total">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.length %></h3>
+                        <p>Total de Produtos</p>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon available">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.filter(p => p.estoque > 0).length %></h3>
+                        <p>Disponíveis</p>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon low">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.filter(p => p.estoque <= 5 && p.estoque > 0).length %></h3>
+                        <p>Estoque Baixo</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <% if (produtos.length > 0) { %>
-            <div class="table-container">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th class="fixed-column-id">ID</th>
-                            <th class="fixed-column">Imagem</th>
-                            <th>Nome</th>
-                            <th>Valor</th>
-                            <th>Categoria</th>
-                            <th>Cor</th>
-                            <th>Tamanho</th>
-                            <th>Peso</th>
-                            <th>Cilindrada</th>
-                            <th>Potência</th>
-                            <th>Tanque</th>
-                            <th>Material</th>
-                            <th>Proteção</th>
-                            <th>Estoque</th>
-                            <th>Descrição</th>
-                            <th>Thumbnails</th>
-                            <th class="fixed-column-action">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% produtos.forEach(function(produto) { %>
+            <!-- Products Table -->
+            <div class="card-promocao">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-list me-2"></i>
+                        Lista de Produtos
+                    </h3>
+                    <div class="table-actions">
+                        <span class="results-count"><%= produtos.length %> produtos encontrados</span>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="table table-hover align-middle produtos-table">
+                        <thead>
                             <tr>
-                                <td class="fixed-column-id"><%= produto.ID %></td>
-                                <td class="fixed-column">
-                                    <% if (produto.imagem) { %>
-                                        <img src="<%= produto.imagem %>" alt="Imagem do Produto" class="produto-img">
-                                    <% } else { %>
-                                        <span class="produto-img d-flex align-items-center justify-content-center" style="background:#e0e0e0;">
-                                            <i class="fas fa-box-open fa-2x" style="color:#bbb;"></i>
-                                        </span>
-                                    <% } %>
-                                </td>
-                                <td><strong><%= produto.nome %></strong></td>
-                                <td>R$ <%= produto.valor ? Number(produto.valor).toFixed(2).replace('.', ',') : '0,00' %></td>
-                                <td>
-                                    <span class="badge-categoria">
-                                        <%= produto.categoria_nome || produto.categoria || produto.Categoria_ID %>
-                                    </span>
-                                </td>
-                                <td><%= produto.cor %></td>
-                                <td><%= produto.tamanho %></td>
-                                <td><%= produto.peso %></td>
-                                <td><%= produto.cilindrada %></td>
-                                <td><%= produto.potencia %></td>
-                                <td><%= produto.tanque %></td>
-                                <td><%= produto.material %></td>
-                                <td><%= produto.protecao %></td>
-                                <td><%= produto.estoque %></td>
-                                <td>
-                                    <div class="produto-details">
-                                        <span><%= produto.descricao %></span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <% if (produto.thumbnails) { 
-                                        // Se for uma lista separada por vírgula
-                                        let thumbs = Array.isArray(produto.thumbnails) ? produto.thumbnails : String(produto.thumbnails).split(',');
-                                    %>
-                                        <% thumbs.forEach(function(url) { %>
-                                            <a href="<%= url.trim() %>" target="_blank">
-                                                <img src="<%= url.trim() %>" alt="Thumbnail" style="width:40px;height:40px;object-fit:cover;border-radius:6px;margin:2px;">
-                                            </a>
-                                        <% }) %>
-                                    <% } %>
-                                </td>
-                                <td class="fixed-column-action">
-                                    <div class="action-btns">
-                                        <a href="/produtos/editar/<%= produto.ID %>" class="action-btn edit" title="Editar">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </a>
-                                        <form action="/seeProduto/excluir/<%= produto.ID %>" method="POST" style="display:inline;">
-                                            <button type="submit" class="action-btn delete" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir este produto?')">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+                                <th class="fixed-column-id">ID</th>
+                                <th class="fixed-column-img">Imagem</th>
+                                <th class="column-nome">Nome</th>
+                                <th class="column-valor">Valor</th>
+                                <th class="column-categoria">Categoria</th>
+                                <th>Cor</th>
+                                <th>Tamanho</th>
+                                <th>Peso</th>
+                                <th>Cilindrada</th>
+                                <th>Potência</th>
+                                <th>Tanque</th>
+                                <th>Material</th>
+                                <th>Proteção</th>
+                                <th class="column-estoque">Estoque</th>
+                                <th class="column-descricao">Descrição</th>
+                                <th>Thumbnails</th>
+                                <th class="fixed-column-action">Ações</th>
                             </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <% produtos.forEach(function(produto) { %>
+                                <tr class="produto-row" data-id="<%= produto.ID %>" data-nome="<%= (produto.nome || '').toLowerCase() %>" data-categoria="<%= (produto.categoria_nome || produto.categoria || produto.Categoria_ID) %>">
+                                    <td class="fixed-column-id">
+                                        <span class="produto-id">#<%= produto.ID %></span>
+                                    </td>
+                                    <td class="fixed-column-img">
+                                        <div class="produto-img-container">
+                                            <% if (produto.imagem) { %>
+                                                <img src="<%= produto.imagem %>" alt="Imagem do Produto" class="produto-img">
+                                            <% } else { %>
+                                                <div class="produto-img-placeholder">
+                                                    <i class="fas fa-box-open"></i>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                    <td class="column-nome">
+                                        <strong class="produto-nome"><%= produto.nome %></strong>
+                                    </td>
+                                    <td class="column-valor">
+                                        <span class="produto-valor">R$ <%= produto.valor ? Number(produto.valor).toFixed(2).replace('.', ',') : '0,00' %></span>
+                                    </td>
+                                    <td class="column-categoria">
+                                        <span class="badge-categoria"><%= produto.categoria_nome || produto.categoria || produto.Categoria_ID %></span>
+                                    </td>
+                                    <td><%= produto.cor || '' %></td>
+                                    <td><%= produto.tamanho || '' %></td>
+                                    <td><%= produto.peso || '' %></td>
+                                    <td><%= produto.cilindrada || '' %></td>
+                                    <td><%= produto.potencia || '' %></td>
+                                    <td><%= produto.tanque || '' %></td>
+                                    <td><%= produto.material || '' %></td>
+                                    <td><%= produto.protecao || '' %></td>
+                                    <td class="column-estoque">
+                                        <span class="estoque-badge <%= produto.estoque > 10 ? 'estoque-alto' : (produto.estoque > 0 ? 'estoque-medio' : 'estoque-baixo') %>">
+                                            <%= produto.estoque %>
+                                            <i class="fas <%= produto.estoque > 10 ? 'fa-check' : (produto.estoque > 0 ? 'fa-exclamation' : 'fa-times') %> ms-1"></i>
+                                        </span>
+                                    </td>
+                                    <td class="column-descricao">
+                                        <div class="produto-descricao"><%= produto.descricao || 'Sem descrição' %></div>
+                                    </td>
+                                    <td>
+                                        <% if (produto.thumbnails) {
+                                            let thumbs = Array.isArray(produto.thumbnails) ? produto.thumbnails : String(produto.thumbnails).split(',');
+                                        %>
+                                            <% thumbs.forEach(function(url) { %>
+                                                <a href="<%= url.trim() %>" target="_blank">
+                                                    <img src="<%= url.trim() %>" alt="Thumbnail" style="width:40px;height:40px;object-fit:cover;border-radius:6px;margin:2px;">
+                                                </a>
+                                            <% }) %>
+                                        <% } %>
+                                    </td>
+                                    <td class="fixed-column-action">
+                                        <div class="action-btns">
+                                            <a href="/produtos/editar/<%= produto.ID %>" class="action-btn edit" title="Editar Produto">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+                                            <form action="/seeProduto/excluir/<%= produto.ID %>" method="POST" class="d-inline">
+                                                <button type="submit" class="action-btn delete" title="Excluir Produto" onclick="return confirm('Tem certeza que deseja excluir o produto \"<%= produto.nome %>\"?')">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                          
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         <% } else { %>
-            <div class="empty-state">
-                <i class="fas fa-box-open fa-3x mb-3" style="color: #dee2e6;"></i>
-                <h4>Nenhum produto cadastrado</h4>
-                <p class="mb-4">Você ainda não possui produtos cadastrados no sistema.</p>
-                <a href="/createItens" class="btn btn-novo">
-                    <i class="fas fa-plus me-2"></i> Adicionar Primeiro Produto
-                </a>
+            <!-- Empty State -->
+            <div class="empty-state card-promocao">
+                <div class="empty-content">
+                    <div class="empty-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h3>Nenhum produto cadastrado</h3>
+                    <p class="empty-text">Você ainda não possui produtos cadastrados no sistema.</p>
+                    <a href="/createItens" class="btn-novo btn-novo-large">
+                        <i class="fas fa-plus me-2"></i> Adicionar Primeiro Produto
+                    </a>
+                </div>
             </div>
         <% } %>
     </div>
+
+    <!-- Product Details Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="productDetails">
+                    <!-- Details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/seeProduto.js"></script>
 </body>
