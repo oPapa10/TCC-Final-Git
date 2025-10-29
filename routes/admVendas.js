@@ -75,15 +75,32 @@ function exigeAdm(req, res, next) {
 router.get('/', /*exigeAdm,*/ async (req, res) => {
   try {
     const q = req.query || {};
-    const year = q.year ? Number(q.year) : null;
-    const month = q.month ? Number(q.month) : null;
-    const day = q.day ? Number(q.day) : null;
-    // status padrão: 'entregue' para que "Vendas realizadas" venha selecionado ao entrar na página
-    const status = q.status ? String(q.status) : 'entregue';
-    const search = q.search ? q.search.trim() : null;
-    const priceMin = q.priceMin ? Number(q.priceMin) : null;
-    const priceMax = q.priceMax ? Number(q.priceMax) : null;
-    const rating = q.rating ? Number(q.rating) : null;
+    // aceitar filtros "De / Até" para ano/mês/dia
+    const yearFrom = q.yearFrom ? Number(q.yearFrom) : (q.year ? Number(q.year) : null);
+    const yearTo   = q.yearTo   ? Number(q.yearTo)   : null;
+    const monthFrom = q.monthFrom ? Number(q.monthFrom) : (q.month ? Number(q.month) : null);
+    const monthTo   = q.monthTo   ? Number(q.monthTo)   : null;
+    const dayFrom = q.dayFrom ? Number(q.dayFrom) : (q.day ? Number(q.day) : null);
+    const dayTo   = q.dayTo   ? Number(q.dayTo)   : null;
+     // status: se foi enviado explicitamente, usa; caso contrário,
+    // definir 'entregue' somente quando NÃO houver outros filtros (comportamento de landing page)
+    let status = null;
+    if (q.status) {
+      status = String(q.status);
+    } else {
+      const hasAnyFilter =
+        !!(q.search ||
+           q.yearFrom || q.yearTo ||
+           q.monthFrom || q.monthTo ||
+           q.dayFrom || q.dayTo ||
+           q.priceMin || q.priceMax ||
+           q.rating);
+      status = hasAnyFilter ? null : 'entregue';
+    }
+     const search = q.search ? q.search.trim() : null;
+     const priceMin = q.priceMin ? Number(q.priceMin) : null;
+     const priceMax = q.priceMax ? Number(q.priceMax) : null;
+     const rating = q.rating ? Number(q.rating) : null;
 
     // years available (distinct)
     const [yearsRows] = await new Promise((resolve, reject) => {
@@ -94,17 +111,30 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
     let where = [];
     let params = [];
 
-    if (year) {
-      where.push('YEAR(v.hora_venda) = ?'); params.push(year);
+    // ANO: se só from definido -> igual; se from e to definidos -> between (ordena)
+    if (yearFrom && !yearTo) {
+      where.push('YEAR(v.hora_venda) = ?'); params.push(yearFrom);
+    } else if (yearFrom && yearTo) {
+      const yMin = Math.min(yearFrom, yearTo), yMax = Math.max(yearFrom, yearTo);
+      where.push('YEAR(v.hora_venda) BETWEEN ? AND ?'); params.push(yMin, yMax);
     }
-    if (month) {
-      where.push('MONTH(v.hora_venda) = ?'); params.push(month);
+    // MÊS
+    if (monthFrom && !monthTo) {
+      where.push('MONTH(v.hora_venda) = ?'); params.push(monthFrom);
+    } else if (monthFrom && monthTo) {
+      const mMin = Math.min(monthFrom, monthTo), mMax = Math.max(monthFrom, monthTo);
+      where.push('MONTH(v.hora_venda) BETWEEN ? AND ?'); params.push(mMin, mMax);
     }
-    if (day) {
-      where.push('DAY(v.hora_venda) = ?'); params.push(day);
+    // DIA
+    if (dayFrom && !dayTo) {
+      where.push('DAY(v.hora_venda) = ?'); params.push(dayFrom);
+    } else if (dayFrom && dayTo) {
+      const dMin = Math.min(dayFrom, dayTo), dMax = Math.max(dayFrom, dayTo);
+      where.push('DAY(v.hora_venda) BETWEEN ? AND ?'); params.push(dMin, dMax);
     }
     if (search) {
-      where.push('(p.nome LIKE ? OR v.ID = ?)');
+      // buscar por nome do produto OU por ID do produto (não por ID da venda)
+      where.push('(p.nome LIKE ? OR p.ID = ?)');
       params.push('%' + search + '%', Number.isFinite(Number(search)) ? Number(search) : 0);
     }
     if (priceMin !== null) {
@@ -114,7 +144,10 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
       where.push('v.valor_venda <= ?'); params.push(priceMax);
     }
     if (rating) {
-      where.push('v.estrela >= ?'); params.push(rating);
+      // filtrar pela média de avaliações do produto (aceita valores decimais como 0.5, 1.5, ...)
+      // usamos subquery para garantir compatibilidade sem depender de alias
+      where.push('(SELECT COALESCE(ROUND(AVG(estrela),2),0) FROM AVALIACAO WHERE produto_id = p.ID) >= ?');
+      params.push(rating);
     }
     // filtro por status (pendente, pronto, a_caminho, entregue, realizada)
     if (status) {
@@ -202,7 +235,10 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
 
     // preparar dados para renderização (evita re-declaração de variáveis)
     const years = Array.isArray(yearsRows) ? yearsRows.map(r => r.ano).filter(Boolean) : [];
-    const filters = { year, month, day, status, search, priceMin, priceMax, rating };
+    const filters = {
+      yearFrom, yearTo, monthFrom, monthTo, dayFrom, dayTo,
+      status, search, priceMin, priceMax, rating
+    };
 
     const renderData = {
       totalVendas,

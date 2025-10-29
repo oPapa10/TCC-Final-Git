@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre Nós - Center Motos Sombrio</title>
+  <link rel="stylesheet" href="/stylesheets/aboutUs.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/stylesheets/theme.css">
+  <link rel="stylesheet" href="/stylesheets/menu-superior.css">
+  <link rel="stylesheet" href="/stylesheets/footer.css">
+  <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
+</head>
+
+<body>
+  <%- include('partials/navbar', { usuario: usuario }) %>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Center Motos Sombrio</h1>
+        <p class="lead">Há mais de 20 anos levando qualidade, segurança e paixão por duas rodas para todo o Extremo Sul Catarinense.</p>
+        
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">20+</span>
+            <span class="stat-label">Anos de Experiência</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">5000+</span>
+            <span class="stat-label">Clientes Satisfeitos</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Qualidade Garantida</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container py-5">
+    <!-- História -->
+    <section class="content-section">
+      <h3 class="section-title">Nossa História</h3>
+      <div class="historia-content">
+        <p>
+          Fundada em 2005 na cidade de Sombrio - SC, a <strong>Center Motos</strong> nasceu do sonho de oferecer aos motociclistas
+          uma loja completa, com atendimento especializado e produtos de alta qualidade. 
+        </p>
+        
+        <div class="historia-highlight">
+          <p>
+            Ao longo dos anos, a empresa se consolidou como uma das principais referências em 
+            <strong>peças, acessórios e manutenção</strong> para motocicletas na região do Extremo Sul Catarinense.
+          </p>
+        </div>
+
+        <p>
+          Desde o início, a Center Motos manteve um compromisso com a confiança e o bom atendimento, 
+          conquistando clientes fiéis não apenas em Sombrio, mas também em cidades vizinhas como 
+          Araranguá, Santa Rosa do Sul, Turvo e Balneário Gaivota.
+        </p>
+      </div>
+    </section>
+
+    <!-- Serviços -->
+    <section class="content-section">
+      <h3 class="section-title">O Que Fazemos</h3>
+      <div class="servicos-grid">
+        <div>
+          <ul class="servicos-list">
+            <li>Venda de peças e acessórios originais e paralelos para todas as marcas</li>
+            <li>Serviços de manutenção e revisão preventiva especializada</li>
+            <li>Troca de óleo e pneus com equipamentos de alta precisão</li>
+            <li>Instalação de acessórios e personalização de motos</li>
+            <li>Atendimento especializado para motociclistas de uso urbano e esportivo</li>
+            <li>Diagnóstico eletrônico e reparos em sistemas de injeção</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pilares -->
+    <section class="content-section">
+      <h3 class="section-title">Nossos Pilares</h3>
+      <div class="pilares-grid">
+        <div class="pilar-card">
+          <h4>Missão</h4>
+          <p>Proporcionar aos motociclistas segurança, desempenho e confiança, através de produtos e serviços de alta qualidade e atendimento excepcional.</p>
+        </div>
+        <div class="pilar-card">
+          <h4>Visão</h4>
+          <p>Ser reconhecida como a principal loja e oficina de motocicletas do Extremo Sul Catarinense, referência em qualidade e confiança.</p>
+        </div>
+        <div class="pilar-card">
+          <h4>Valores</h4>
+          <p>Comprometimento, integridade, inovação e respeito pelo cliente e pela paixão sobre duas rodas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diferenciais -->
+    <section class="content-section">
+      <h3 class="section-title">Nossos Diferenciais</h3>
+      <div class="diferenciais-grid">
+        <div class="diferencial-item">
+          <div class="diferencial-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <div class="diferencial-text">
+            <strong>Equipe Técnica Qualificada</strong>
+            <span>Profissionais apaixonados por motos com anos de experiência</span>
+          </div>
+        </div>
+        <div class="diferencial-item">
+          <div class="diferencial-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="diferencial-text">
+            <strong>Peças Originais</strong>
+            <span>Trabalhamos apenas com peças das principais marcas do mercado</span>
+          </div>
+        </div>
+        <div class="diferencial-item">
+          <div class="diferencial-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="diferencial-text">
+            <strong>Atendimento Rápido</strong>
+            <span>Serviços ágeis sem abrir mão da qualidade e precisão</span>
+          </div>
+        </div>
+        <div class="diferencial-item">
+          <div class="diferencial-icon">
+            <i class="fas fa-award"></i>
+          </div>
+          <div class="diferencial-text">
+            <strong>Garantia Total</strong>
+            <span>Garantia em todos os serviços e produtos comercializados</span>
+          </div>
+        </div>
+        <div class="diferencial-item">
+          <div class="diferencial-icon">
+            <i class="fas fa-home"></i>
+          </div>
+          <div class="diferencial-text">
+            <strong>Ambiente Moderno</strong>
+            <span>Estrutura limpa, organizada e confortável para nossos clientes</span>
+          </div>
+        </div>
+        <div class="diferencial-item">
+          <div class="diferencial-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="diferencial-text">
+            <strong>Atendimento Personalizado</strong>
+            <span>Cada cliente recebe atenção especial e soluções customizadas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Localização -->
+    <section class="content-section">
+      <h3 class="section-title">Onde Estamos</h3>
+      <div class="localizacao-content">
+        <div class="localizacao-info">
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <strong>Endereço</strong>
+              <p>R. João José de Guimarães, 782 - Centro<br>Sombrio - SC, 88960-000</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fab fa-whatsapp"></i>
+            </div>
+            <div>
+              <strong>WhatsApp</strong>
+              <p>(48) 93533-3299</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <strong>Horário de Atendimento</strong>
+              <p>Segunda a sexta: 8h às 18h<br>Sábados: 8h às 12h</p>
+            </div>
+          </div>
+        </div>
+        <div class="mapa-container">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3479.2159999999995!2d-49.626!3d-29.106!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x952269a5b1b11111%3A0xabcdef123456789!2sR.%20Jo%C3%A3o%20Jos%C3%A9%20de%20Guimar%C3%A3es%2C%20782%20-%20Centro%2C%20Sombrio%20-%20SC%2C%2088960-000!5e0!3m2!1spt-BR!2sbr!4v1234567890" 
+            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h3>Pronto para dar um upgrade na sua moto?</h3>
+        <p>Venha nos visitar e descubra por que somos a escolha número 1 dos motociclistas da região!</p>
+        <div class="cta-buttons">
+          <a href="/contato" class="btn btn-primary">
+            <i class="fas fa-phone-alt"></i>
+            Fale Conosco
+          </a>
+          <a href="/produtos" class="btn btn-secondary">
+            <i class="fas fa-motorcycle"></i>
+            Ver Produtos
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

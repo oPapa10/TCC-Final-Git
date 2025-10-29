@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notificações</title>
   <link rel="stylesheet" href="/stylesheets/menu-superior.css">
   <link rel="stylesheet" href="/stylesheets/notificacoes.css">
@@ -15,65 +16,140 @@
 
   <main class="container mt-5 mb-5">
     <% if (typeof mensagemNaoLogado !== 'undefined' && mensagemNaoLogado) { %>
-      <div class="alert alert-warning text-center mt-4 shadow-sm">
+      <div class="alert alert-warning text-center mt-4">
         <i class="fas fa-exclamation-triangle me-2"></i>
         <%= mensagemNaoLogado %>
         <a href="/perfil" class="btn btn-primary btn-sm ms-2">Entrar</a>
       </div>
     <% } %>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h3><i class="fas fa-bell me-2"></i>Notificações</h3>
+    <div class="notification-header">
+      <h3><i class="fas fa-bell"></i>Notificações</h3>
     </div>
 
-    <!-- se estiver deslogado, notificacoes estará vazio e a lista mostrará estado vazio -->
-  
-
-    <div class="list-group">
+    <div class="notifications-container">
       <% if (notificacoes && notificacoes.length) { %>
         <% notificacoes.forEach(function(n){ %>
-          <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
-            <div class="d-flex">
-              <% if (n.produto_imagem) { %>
-                <img src="<%= n.produto_imagem %>" alt="" class="rounded" style="width:64px;height:64px;object-fit:cover;margin-right:12px;">
-              <% } else { %>
-                <div class="rounded bg-light d-flex align-items-center justify-content-center" style="width:64px;height:64px;margin-right:12px;color:#999">—</div>
-              <% } %>
-              <div>
-                <div class="fw-bold"><%= n.titulo %></div>
-                <% if (n.produto_nome) { %>
-                  <div class="small text-muted"><strong><%= n.produto_nome %></strong> — R$ <%= Number(n.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+          <div class="notification-card">
+            <div class="notification-content">
+              <!-- Imagem -->
+              <div class="notification-image">
+                <% if (n.produto_imagem) { %>
+                  <img src="<%= n.produto_imagem %>" alt="<%= n.produto_nome || 'Produto' %>">
+                <% } else { %>
+                  <i class="fas fa-cube"></i>
                 <% } %>
-                <div class="small text-muted mt-1"><%= n.mensagem %></div>
+              </div>
+              
+              <!-- Conteúdo -->
+              <div class="notification-text">
+                <div class="notification-title"><%= n.titulo %></div>
+                <% if (n.produto_nome) { %>
+                  <div class="notification-product">
+                    <strong><%= n.produto_nome %></strong> — R$ <%= Number(n.valor_venda||0).toLocaleString('pt-BR', {minimumFractionDigits:2}) %>
+                  </div>
+                <% } %>
+                <div class="notification-message"><%= n.mensagem %></div>
+              </div>
+              
+              <!-- Metadados -->
+              <div class="notification-meta">
+                <div class="notification-time">
+                  <%= new Date(n.created_at).toLocaleString('pt-BR') %>
+                </div>
+                
+                <% if (n.status === 'pendente') { %>
+                  <span class="status-badge status-pendente">Pendente</span>
+                <% } else if (n.status === 'pronto') { %>
+                  <span class="status-badge status-pronto">Pronto</span>
+                <% } else if (n.status === 'a_caminho' && n.venda_id) { %>
+                  <span class="status-badge status-a_caminho">A caminho</span>
+                  <form method="POST" action="/notificacoes/confirmar-entrega">
+                    <input type="hidden" name="vendaId" value="<%= n.venda_id %>">
+                    <button type="submit" class="confirm-btn">Confirmar recebimento</button>
+                  </form>
+                <% } else if (n.status === 'entregue') { %>
+                  <span class="status-badge status-entregue">Entregue</span>
+                <% } else { %>
+                  <span class="status-badge status-pronto"><%= n.status %></span>
+                <% } %>
+
+                <!-- Botão REMOVER notificação (apenas remove o registro de notificações) -->
+                <div class="mt-2">
+                  <form method="POST" action="/notificacoes/remover" class="d-inline remove-notif-form">
+                    <input type="hidden" name="notificacaoId" value="<%= n.id %>">
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-notif" 
+                            data-id="<%= n.id %>" data-titulo="<%= (n.titulo || '').replace(/"/g,'&quot;') %>">
+                      <i class="fas fa-trash-alt"></i> Remover
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
-            <div class="text-end small">
-              <div class="text-muted"><%= new Date(n.created_at).toLocaleString('pt-BR') %></div>
-              <% if (n.status === 'pendente') { %>
-                <span class="badge bg-warning text-dark mt-1">Pendente</span>
-              <% } else if (n.status === 'pronto') { %>
-                <span class="badge bg-secondary text-dark mt-1">Pronto</span>
-              <% } else if (n.status === 'a_caminho' && n.venda_id) { %>
-                <span class="badge bg-info text-dark mt-1">A caminho</span>
-                <form method="POST" action="/notificacoes/confirmar-entrega" class="mt-2">
-                  <input type="hidden" name="vendaId" value="<%= n.venda_id %>">
-                  <button type="submit" class="btn btn-sm btn-success">Confirmar recebimento</button>
-                </form>
-              <% } else if (n.status === 'entregue') { %>
-                <span class="badge bg-success mt-1">Entregue</span>
-              <% } else { %>
-                <span class="badge bg-secondary mt-1"><%= n.status %></span>
-              <% } %>
-            </div>
-          </a>
+          </div>
         <% }) %>
       <% } else { %>
-        <div class="card p-4 text-center text-muted">Você não tem notificações no momento.</div>
+        <div class="empty-state">
+          <i class="fas fa-bell-slash"></i>
+          <p>Você não tem notificações no momento.</p>
+        </div>
       <% } %>
     </div>
   </main>
 
+  <!-- Modal de confirmação para remover notificação -->
+  <div class="modal fade" id="confirmDeleteNotificacaoModal" tabindex="-1" aria-labelledby="confirmDeleteNotificacaoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteNotificacaoLabel">Remover notificação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmDeleteNotificacaoText">Deseja realmente remover esta notificação? Esta ação remove apenas a notificação e não altera pedidos ou produtos.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="confirmDeleteNotificacaoBtn" class="btn btn-danger btn-sm">Remover</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <%- include('partials/footer') %>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    (function(){
+      const deleteButtons = document.querySelectorAll('.btn-delete-notif');
+      const modalEl = document.getElementById('confirmDeleteNotificacaoModal');
+      const modalText = document.getElementById('confirmDeleteNotificacaoText');
+      const confirmBtn = document.getElementById('confirmDeleteNotificacaoBtn');
+      let formToSubmit = null;
+
+      const bsModal = modalEl ? new bootstrap.Modal(modalEl) : null;
+
+      deleteButtons.forEach(btn => {
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          const id = this.getAttribute('data-id');
+          const titulo = this.getAttribute('data-titulo') || 'esta notificação';
+          // localizar o form pai correspondente
+          formToSubmit = this.closest('form');
+          if (modalText) modalText.textContent = `Deseja remover "${titulo}"? Esta ação removerá apenas a notificação.`;
+          if (bsModal) bsModal.show();
+        });
+      });
+
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', function(){
+          if (formToSubmit) {
+            formToSubmit.submit();
+          }
+          if (bsModal) bsModal.hide();
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

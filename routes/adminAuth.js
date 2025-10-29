@@ -37,7 +37,7 @@ router.post('/login', (req, res) => {
   req.session.adminAuthenticated = true;
   req.session.adminUser = ADMIN_USER;
   // sempre levar para a área administrativa após login (a menos que exista um redirect explícito)
-  const redirect = req.query.redirect ? decodeURIComponent(req.query.redirect) : '/centerrmotos4asda88a4admsdada4a4ADM';
+  const redirect = req.query.redirect ? decodeURIComponent(req.query.redirect) : '/admCenterMotos';
   return res.redirect(redirect);
 });
 

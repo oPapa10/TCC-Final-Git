@@ -87,8 +87,8 @@ app.use('/ajuda', ajudaRouter);
 app.use('/createItens', createItensRouter);
 app.use('/seeProduto', seeProdutoRouter);
 app.use('/createCategoria', createCategoriaRouter);
-app.use('/adm', admRouter);
-app.use('/adm/vendas', admVendasRouter);
+app.use('/admCenterMotos', admRouter);
+app.use('/admCenterMotos/vendas', admVendasRouter);
 app.use('/categorias', categoriaRoutes);   //  corrigido
 app.use('/produtos', require('./routes/produto'));
 app.use('/login', loginRouter);
@@ -105,8 +105,7 @@ app.use('/', recuperarSenhaRouter); // Nova rota para recuperação de senha
 app.use('/', notificacoesRouter); // { changed code }
 app.use('/admin', adminAuthRouter); // rotas /admin/login e /admin/logout
 
-// monta a área administrativa em rota difícil:
-app.use('/centerrmotos4asda88a4admsdada4a4ADM', require('./routes/adm'));
+// antiga rota difícil removida — usamos apenas /admCenterMotos
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // catch 404 and forward to error handler

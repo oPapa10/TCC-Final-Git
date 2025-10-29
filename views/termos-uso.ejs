@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Termos de Uso - Center Motos</title>
+  <link rel="stylesheet" href="/stylesheets/termosUso.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/stylesheets/theme.css">
+  <link rel="stylesheet" href="/stylesheets/menu-superior.css">
+  <link rel="stylesheet" href="/stylesheets/footer.css">
+  <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
+</head>
+
+<body>
+  <%- include('partials/navbar', { usuario: usuario }) %>
+
+  <!-- Progress Bar -->
+  <div class="scroll-progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Termos de Uso</h1>
+        <p class="lead">Leia atentamente os termos e condições que regulam o uso do site e os serviços da Center Motos.</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="container py-5">
+    <div class="main-content">
+      <!-- Navegação Lateral Fixa -->
+      <aside class="terms-navigation">
+        <h4>Navegação Rápida</h4>
+        <ul>
+          <li><a href="#aceitacao" class="nav-link">
+            <i class="fas fa-check-circle"></i>
+            <span>1. Aceitação</span>
+          </a></li>
+          <li><a href="#cadastro" class="nav-link">
+            <i class="fas fa-user-plus"></i>
+            <span>2. Cadastro</span>
+          </a></li>
+          <li><a href="#produtos" class="nav-link">
+            <i class="fas fa-shopping-bag"></i>
+            <span>3. Produtos</span>
+          </a></li>
+          <li><a href="#pagamentos" class="nav-link">
+            <i class="fas fa-credit-card"></i>
+            <span>4. Pagamentos</span>
+          </a></li>
+          <li><a href="#entrega" class="nav-link">
+            <i class="fas fa-truck"></i>
+            <span>5. Entrega</span>
+          </a></li>
+          <li><a href="#trocas" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>6. Trocas</span>
+          </a></li>
+          <li><a href="#propriedade" class="nav-link">
+            <i class="fas fa-copyright"></i>
+            <span>7. Propriedade</span>
+          </a></li>
+          <li><a href="#conduta" class="nav-link">
+            <i class="fas fa-user-shield"></i>
+            <span>8. Conduta</span>
+          </a></li>
+          <li><a href="#responsabilidade" class="nav-link">
+            <i class="fas fa-balance-scale"></i>
+            <span>9. Responsabilidade</span>
+          </a></li>
+          <li><a href="#lei" class="nav-link">
+            <i class="fas fa-gavel"></i>
+            <span>10. Lei Aplicável</span>
+          </a></li>
+          <li><a href="#alteracoes" class="nav-link">
+            <i class="fas fa-sync-alt"></i>
+            <span>11. Alterações</span>
+          </a></li>
+          <li><a href="#contato" class="nav-link">
+            <i class="fas fa-headset"></i>
+            <span>12. Contato</span>
+          </a></li>
+          <li><a href="#disposicoes" class="nav-link">
+            <i class="fas fa-file-contract"></i>
+            <span>13. Disposições</span>
+          </a></li>
+        </ul>
+      </aside>
+
+      <!-- Conteúdo Principal -->
+      <div class="terms-content">
+        <!-- Ações Rápidas -->
+        <div class="quick-actions">
+          <a href="/seguranca" class="action-btn action-btn-primary">
+            <i class="fas fa-shield-alt"></i>
+            Política de Privacidade
+          </a>
+        </div>
+
+        <!-- Conteúdo dos Termos -->
+        <section class="content-section" id="aceitacao">
+          <h3><span class="section-counter">1</span>Aceitação dos Termos</h3>
+          <p>Ao acessar e utilizar o site da Center Motos, você declara que leu, compreendeu e concorda em ficar vinculado a estes Termos de Uso e à nossa Política de Privacidade. Se você não concordar com qualquer parte destes termos, não deverá utilizar nossos serviços.</p>
+          <p>Estes termos se aplicam a todos os visitantes, usuários e outras pessoas que acessam ou utilizam o serviço.</p>
+        </section>
+
+        <section class="content-section" id="cadastro">
+          <h3><span class="section-counter">2</span>Cadastro no Site</h3>
+          <p>Para realizar compras em nosso e-commerce, é necessário criar uma conta fornecendo informações precisas, completas e atualizadas. Você é responsável por:</p>
+          <ul>
+            <li>Manter a confidencialidade de sua senha</li>
+            <li>Restringir o acesso à sua conta</li>
+            <li>Assumir total responsabilidade por todas as atividades que ocorram em sua conta</li>
+            <li>Notificar imediatamente a Center Motos sobre qualquer uso não autorizado de sua conta</li>
+            <li>Garantir que você se desconecte de sua conta ao final de cada sessão</li>
+          </ul>
+
+          <div class="highlight-box">
+            <p><strong>Importante:</strong> A Center Motos não se responsabiliza por perdas ou danos resultantes da não observância destas obrigações.</p>
+          </div>
+        </section>
+
+        <section class="content-section" id="produtos">
+          <h3><span class="section-counter">3</span>Produtos e Serviços</h3>
+          <p>Nos esforçamos para exibir com a maior precisão possível as cores e imagens dos produtos. No entanto, não podemos garantir que a exibição de qualquer cor no monitor do seu computador seja precisa.</p>
+
+          <ul>
+            <li>Reservamo-nos o direito de limitar as quantidades de produtos ou serviços que oferecemos</li>
+            <li>Todas as descrições de produtos e preços estão sujeitos a alterações a qualquer momento sem aviso prévio</li>
+            <li>Reservamo-nos o direito de descontinuar qualquer produto a qualquer momento</li>
+            <li>Qualquer oferta de produto ou serviço neste site é nula onde for proibida</li>
+          </ul>
+        </section>
+
+        <section class="content-section" id="pagamentos">
+          <h3><span class="section-counter">4</span>Pagamentos</h3>
+          <p>Aceitamos diversas formas de pagamento para facilitar sua compra. Todas as transações são processadas de forma segura através de gateways de pagamento certificados.</p>
+
+          <ul>
+            <li>Cartões de crédito (Visa, Mastercard, Elo, American Express)</li>
+            <li>Cartões de débito</li>
+            <li>PIX</li>
+            <li>Boleto bancário</li>
+            <li>Transferência bancária</li>
+          </ul>
+
+          <div class="highlight-box">
+            <p><strong>Segurança:</strong> Todas as informações de pagamento são criptografadas e processadas em ambiente seguro. Não armazenamos dados completos de cartões de crédito em nossos servidores.</p>
+          </div>
+        </section>
+
+        <section class="content-section" id="entrega">
+          <h3><span class="section-counter">5</span>Entrega e Frete</h3>
+          <p>Os prazos de entrega são estimativas e podem variar de acordo com a região de entrega e outros fatores alheios ao nosso controle. A Center Motos não se responsabiliza por atrasos causados por:</p>
+
+          <ul>
+            <li>Problemas com os correios ou transportadoras</li>
+            <li>Feriados ou fins de semana</li>
+            <li>Endereço de entrega incorreto ou incompleto</li>
+            <li>Falta de recebimento no local de entrega</li>
+            <li>Casos fortuitos ou de força maior</li>
+          </ul>
+        </section>
+
+        <section class="content-section" id="trocas">
+          <h3><span class="section-counter">6</span>Política de Trocas e Devoluções</h3>
+          <p>As trocas e devoluções seguem as disposições do Código de Defesa do Consumidor. Para solicitar troca ou devolução:</p>
+
+          <ul>
+            <li>O produto deve estar em sua embalagem original</li>
+            <li>Deve conter todos os acessórios e manuais</li>
+            <li>O prazo para solicitação é de até 7 dias após o recebimento</li>
+            <li>O produto não pode apresentar indícios de uso</li>
+            <li>Deve ser acompanhado da nota fiscal</li>
+          </ul>
+        </section>
+
+        <section class="content-section" id="propriedade">
+          <h3><span class="section-counter">7</span>Propriedade Intelectual</h3>
+          <p>Todo o conteúdo do site, incluindo textos, gráficos, logos, ícones, imagens, clipes de áudio, downloads digitais e compilações de dados, é propriedade da Center Motos ou de seus fornecedores de conteúdo e é protegido por leis de direitos autorais.</p>
+
+          <p>O uso não autorizado pode violar leis de direitos autorais, marcas registradas e outras leis. Você não pode reproduzir, distribuir ou criar trabalhos derivados com base neste conteúdo sem nossa autorização expressa por escrito.</p>
+        </section>
+
+        <section class="content-section" id="conduta">
+          <h3><span class="section-counter">8</span>Conduta do Usuário</h3>
+          <p>Você concorda em não usar o site para:</p>
+
+          <ul>
+            <li>Violar qualquer lei local, estadual, nacional ou internacional</li>
+            <li>Infringir direitos de propriedade intelectual</li>
+            <li>Enviar material que seja difamatório, obsceno, ofensivo ou prejudicial</li>
+            <li>Transmitir vírus ou qualquer outro código de natureza destrutiva</li>
+            <li>Coletar ou rastrear informações pessoais de outros</li>
+            <li>Praticar spam, phishing ou outras atividades fraudulentas</li>
+          </ul>
+        </section>
+
+        <section class="content-section" id="responsabilidade">
+          <h3><span class="section-counter">9</span>Limitação de Responsabilidade</h3>
+          <p>A Center Motos não será responsável por quaisquer danos diretos, indiretos, acidentais, especiais ou consequenciais resultantes de:</p>
+
+          <ul>
+            <li>Seu uso ou incapacidade de usar o serviço</li>
+            <li>Qualquer acesso não autorizado ou alteração de suas transmissões ou dados</li>
+            <li>Declarações ou conduta de qualquer terceiro no serviço</li>
+            <li>Quaisquer outros assuntos relacionados ao serviço</li>
+          </ul>
+
+          <div class="highlight-box">
+            <p><strong>Observação:</strong> Em nenhum caso a responsabilidade total da Center Motos para com você por todos os danos, perdas e causas de ação excederá o valor pago por você à Center Motos nos últimos 12 meses.</p>
+          </div>
+        </section>
+
+        <section class="content-section" id="lei">
+          <h3><span class="section-counter">10</span>Lei Aplicável</h3>
+          <p>Estes Termos de Uso serão regidos e interpretados de acordo com as leis da República Federativa do Brasil. Qualquer disputa decorrente destes termos será submetida ao foro da comarca de Santa Catarina/SC, com expressa renúncia de qualquer outro, por mais privilegiado que seja.</p>
+        </section>
+
+        <section class="content-section" id="alteracoes">
+          <h3><span class="section-counter">11</span>Alterações nos Termos</h3>
+          <p>Reservamo-nos o direito, a nosso exclusivo critério, de modificar ou substituir estes Termos a qualquer momento. Se uma revisão for material, tentaremos fornecer um aviso com pelo menos 30 dias de antecedência antes que os novos termos entrem em vigor.</p>
+
+          <p>O que constitui uma mudança material será determinado a nosso exclusivo critério. Ao continuar a acessar ou usar nosso serviço após essas revisões entrarem em vigor, você concorda em ficar vinculado aos termos revisados.</p>
+        </section>
+
+        <section class="content-section" id="contato">
+          <h3><span class="section-counter">12</span>Contato</h3>
+          <p>Se você tiver alguma dúvida sobre estes Termos de Uso, entre em contato conosco:</p>
+
+          <ul>
+            <li>Telefone: (48) 3533-3299</li>
+            <li>Endereço: Rua João José Guimarães 748, Sombrio, SC, 88960-000</li>
+            <li><strong>Horário de atendimento:</strong> Segunda a sexta, das 9h às 18h</li>
+          </ul>
+        </section>
+
+        <section class="content-section" id="disposicoes">
+          <h3><span class="section-counter">13</span>Disposições Gerais</h3>
+          <p>Estes Termos constituem o acordo completo entre você e a Center Motos em relação a este site e substituem todos os acordos anteriores e contemporâneos, comunicações e propostas, sejam verbais ou escritas, entre você e a Center Motos.</p>
+
+          <p>Se qualquer disposição destes Termos for considerada inválida ou inexequível por um tribunal, as demais disposições permanecerão em pleno vigor e efeito.</p>
+
+          <div class="last-updated">
+            <p class="small text-muted">Última atualização: 15 de outubro de 2025</p>
+          </div>
+        </section>
+
+        <div class="warning-box">
+          <p><strong>⚠️ Atenção:</strong> Ao utilizar nosso site e serviços, você reconhece que leu e compreendeu estes Termos de Uso e concorda em estar vinculado por eles. Recomendamos que imprima uma cópia destes termos para seus registros.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Back to Top Button -->
+  <a href="#" class="back-to-top" id="backToTop">
+    <i class="fas fa-chevron-up"></i>
+  </a>
+
+  <%- include('partials/footer') %>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Smooth scrolling para navegação interna
+    document.querySelectorAll('.terms-navigation a').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Progress Bar
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+
+    // Back to Top Button
+    const backToTopButton = document.getElementById('backToTop');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        backToTopButton.classList.add('show');
+      } else {
+        backToTopButton.classList.remove('show');
+      }
+    });
+
+    backToTopButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Section Highlighting
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('.terms-navigation a');
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.getAttribute('id');
+        const link = document.querySelector(`.terms-navigation a[href="#${id}"]`);
+        
+        if (entry.isIntersecting) {
+          // Remove active class from all links
+          navLinks.forEach(link => link.classList.remove('active'));
+          // Add active class to current link
+          link?.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+
+    // Mobile navigation toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const navToggle = document.createElement('button');
+      navToggle.className = 'btn btn-primary d-lg-none mb-3 w-100';
+      navToggle.innerHTML = '<i class="fas fa-bars me-2"></i>Menu de Navegação';
+      navToggle.style.display = 'none';
+      
+      const termsNav = document.querySelector('.terms-navigation');
+      termsNav.parentNode.insertBefore(navToggle, termsNav);
+      
+      // Show toggle on mobile
+      if (window.innerWidth < 992) {
+        navToggle.style.display = 'block';
+        termsNav.style.display = 'none';
+      }
+      
+      navToggle.addEventListener('click', function() {
+        if (termsNav.style.display === 'none') {
+          termsNav.style.display = 'block';
+          this.innerHTML = '<i class="fas fa-times me-2"></i>Fechar Menu';
+        } else {
+          termsNav.style.display = 'none';
+          this.innerHTML = '<i class="fas fa-bars me-2"></i>Menu de Navegação';
+        }
+      });
+      
+      // Handle resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+          navToggle.style.display = 'none';
+          termsNav.style.display = 'block';
+        } else {
+          navToggle.style.display = 'block';
+          termsNav.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -44,4 +44,22 @@ router.get('/', (req, res) => {
   });
 });
 
+// novas rotas estáticas simples
+router.get('/termos-uso', (req, res) => {
+  res.render('termos-uso');
+});
+
+router.get('/sobre-nos', (req, res) => {
+  res.render('aboutUs');
+});
+
+router.get('/privacidade', (req, res) => {
+  // manter rota compatível com a label "Política de Privacidade"
+  res.redirect('/seguranca');
+});
+
+router.get('/seguranca', (req, res) => {
+  res.render('seguranca');
+});
+
 module.exports = router;

@@ -137,4 +137,40 @@ router.post('/:id/caminho', async (req, res) => {
   }
 });
 
+/*
+  Rota para remover apenas a NOTIFICAÇÃO.
+  Verifica que o usuário está logado e é o dono da notificação antes de remover.
+*/
+router.post('/notificacoes/remover', async (req, res) => {
+  const usuario = req.session.usuario;
+  const notificacaoId = Number(req.body.notificacaoId || req.body.id || 0);
+
+  if (!usuario || !usuario.ID) {
+    return res.status(401).redirect('/login?redirect=/notificacoes');
+  }
+  if (!notificacaoId) {
+    return res.status(400).send('Notificação inválida');
+  }
+
+  try {
+    const result = await new Promise((resolve, reject) => {
+      db.query('DELETE FROM notificacoes WHERE id = ? AND cliente_id = ?', [notificacaoId, usuario.ID], (err, r) => {
+        if (err) return reject(err);
+        resolve(r);
+      });
+    });
+
+    if (result && result.affectedRows) {
+      // removido com sucesso
+      return res.redirect('/notificacoes');
+    } else {
+      // não encontrou ou não pertence ao usuário
+      return res.status(404).send('Notificação não encontrada ou sem permissão');
+    }
+  } catch (err) {
+    console.error('Erro ao remover notificação:', err);
+    return res.status(500).send('Erro interno');
+  }
+});
+
 module.exports = router;

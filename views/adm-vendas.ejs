@@ -77,47 +77,64 @@
         <i class="fas fa-filter me-2"></i>Filtros de Vendas
       </h3>
       <form class="row g-3" method="GET" action="/adm/vendas">
-        <div class="col-md-2">
-          <label class="form-label">Ano</label>
-          <select name="year" class="form-select">
-            <option value="">Todos</option>
-            <% years.forEach(function(y){ %>
-              <option value="<%= y %>" <%= (filters.year==y)?'selected':'' %>><%= y %></option>
-            <% }) %>
-          </select>
+        <!-- substitua os selects únicos de Ano / Mês / Dia por pares "De / Até" -->
+        <div class="col-md-4">
+          <label class="form-label">Ano (De / Até)</label>
+          <div class="d-flex gap-2">
+            <select name="yearFrom" class="form-select" aria-label="Ano de">
+              <option value="">De</option>
+              <% years.forEach(function(y){ %>
+                <option value="<%= y %>" <%= (filters.yearFrom==y)?'selected':'' %>><%= y %></option>
+              <% }) %>
+            </select>
+            <select name="yearTo" class="form-select" aria-label="Ano até">
+              <option value="">Até (opcional)</option>
+              <% years.forEach(function(y){ %>
+                <option value="<%= y %>" <%= (filters.yearTo==y)?'selected':'' %>><%= y %></option>
+              <% }) %>
+            </select>
+          </div>
         </div>
-        <div class="col-md-2">
-          <label class="form-label">Mês</label>
-          <select name="month" class="form-select">
-            <option value="">Todos</option>
-            <% for(let m=1;m<=12;m++){ %>
-              <option value="<%= m %>" <%= (filters.month==m)?'selected':'' %>><%= m %></option>
-            <% } %>
-          </select>
+
+        <div class="col-md-4">
+          <label class="form-label">Mês (De / Até)</label>
+          <div class="d-flex gap-2">
+            <select name="monthFrom" class="form-select" aria-label="Mês de">
+              <option value="">De</option>
+              <% for(let m=1;m<=12;m++){ %>
+                <option value="<%= m %>" <%= (filters.monthFrom==m)?'selected':'' %>><%= m %></option>
+              <% } %>
+            </select>
+            <select name="monthTo" class="form-select" aria-label="Mês até">
+              <option value="">Até (opcional)</option>
+              <% for(let m=1;m<=12;m++){ %>
+                <option value="<%= m %>" <%= (filters.monthTo==m)?'selected':'' %>><%= m %></option>
+              <% } %>
+            </select>
+          </div>
         </div>
-        <div class="col-md-2">
-          <label class="form-label">Dia</label>
-          <select name="day" class="form-select">
-            <option value="">Todos</option>
-            <% for(let d=1;d<=31;d++){ %>
-              <option value="<%= d %>" <%= (filters.day==d)?'selected':'' %>><%= d %></option>
-            <% } %>
-          </select>
+
+        <div class="col-md-4">
+          <label class="form-label">Dia (De / Até)</label>
+          <div class="d-flex gap-2">
+            <select name="dayFrom" class="form-select" aria-label="Dia de">
+              <option value="">De</option>
+              <% for(let d=1;d<=31;d++){ %>
+                <option value="<%= d %>" <%= (filters.dayFrom==d)?'selected':'' %>><%= d %></option>
+              <% } %>
+            </select>
+            <select name="dayTo" class="form-select" aria-label="Dia até">
+              <option value="">Até (opcional)</option>
+              <% for(let d=1;d<=31;d++){ %>
+                <option value="<%= d %>" <%= (filters.dayTo==d)?'selected':'' %>><%= d %></option>
+              <% } %>
+            </select>
+          </div>
         </div>
 
         <div class="col-md-3">
-          <label class="form-label"><i class="fas fa-search me-1"></i>Busca por produto / ID</label>
-          <input name="search" type="text" class="form-control" value="<%= filters.search || '' %>" placeholder="Nome do produto ou ID">
-        </div>
-
-        <div class="col-md-1">
-          <label class="form-label"><i class="fas fa-star me-1"></i>Avaliação</label>
-          <select name="rating" class="form-select">
-            <option value="">-</option>
-            <% for(let r=1;r<=5;r++){ %>
-              <option value="<%= r %>" <%= (filters.rating==r)?'selected':'' %>><%= r %></option>
-            <% } %>
-          </select>
+          <label class="form-label"><i class="fas fa-search me-1"></i>Busca por Nome / ID</label>
+          <input name="search" type="text" class="form-control" value="<%= filters.search || '' %>" placeholder="Nome do produto ou ID do produto">
         </div>
 
         <div class="col-md-2 d-flex gap-2">
@@ -186,11 +203,12 @@
                       </div>
                     <% } %>
                   </td>
-                  <td><strong>#<%= v.ID %></strong></td>
-                  <td><%= new Date(v.hora_venda).toLocaleString('pt-BR') %></td>
+                  <!-- mostrar ID do PRODUTO -->
+                  <td><strong><%= v.produto_id %></strong></td>
+                  <!-- mostrar data/hora da venda (formatada pt-BR) -->
+                  <td><strong><%= v.hora_venda ? (new Date(v.hora_venda)).toLocaleString('pt-BR') : '-' %></strong></td>
                   <td>
                     <strong class="produto-nome"><%= v.produto_nome %></strong>
-                    <div class="small-muted">ID <%= v.produto_id %></div>
                   </td>
                   <td>
                     <strong><%= v.cliente_nome %></strong>
@@ -213,8 +231,26 @@
                   <td class="align-middle text-center">
                     <% if (v.produto_qtd_avaliacoes && v.produto_qtd_avaliacoes > 0) { %>
                       <div class="rating-stars">
-                        <% for(let i=1; i<=5; i++) { %>
-                          <i class="fas fa-star <%= i <= Math.round(v.produto_media) ? 'text-warning' : 'text-muted' %>"></i>
+                        <% 
+                          var media = Number(v.produto_media) || 0;
+                          var fullStars = Math.floor(media);
+                          var hasHalfStar = media % 1 >= 0.3 && media % 1 <= 0.7;
+                          var emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                        %>
+                        
+                        <!-- Estrelas completas -->
+                        <% for(var i=0; i < fullStars; i++) { %>
+                          <i class="fas fa-star text-warning"></i>
+                        <% } %>
+                        
+                        <!-- Meia estrela -->
+                        <% if (hasHalfStar) { %>
+                          <i class="fas fa-star-half-alt text-warning"></i>
+                        <% } %>
+                        
+                        <!-- Estrelas vazias -->
+                        <% for(var i=0; i < emptyStars; i++) { %>
+                          <i class="fas fa-star"></i>
                         <% } %>
                       </div>
                       <div class="text-muted small mt-1"><%= v.produto_qtd_avaliacoes %> avaliação<%= v.produto_qtd_avaliacoes>1 ? 's' : '' %></div>

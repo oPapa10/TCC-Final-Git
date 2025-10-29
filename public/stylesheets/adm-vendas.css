@@ -348,6 +348,27 @@ body {
     gap: 2px;
 }
 
+/* ===== ESTRELAS PERSONALIZADAS ===== */
+.rating-stars .fa-star:not(.text-warning) {
+    color: white;
+    text-shadow: 
+        0 0 1px #ffc107,
+        0 0 1px #ffc107,
+        0 0 1px #ffc107,
+        0 0 1px #ffc107;
+    position: relative;
+}
+
+.rating-stars .fa-star.text-warning {
+    color: #ffc107;
+    text-shadow: none;
+}
+
+.rating-stars .fa-star-half-alt.text-warning {
+    color: #ffc107;
+    text-shadow: none;
+}
+
 /* ===== STATUS BADGES ===== */
 .status-badge-container {
     display: flex;
@@ -516,6 +537,10 @@ body {
     .status-badge-container, .action-buttons {
         justify-content: center;
     }
+    
+    .rating-stars {
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 576px) {
@@ -549,5 +574,9 @@ body {
     .filters-card .col-md-3, 
     .filters-card .col-md-1 {
         flex: 0 0 100%;
+    }
+    
+    .rating-stars {
+        justify-content: center;
     }
 }
