@@ -340,3 +340,63 @@ document.addEventListener('DOMContentLoaded', function() {
         categorias.scrollLeft = scrollLeft - walk;
     });
 });
+
+(function() {
+    // Habilita clique no slide da promoção em mobile para navegar ao produto/página
+    function isMobileView() {
+        return window.innerWidth <= 768;
+    }
+
+    function attachPromoMobileClick() {
+        const promoCarousel = document.getElementById('promoCarousel');
+        if (!promoCarousel) return;
+        const items = promoCarousel.querySelectorAll('.carousel-item');
+
+        items.forEach(item => {
+            if (item.dataset.mobileClickAdded) return;
+
+            const handler = function(e) {
+                // só age em mobile
+                if (!isMobileView()) return;
+
+                // não ativar ao clicar em controles, indicadores ou elementos interativos
+                if (e.target.closest('.carousel-control-prev, .carousel-control-next, .carousel-indicators, a, button, input, select, textarea')) {
+                    return;
+                }
+
+                // procura por link/atributo com destino dentro do slide
+                let url = null;
+                const linkSelectors = ['a.promo-button[href]', 'a[href]', '[data-href]'];
+                for (const s of linkSelectors) {
+                    const found = item.querySelector(s);
+                    if (found) {
+                        url = found.getAttribute('href') || found.dataset.href || found.getAttribute('data-href');
+                        if (url) break;
+                    }
+                }
+
+                // tentar atributo direto do item: data-href / data-url
+                if (!url) {
+                    url = item.dataset.href || item.dataset.url || item.getAttribute('data-href') || item.getAttribute('data-url');
+                }
+
+                // se achou URL, navega
+                if (url) {
+                    // evita múltiplos eventos rápidos
+                    window.location.href = url;
+                }
+            };
+
+            item.addEventListener('click', handler);
+            item.dataset.mobileClickAdded = '1';
+        });
+    }
+
+    // inicializa ao carregar e reaplica no resize (debounce simples)
+    document.addEventListener('DOMContentLoaded', attachPromoMobileClick);
+    let resizeTimer = null;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(attachPromoMobileClick, 200);
+    });
+})();

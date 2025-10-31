@@ -15,7 +15,7 @@
   <main class="container-lg mt-4 mb-5">
     <!-- Cabeçalho -->
     <div class="header-section">
-      <a href="/adm" class="btn-voltar">
+      <a href="/admCenterMotos" class="btn-voltar">
         <i class="fas fa-arrow-left"></i> Voltar ao ADM
       </a>
       <h1 class="header-title">
@@ -76,7 +76,7 @@
       <h3 class="filters-title mb-3">
         <i class="fas fa-filter me-2"></i>Filtros de Vendas
       </h3>
-      <form class="row g-3" method="GET" action="/adm/vendas">
+      <form class="row g-3" method="GET" action="/admCenterMotos/vendas">
         <!-- substitua os selects únicos de Ano / Mês / Dia por pares "De / Até" -->
         <div class="col-md-4">
           <label class="form-label">Ano (De / Até)</label>
@@ -152,7 +152,7 @@
           <button class="btn btn-primary">
             <i class="fas fa-filter me-2"></i>Aplicar filtros
           </button>
-          <a href="/adm/vendas" class="btn btn-outline-secondary">
+          <a href="/admCenterMotos/vendas" class="btn btn-outline-secondary">
             <i class="fas fa-eraser me-2"></i>Limpar
           </a>
         </div>
@@ -162,13 +162,13 @@
     <!-- Navegação por status -->
     <div class="mb-4">
       <div class="status-nav">
-        <a class="status-nav-item <%= (!filters.status || filters.status==='entregue')?'active':'' %>" href="/adm/vendas?status=entregue">
+        <a class="status-nav-item <%= (!filters.status || filters.status==='entregue')?'active':'' %>" href="/admCenterMotos/vendas?status=entregue">
           <i class="fas fa-check-circle me-2"></i>Vendas realizadas
         </a>
-        <a class="status-nav-item <%= (filters.status==='a_caminho') ? 'active' : '' %>" href="/adm/vendas?status=a_caminho">
+        <a class="status-nav-item <%= (filters.status==='a_caminho') ? 'active' : '' %>" href="/admCenterMotos/vendas?status=a_caminho">
           <i class="fas fa-shipping-fast me-2"></i>Vendas em trajeto
         </a>
-        <a class="status-nav-item <%= (!filters.status || filters.status==='pendente' || filters.status==='pronto') ? 'active' : '' %>" href="/adm/vendas?status=pendente">
+        <a class="status-nav-item <%= (!filters.status || filters.status==='pendente' || filters.status==='pronto') ? 'active' : '' %>" href="/admCenterMotos/vendas?status=pendente">
           <i class="fas fa-clock me-2"></i>Vendas pendentes
         </a>
       </div>
@@ -292,13 +292,13 @@
                       <!-- ações conforme status -->
                       <div class="action-buttons">
                         <% if (v.status === 'pendente') { %>
-                          <form method="POST" action="/adm/vendas/<%= v.ID %>/pronto" class="d-inline">
+                          <form method="POST" action="/admCenterMotos/vendas/<%= v.ID %>/pronto" class="d-inline">
                             <button class="btn-action btn-action-ready">
                               <i class="fas fa-box me-1"></i>Pronto para envio
                             </button>
                           </form>
                         <% } else if (v.status === 'pronto') { %>
-                          <form method="POST" action="/adm/vendas/<%= v.ID %>/caminho" class="d-inline">
+                          <form method="POST" action="/admCenterMotos/vendas/<%= v.ID %>/caminho" class="d-inline">
                             <button class="btn-action btn-action-ship">
                               <i class="fas fa-shipping-fast me-1"></i>Enviar
                             </button>

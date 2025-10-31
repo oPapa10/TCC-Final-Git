@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Mostra a seção correspondente
             const targetId = this.getAttribute('href');
-            document.querySelector(targetId).style.display = 'block';
+            document.querySelector(tazzrgetId).style.display = 'block';
         });
     });
     

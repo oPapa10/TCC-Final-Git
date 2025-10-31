@@ -266,4 +266,23 @@
 .admin-nav-item { margin-left: 8px; }
 #admin-button-desktop .fas { font-size: 1.05rem; color: #fff; } /* ícone branco */
 #admin-button-desktop { display: inline-flex; align-items:center; justify-content:center; padding: 6px 10px; }
+/* Garantir estrela do menu preta (sem contorno/sombra) em mobile/desktop */
+.navbar-custom .nav-link .fa-star,
+.offcanvas .nav-link .fa-star,
+#navbarNavMenuSuperior .nav-link .fa-star,
+.nav-item .nav-link .fa-star {
+    color: #111 !important;
+    -webkit-text-stroke: 0 !important;
+    text-stroke: 0 !important;
+    text-shadow: none !important;
+    filter: none !important;
+}
+
+/* Remover fallback aplicado via ::before */
+.navbar-custom .nav-link .fa-star::before,
+.offcanvas .nav-link .fa-star::before,
+.nav-item .nav-link .fa-star::before {
+    color: inherit !important;
+    text-shadow: none !important;
+}
 
