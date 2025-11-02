@@ -26,4 +26,24 @@ document.addEventListener("DOMContentLoaded", () => {
             cvv.value = cvv.value.replace(/\D/g, "").substr(0, 3);
         });
     }
+
+    // Aplica tema conforme seleção armazenada (sincroniza com Opções)
+    try {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'escuro') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+        // mantém sincronizado caso o usuário mude em outra aba
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                if (e.newValue === 'escuro') document.body.classList.add('dark-theme');
+                else document.body.classList.remove('dark-theme');
+            }
+        });
+    } catch (e) {
+        // ambiente sem localStorage — ignora
+        console.warn('Tema: erro ao ler localStorage', e);
+    }
 });

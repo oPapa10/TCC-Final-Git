@@ -1,35 +1,34 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Navegação entre seções
-    const navLinks = document.querySelectorAll('.options-sidebar .nav-link');
-    const sections = document.querySelectorAll('.option-section');
-    
-    navLinks.forEach(link => {
+    // Função segura e global para trocar seções
+    function showSection(sectionId) {
+        if (!sectionId) return;
+        document.querySelectorAll('.option-section').forEach(sec => sec.style.display = 'none');
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.style.display = 'block';
+        }
+        document.querySelectorAll('.options-sidebar .nav-link').forEach(link => link.classList.remove('active'));
+        const activeLink = document.querySelector('.options-sidebar .nav-link[href="#' + sectionId + '"]');
+        if (activeLink) activeLink.classList.add('active');
+    }
+    // expõe globalmente (mantém compatibilidade com onclick inline)
+    window.showSection = showSection;
+
+    // Anexa listeners aos links da sidebar (previne comportamento padrão do <a>)
+    document.querySelectorAll('.options-sidebar .nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // Remove a classe active de todos os links
-            navLinks.forEach(navLink => {
-                navLink.classList.remove('active');
-            });
-            
-            // Adiciona a classe active ao link clicado
-            this.classList.add('active');
-            
-            // Esconde todas as seções
-            sections.forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            // Mostra a seção correspondente
-            const targetId = this.getAttribute('href');
-            document.querySelector(tazzrgetId).style.display = 'block';
+            const href = this.getAttribute('href') || '';
+            const id = href.startsWith('#') ? href.slice(1) : (this.dataset.target || '');
+            showSection(id);
+            // atualiza hash sem causar jump visual brusco
+            if (id) history.replaceState(null, '', '#' + id);
         });
     });
-    
-    // Mostra a primeira seção por padrão
-    if (navLinks.length > 0) {
-        navLinks[0].click();
-    }
+
+    // Inicializa exibindo 'conta' (ou a hash atual, se existir)
+    const initialHash = location.hash ? location.hash.slice(1) : 'conta';
+    showSection(initialHash);
     
     // Simulação de troca de tema
     const themeRadios = document.querySelectorAll('input[name="tema"]');

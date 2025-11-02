@@ -69,3 +69,151 @@ input.form-control {
 }
 
 footer { margin-top: auto; } /* força footer ao fim */
+
+/* ===== Melhoria visual dos campos de cartão ===== */
+.cartao-container {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.cartao-container .card-field-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    flex-wrap: nowrap;
+}
+
+.cartao-container .form-control {
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    border: 1px solid #e6e9ee;
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(20,40,70,0.04);
+    transition: box-shadow .12s ease, border-color .12s ease, transform .08s;
+    font-size: 1rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.cartao-container .form-control::placeholder { color: #98a0aa; }
+.cartao-container .form-control:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 8px 28px rgba(67,97,238,0.12);
+    transform: translateY(-1px);
+}
+
+/* Número do cartão com espaçamento mono e letra maior */
+.card-number {
+    font-family: "Roboto Mono", "SFMono-Regular", ui-monospace, monospace;
+    letter-spacing: 2px;
+    font-size: 1.05rem;
+}
+
+/* CVV menor e alinhado à direita */
+.cvv-input { max-width: 120px; }
+
+/* Validade compacto */
+.validade-input { max-width: 120px; }
+
+/* Ícone da bandeira (se usar) */
+.card-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: #374151;
+    min-width: 72px;
+}
+
+/* Label dos campos mais suave */
+.cartao-container label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.35rem;
+}
+
+/* Botão de pagar mais proeminente */
+.pagamento-card .btn-confirmar {
+    width: 100%;
+    padding: 0.95rem;
+    border-radius: 12px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    box-shadow: 0 8px 28px rgba(67,97,238,0.12);
+}
+
+/* Responsivo: empilhar campos em telas pequenas */
+@media (max-width: 576px) {
+    .cartao-container .card-field-row { flex-direction: column; gap: 0.5rem; }
+    .card-brand { justify-content: flex-start; }
+}
+
+/* ===== Tema escuro específico da página de pagamento ===== */
+body.dark-theme .pagamento-container {
+    background: #0f1114 !important;
+}
+body.dark-theme .pagamento-card {
+    background: linear-gradient(180deg,#141516,#1b1d20) !important;
+    color: #e6eef9 !important;
+    border: 1px solid #22262b !important;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.6) !important;
+}
+
+/* Inputs no tema escuro */
+body.dark-theme .cartao-container .form-control,
+body.dark-theme .pagamento-card .form-control,
+body.dark-theme .pix-copiaecola {
+    background: #17181b !important;
+    color: #e6eef9 !important;
+    border: 1px solid #2c3137 !important;
+    box-shadow: none !important;
+}
+
+body.dark-theme .cartao-container label,
+body.dark-theme .pagamento-card .card-title,
+body.dark-theme .pagamento-card h3 {
+    color: #e6eef9 !important;
+}
+
+/* Placeholder escuro */
+body.dark-theme .cartao-container .form-control::placeholder {
+    color: #9aa6b2 !important;
+}
+
+/* Foco no tema escuro */
+body.dark-theme .cartao-container .form-control:focus,
+body.dark-theme .pagamento-card .form-control:focus {
+    border-color: #4cc9f0 !important;
+    box-shadow: 0 8px 28px rgba(76,201,240,0.06) !important;
+}
+
+/* Botão de confirmação (theme aware) */
+body.dark-theme .pagamento-card .btn-confirmar {
+    background: linear-gradient(90deg,#4361ee,#4cc9f0) !important;
+    color: #fff !important;
+    box-shadow: 0 10px 30px rgba(67,97,238,0.16) !important;
+    border: none !important;
+}
+
+/* Contraste para valores e títulos */
+body.dark-theme .pagamento-itens-list .fw-bold,
+body.dark-theme .pix-container h3 {
+    color: #bff0d6 !important;
+    font-weight: 800;
+}
+
+/* pequenas melhorias visuais */
+.pagamento-card .card-summary {
+    border-radius: 12px;
+    padding: 1rem;
+    background: rgba(0,0,0,0.03);
+}
+body.dark-theme .pagamento-card .card-summary {
+    background: rgba(255,255,255,0.02) !important;
+    border: 1px solid rgba(255,255,255,0.03) !important;
+}
+

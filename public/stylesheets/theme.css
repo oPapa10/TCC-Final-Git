@@ -761,6 +761,24 @@ body.dark-theme .btn-category {
     box-shadow: none !important;
 }
 
+/* Remover qualquer borda/contorno dos botões de categoria no modo escuro */
+body.dark-theme .btn-category,
+body.dark-theme .btn-category:hover,
+body.dark-theme .btn-category:focus,
+body.dark-theme .btn-category:active,
+body.dark-theme .btn-category.active {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+/* Evita ring/outline do navegador no foco */
+body.dark-theme .btn-category:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
 body.dark-theme .btn-category.active,
 body.dark-theme .btn-category:focus,
 body.dark-theme .btn-category:hover {
@@ -875,4 +893,642 @@ body.dark-theme .cart-continue-btn {
 /* Labels do formulário de login com cor clara no tema escuro */
 body.dark-theme .profile-form .form-label {
     color: #e0e6ed !important;
+}
+
+/* Melhorar legibilidade da seção "Minha Conta" no modo escuro */
+body.dark-theme .option-section#conta,
+body.dark-theme .option-section#conta .card,
+body.dark-theme .option-section#conta .card-body,
+body.dark-theme .option-section#conta .fw-semibold,
+body.dark-theme .option-section#conta .form-label,
+body.dark-theme .option-section#conta .missing-field,
+body.dark-theme .option-section#conta .account-address,
+body.dark-theme .option-section#conta .account-complement {
+    color: #f1f5f9 !important;
+}
+
+body.dark-theme .option-section#conta .form-label {
+    color: #e6eef9 !important;
+    font-weight: 700 !important;
+}
+
+body.dark-theme .option-section#conta .fw-semibold {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+}
+
+body.dark-theme .option-section#conta .missing-field {
+    color: #9aa6b2 !important;
+    font-style: italic;
+}
+
+body.dark-theme .option-section#conta .card {
+    background: linear-gradient(180deg,#1f2226,#23272f) !important;
+    border: 1px solid rgba(255,255,255,0.04) !important;
+}
+
+body.dark-theme .options-content {
+    color: #f1f5f9 !important;
+}
+
+/* Sidebar: texto mais claro e destaque do item ativo */
+body.dark-theme .options-sidebar .nav-link {
+    color: #cbd6e3 !important;
+}
+body.dark-theme .options-sidebar .nav-link.active,
+body.dark-theme .options-sidebar .nav-link:hover {
+    background: #2b3340 !important;
+    color: #e6f0ff !important;
+    font-weight: 700 !important;
+}
+
+/* UNIVERSAL DARK THEME LIMPO E MODERNO - MELHORIAS PARA INDEX */
+
+/* ===== MELHORIAS ESPECÍFICAS PARA A PÁGINA INDEX ===== */
+
+/* Navbar de Categorias no Index - Tema Escuro */
+body.dark-theme #navbar2,
+body.dark-theme #navbarNavCategorias {
+    background: #181a20 !important;
+    border-bottom: 1px solid #2d3142 !important;
+}
+
+body.dark-theme .btn-category {
+    background: transparent !important;
+    color: #b0b8c1 !important;
+    border: 1px solid #2d3142 !important;
+    border-radius: 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+body.dark-theme .btn-category:hover {
+    background: #2d3142 !important;
+    color: #4cc9f0 !important;
+    border-color: #4cc9f0 !important;
+    transform: translateY(-2px);
+}
+
+body.dark-theme .btn-category.active {
+    background: #4361ee !important;
+    color: #ffffff !important;
+    border-color: #4361ee !important;
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3) !important;
+}
+
+/* Barra de rolagem horizontal das categorias no tema escuro */
+body.dark-theme #navbarNavCategorias .navbar-nav.mx-auto {
+    scrollbar-color: #4cc9f0 #181a20 !important;
+}
+
+body.dark-theme #navbarNavCategorias .navbar-nav.mx-auto::-webkit-scrollbar {
+    background: #181a20 !important;
+}
+
+body.dark-theme #navbarNavCategorias .navbar-nav.mx-auto::-webkit-scrollbar-thumb {
+    background: #4cc9f0 !important;
+    border-radius: 4px !important;
+}
+
+/* ===== CARROSSEL DE PROMOÇÕES NO TEMA ESCURO ===== */
+body.dark-theme .promo-carousel-container {
+    background: #23272f !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+body.dark-theme #promoCarousel {
+    background: #23272f !important;
+    border: 1px solid #2d3142 !important;
+}
+
+body.dark-theme .promo-carousel-item {
+    background: linear-gradient(135deg, #23272f 0%, #2d3142 100%) !important;
+}
+
+body.dark-theme .promo-image-container {
+    background: #181a20 !important;
+    border-right: 1px solid #2d3142 !important;
+}
+
+body.dark-theme .promo-image {
+    background: #23272f !important;
+    border: 2px solid #2d3142 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-theme .promo-info {
+    background: transparent !important;
+    color: #e0e6ed !important;
+}
+
+body.dark-theme .promo-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-theme .original-price {
+    color: #b0b8c1 !important;
+}
+
+body.dark-theme .discounted-price {
+    color: #51fa7b !important;
+}
+
+body.dark-theme .promo-description {
+    color: #b0b8c1 !important;
+}
+
+body.dark-theme .promo-timer {
+    color: #ffb703 !important;
+}
+
+body.dark-theme .promo-button {
+    background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3) !important;
+}
+
+body.dark-theme .promo-button:hover {
+    background: linear-gradient(135deg, #3a56d4 0%, #364fc7 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4) !important;
+}
+
+/* Setas do carousel no tema escuro */
+body.dark-theme .carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%234cc9f0' viewBox='0 0 8 8'><path d='M5.854 1.146a.5.5 0 0 1 0 .708L3.707 4l2.147 2.146a.5.5 0 0 1-.708.708l-2.5-2.5a.5.5 0 0 1 0-.708l2.5-2.5a.5.5 0 0 1 .708 0z'/></svg>") !important;
+}
+
+body.dark-theme .carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%234cc9f0' viewBox='0 0 8 8'><path d='M2.146 1.146a.5.5 0 0 1 .708 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.708-.708L4.293 4 2.146 1.854a.5.5 0 0 1 0-.708z'/></svg>") !important;
+}
+
+body.dark-theme .carousel-control-prev:hover .carousel-control-prev-icon,
+body.dark-theme .carousel-control-next:hover .carousel-control-next-icon {
+    filter: brightness(1.3) !important;
+}
+
+/* ===== CARDS DE PRODUTOS NO INDEX - TEMA ESCURO ===== */
+body.dark-theme .product-card {
+    background: linear-gradient(135deg, #23272f 0%, #2d3142 100%) !important;
+    border: 1px solid #2d3142 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
+}
+
+body.dark-theme .product-card:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25) !important;
+    border-color: #4cc9f0 !important;
+}
+
+body.dark-theme .card-title {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+body.dark-theme .card-text {
+    color: #b0b8c1 !important;
+}
+
+body.dark-theme .price {
+    color: #51fa7b !important;
+    font-weight: 700 !important;
+}
+
+body.dark-theme .text-muted.text-decoration-line-through {
+    color: #b0b8c1 !important;
+}
+
+body.dark-theme .card-img-top {
+    background: #181a20 !important;
+    border-bottom: 1px solid #2d3142 !important;
+    padding: 15px !important;
+}
+
+/* Link overlay dos produtos */
+body.dark-theme .product-link {
+    background: transparent !important;
+}
+
+/* ===== BARRA DE PESQUISA NO TEMA ESCURO ===== */
+body.dark-theme .search-container {
+    background: transparent !important;
+}
+
+body.dark-theme .search-container .input-group {
+    background: transparent !important;
+}
+
+body.dark-theme #searchInput {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+    border-right: none !important;
+}
+
+body.dark-theme #searchInput:focus {
+    background: #23272f !important;
+    color: #ffffff !important;
+    border-color: #4cc9f0 !important;
+    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2) !important;
+}
+
+body.dark-theme #searchInput::placeholder {
+    color: #b0b8c1 !important;
+}
+
+body.dark-theme #button-search {
+    background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #2d3142 !important;
+    border-left: none !important;
+}
+
+body.dark-theme #button-search:hover {
+    background: linear-gradient(135deg, #3a56d4 0%, #364fc7 100%) !important;
+    transform: translateY(-1px);
+}
+
+/* ===== MENSAGENS E ALERTS NO TEMA ESCURO ===== */
+body.dark-theme .alert-success {
+    background: linear-gradient(135deg, #23272f 0%, #1e3a28 100%) !important;
+    color: #51fa7b !important;
+    border: 1px solid #51fa7b !important;
+    border-radius: 8px !important;
+}
+
+body.dark-theme .alert-success .btn-primary {
+    background: #51fa7b !important;
+    color: #23272f !important;
+    border: none !important;
+}
+
+body.dark-theme .alert-success .btn-primary:hover {
+    background: #40e069 !important;
+    color: #23272f !important;
+}
+
+body.dark-theme #searchMessage .alert-custom {
+    background: #23272f !important;
+    color: #b0b8c1 !important;
+    border: 1px solid #2d3142 !important;
+    border-radius: 8px !important;
+}
+
+/* ===== FOOTER NO TEMA ESCURO ===== */
+body.dark-theme .footer {
+    background: #181a20 !important;
+    border-top: 1px solid #2d3142 !important;
+}
+
+body.dark-theme .footer h4 {
+    color: #4cc9f0 !important;
+}
+
+body.dark-theme .footer .border-bottom {
+    border-color: #2d3142 !important;
+}
+
+body.dark-theme .footer a {
+    color: #b0b8c1 !important;
+    transition: color 0.3s ease !important;
+}
+
+body.dark-theme .footer a:hover {
+    color: #4cc9f0 !important;
+}
+
+body.dark-theme .footer .copyright {
+    color: #b0b8c1 !important;
+    border-top: 1px solid #2d3142 !important;
+}
+
+/* ===== MENSAGEM DO CARRINHO NO TEMA ESCURO ===== */
+body.dark-theme .cart-message {
+    background: linear-gradient(135deg, #51fa7b 0%, #28a745 100%) !important;
+    color: #23272f !important;
+    box-shadow: 0 4px 20px rgba(81, 250, 123, 0.3) !important;
+    font-weight: 600 !important;
+}
+
+/* ===== RESPONSIVIDADE PARA INDEX NO TEMA ESCURO ===== */
+@media (max-width: 768px) {
+    body.dark-theme .promo-carousel-item {
+        flex-direction: column !important;
+        height: auto !important;
+    }
+    
+    body.dark-theme .promo-image-container,
+    body.dark-theme .promo-info {
+        width: 100% !important;
+    }
+    
+    body.dark-theme .promo-image-container {
+        height: 200px !important;
+        border-right: none !important;
+        border-bottom: 1px solid #2d3142 !important;
+    }
+    
+    body.dark-theme .promo-info {
+        padding: 20px !important;
+        height: auto !important;
+    }
+    
+    body.dark-theme .btn-category {
+        font-size: 0.85rem !important;
+        padding: 6px 12px !important;
+    }
+    
+    body.dark-theme .product-card:hover {
+        transform: translateY(-4px) !important;
+    }
+}
+
+/* ===== OVERLAY LINK PARA MOBILE NO CARROSSEL ===== */
+body.dark-theme .promo-overlay-link {
+    background: transparent !important;
+}
+
+/* ===== CONTADOR DO CARRINHO NO TEMA ESCURO ===== */
+body.dark-theme .cart-counter {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4) !important;
+}
+
+body.dark-theme .cart-counter:hover {
+    background: linear-gradient(135deg, #c82333 0%, #a71d2a 100%) !important;
+    transform: scale(1.15) !important;
+}
+
+/* ===== BOTÃO ADMIN NO TEMA ESCURO ===== */
+body.dark-theme #admin-button {
+    background: #23272f !important;
+    color: #e0e6ed !important;
+    border: 1px solid #2d3142 !important;
+}
+
+body.dark-theme #admin-button:hover {
+    background: #2d3142 !important;
+    color: #4cc9f0 !important;
+    border-color: #4cc9f0 !important;
+}
+
+/* ===== ANIMAÇÕES ESPECIAIS PARA INDEX NO TEMA ESCURO ===== */
+@keyframes darkThemeGlow {
+    0% { box-shadow: 0 0 5px rgba(76, 201, 240, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(76, 201, 240, 0.6); }
+    100% { box-shadow: 0 0 5px rgba(76, 201, 240, 0.3); }
+}
+
+body.dark-theme .product-card:hover {
+    animation: darkThemeGlow 2s infinite !important;
+}
+
+/* ===== SCROLLBAR PERSONALIZADA PARA INDEX ===== */
+body.dark-theme #navbarNavCategorias .navbar-nav.mx-auto::-webkit-scrollbar-track {
+    background: #181a20 !important;
+    border-radius: 4px !important;
+}
+
+body.dark-theme #navbarNavCategorias .navbar-nav.mx-auto::-webkit-scrollbar-thumb:hover {
+    background: #4361ee !important;
+}
+
+/* ===== ESTILOS PARA PRODUTOS SEM IMAGEM NO TEMA ESCURO ===== */
+body.dark-theme .card-img-top:not([src]),
+body.dark-theme .card-img-top[src=""] {
+    background: linear-gradient(135deg, #2d3142 0%, #23272f 100%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #4cc9f0 !important;
+    font-style: italic !important;
+}
+
+/* ===== MELHORIA DE CONTRASTE PARA TEXTO NO TEMA ESCURO ===== */
+body.dark-theme .card-body {
+    background: transparent !important;
+}
+
+body.dark-theme .text-clamp-2 {
+    color: #b0b8c1 !important;
+    line-height: 1.4em !important;
+}
+
+/* ===== BOTÕES DE CONTROLE DO CARROSSEL NO TEMA ESCURO ===== */
+body.dark-theme .carousel-control-prev,
+body.dark-theme .carousel-control-next {
+    background: rgba(35, 39, 47, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+body.dark-theme .carousel-control-prev:hover,
+body.dark-theme .carousel-control-next:hover {
+    background: rgba(67, 97, 238, 0.8) !important;
+}
+
+/* Corrige footer: garante que fique no fim da página e sem gaps com navs */
+html, body {
+    height: 100%;
+}
+
+/* garante layout em coluna e que o footer possa ser empurrado para baixo */
+body {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+}
+
+/* área principal do site deve crescer para empurrar o footer quando necessário */
+main, .site-main, .content, .page-content, .container-fluid.px-0, #produtos, .promo-carousel-container {
+    flex: 1 0 auto;
+}
+
+/* Forçar footer.mt-auto a colar no final e ocupar toda a largura */
+footer.footer.mt-auto,
+footer.footer {
+    margin-top: auto !important;       /* mantém comportamento push */
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+    width: 100% !important;
+    display: block !important;
+    align-self: stretch !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 1040 !important;          /* acima do conteúdo, abaixo de modals */
+    background: inherit !important;
+    box-shadow: none !important;
+}
+
+/* Garante que o .container interno não adicione fundo/padding que crie gap visual */
+footer.footer .container {
+    max-width: 100% !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    background: transparent !important;
+}
+
+/* Zera margin entre nav e footer caso algum nav anterior gere gap */
+nav + footer.footer,
+#navbar2 + footer.footer,
+.container + footer.footer,
+.row + footer.footer {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Proteção contra margins internas de elementos anteriores que criam espaço */
+body > *:not(footer) {
+    margin-bottom: 0 !important;
+}
+
+/* Garantir layout flex para empurrar footer quando conteúdo curto */
+html, body {
+    height: 100% !important;
+}
+body {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+}
+
+/* Área principal cresce para empurrar footer */
+main, .site-main, .content, .page-content, .container-fluid.px-0, #produtos, .promo-carousel-container {
+    flex: 1 0 auto !important;
+}
+
+/* Torna o ícone "hamburger" visível no tema escuro e estiliza offcanvas (menu lateral) */
+body.dark-theme .navbar-toggler {
+    background: transparent !important;
+    border: none !important;
+    padding: 0.35rem 0.6rem !important;
+}
+
+/* Substitui o SVG do ícone para garantir contraste (cor clara) */
+body.dark-theme .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' stroke='%23e0e6ed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 7h22M4 15h22M4 23h22'/></svg>") !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: none !important;
+    width: 1.6rem;
+    height: 1.6rem;
+}
+
+/* Offcanvas (menu lateral) no tema escuro */
+body.dark-theme .offcanvas {
+    background: #181a20 !important;
+    color: #e0e6ed !important;
+    border: none !important;
+}
+
+/* Cabeçalho e corpo do offcanvas */
+body.dark-theme .offcanvas .offcanvas-header,
+body.dark-theme .offcanvas .offcanvas-body {
+    background: transparent !important;
+    color: inherit !important;
+}
+
+/* Botão de fechar no offcanvas — garantir visibilidade */
+body.dark-theme .offcanvas .btn-close {
+    filter: invert(1) !important; /* inverte para ficar claro */
+    opacity: 0.95 !important;
+}
+
+/* Links e itens do offcanvas */
+body.dark-theme .offcanvas .nav-link,
+body.dark-theme .offcanvas .dropdown-item,
+body.dark-theme .offcanvas a {
+    color: #e0e6ed !important;
+}
+
+body.dark-theme .offcanvas .nav-link:hover,
+body.dark-theme .offcanvas .dropdown-item:hover {
+    color: #4cc9f0 !important;
+    background: rgba(76,201,240,0.05) !important;
+    border-radius: 6px;
+}
+
+/* Ícones dentro do offcanvas (ex: <i> ou <img>) */
+body.dark-theme .offcanvas .fa,
+body.dark-theme .offcanvas .nav-icon,
+body.dark-theme .offcanvas img {
+    filter: brightness(0) invert(1) !important;
+}
+
+/* Se usar offcanvas-start fixo: garantir z-index e sombra suave no tema escuro */
+body.dark-theme .offcanvas.offcanvas-start {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6) !important;
+    z-index: 1045 !important;
+}
+
+/* Protege contra regras conflitantes: força o botão toggler a usar o novo ícone */
+@media (max-width: 991px) {
+    body.dark-theme .navbar-toggler .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' stroke='%23e0e6ed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 7h22M4 15h22M4 23h22'/></svg>") !important;
+    }
+}
+
+/* Forçar estrela das "Minhas Avaliações" branca no offcanvas em tema escuro */
+body.dark-theme .offcanvas .nav-link .fa-star,
+body.dark-theme .offcanvas .nav-link .fa-star::before {
+    color: #ffffff !important;
+    -webkit-text-stroke: 0 !important;
+    text-stroke: 0 !important;
+    text-shadow: none !important;
+    filter: none !important;
+}
+
+/* Caso o ícone venha de <i> com classes diferentes (maior especificidade) */
+body.dark-theme .offcanvas .nav-link .fa,
+body.dark-theme .offcanvas .nav-link i.fa-star {
+    color: #ffffff !important;
+    filter: none !important;
+}
+
+/* Garantir que .navbar-nav ms-auto tenha mesmo visual da barra (.navbar-custom.fixed-top) */
+nav.navbar-custom.fixed-top,
+nav.navbar-custom.fixed-top .container-fluid {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    background: inherit;
+}
+
+/* Faz a lista de itens (ms-auto flex-row ...) herdar o fundo e cor da navbar */
+nav.navbar-custom.fixed-top .navbar-nav.ms-auto.flex-row.flex-nowrap.align-items-center,
+nav.navbar-custom.fixed-top .navbar-nav.ms-auto {
+    background: inherit !important;
+    color: inherit !important;
+    height: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0 12px;
+}
+
+/* Links dentro dessa lista devem usar mesma cor da navbar */
+nav.navbar-custom.fixed-top .navbar-nav.ms-auto .nav-link {
+    background: transparent !important;
+    color: inherit !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: .5rem .75rem;
+}
+
+/* Remover possíveis bordas/arredondamentos que destacam as pontas */
+nav.navbar-custom.fixed-top .navbar-nav.ms-auto,
+nav.navbar-custom.fixed-top .navbar-nav.ms-auto .nav-link {
+    border-radius: 0 !important;
+}
+
+/* Especificidade extra para o tema escuro */
+body.dark-theme nav.navbar-custom.fixed-top .navbar-nav.ms-auto,
+body.dark-theme nav.navbar-custom.fixed-top .navbar-nav.ms-auto .nav-link {
+    background: inherit !important;
+    color: inherit !important;
+    border: none !important;
+    box-shadow: none !important;
 }

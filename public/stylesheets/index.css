@@ -796,3 +796,50 @@
     line-height: 1.2em; /* ajuste se necessário */
     max-height: calc(1.2em * 2); /* assegura corte em 2 linhas */
 }
+
+/* Corrige a navbar para ocupar 100% da largura e remover "pontas" com outra cor */
+html, body {
+    margin: 0;    /* remove margem padrão do navegador que mostrava o fundo nas laterais */
+    padding: 0;
+}
+
+/* garante que a navbar ocupe a largura total e sem cantos arredondados */
+nav.navbar#navbar2,
+#navbar2 {
+    width: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    background: var(--primary-medium) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* remove padding lateral do container interno para evitar "gaps" visíveis */
+#navbar2 .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* faz com que a lista de categorias ocupe toda a largura interna e tenha o mesmo fundo */
+.navbar-nav.mx-auto.flex-row.flex-nowrap.align-items-center {
+    background: inherit !important;
+    height: 56px;           /* mesma altura visual da navbar */
+    padding: 0 16px;        /* mantém espaçamento interno sem criar bordas visíveis */
+    box-shadow: none !important;
+}
+
+/* evita arredondamento criado por regras acidentais */
+#navbar2 *,
+#navbar2 *::before,
+#navbar2 *::after {
+    border-radius: 0 !important;
+}
+
+/* proteção para tema escuro */
+body.dark-theme nav.navbar#navbar2,
+body.dark-theme #navbar2 {
+    background: #20232a !important;
+    border-radius: 0 !important;
+}
