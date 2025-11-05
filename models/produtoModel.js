@@ -23,33 +23,57 @@ exports.findById = (id, callback) => {
 };
 
 exports.create = (produto, callback) => {
-  const sql = `INSERT INTO Produto 
-    (nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque, estoque, material, protecao, imagem, thumbnails, Categoria_ID, slug)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    // Lista completa de campos permitidos
+    const camposPermitidos = [
+        'nome', 'valor', 'descricao', 'Categoria_ID', 'thumbnails', 
+        'estoque', 'slug', 'especificacoes', 'cor', 'cilindrada',
+        'potencia', 'tanque', 'material', 'protecao', 'imagem',
+        'marca', 'modelo', 'tamanho', 'peso', 'ano',
+        'tipo_motor', 'refrigeracao', 'partida', 'quilometragem', 'marchas',
+        'material_casco', 'tipo_viseira', 'sistema_retencao', 'certificacao',
+        'tipo_oleo', 'viscosidade', 'volume_unidade', 'formato_venda',
+        'tipo_recipiente', 'aplicacao', 'tipo_peca', 'modelo_compativel',
+        'numero_peca', 'dimensoes', 'posicao_lado', 'quantidade_kit',
+        'garantia'
+    ];
+    
+    // Filtra campos com valores
+    const campos = [];
+    const valores = [];
+    const especificacoes = {};
+    
+    // Processa campos normais e especificações
+    Object.entries(produto).forEach(([campo, valor]) => {
+        if (valor !== undefined && valor !== '' && valor !== null) {
+            // Se é um campo direto da tabela
+            if (camposPermitidos.includes(campo)) {
+                campos.push(campo);
+                valores.push(valor);
+            } 
+            // Se não é um campo sistema, adiciona às especificações
+            else if (!['categoria_key', 'imagemLink', 'submit'].includes(campo)) {
+                especificacoes[campo] = valor;
+            }
+        }
+    });
 
-  // Corrige peso: envia null se vazio
-  const pesoFinal = (produto.peso !== undefined && produto.peso !== '') ? produto.peso : null;
+    // Adiciona especificações como JSON se houver alguma
+    if (Object.keys(especificacoes).length > 0) {
+        campos.push('especificacoes');
+        valores.push(JSON.stringify(especificacoes));
+    }
 
-  const values = [
-    produto.nome,
-    produto.cor,
-    produto.tamanho,
-    pesoFinal,
-    produto.valor,
-    produto.cilindrada,
-    produto.descricao,
-    produto.potencia,
-    produto.tanque,
-    produto.estoque ?? 0,
-    produto.material,
-    produto.protecao,
-    produto.imagem,
-    produto.thumbnails,
-    produto.Categoria_ID,
-    produto.slug ?? gerarSlug(produto.nome)
-  ];
+    const sql = `
+        INSERT INTO produto 
+        (${campos.join(', ')})
+        VALUES 
+        (${campos.map(() => '?').join(', ')})
+    `;
 
-  db.query(sql, values, callback);
+    console.log('SQL:', sql);
+    console.log('Valores:', valores);
+
+    db.query(sql, valores, callback);
 };
 
 // ATUALIZAÇÃO COM REMOÇÃO DE PROMOÇÃO SE ESTOQUE = 0

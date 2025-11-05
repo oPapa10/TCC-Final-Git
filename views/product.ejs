@@ -96,15 +96,79 @@
                 <div class="details-section product-details mb-4">
                     <h5 class="section-title">Detalhes do Produto</h5>
                     <ul class="details-list">
-                        <% if (produto.cor) { %><li><strong>Cor:</strong> <%= produto.cor %></li><% } %>
-                        <% if (produto.tamanho) { %><li><strong>Tamanho:</strong> <%= produto.tamanho %></li><% } %>
-                        <% if (produto.peso) { %><li><strong>Peso:</strong> <%= produto.peso %> kg</li><% } %>
-                        <% if (produto.cilindrada) { %><li><strong>Cilindrada:</strong> <%= produto.cilindrada %></li><% } %>
-                        <% if (produto.potencia) { %><li><strong>Potência:</strong> <%= produto.potencia %></li><% } %>
-                        <% if (produto.tanque) { %><li><strong>Tanque:</strong> <%= produto.tanque %></li><% } %>
-                        <% if (produto.estoque) { %><li><strong>Estoque:</strong> <%= produto.estoque %></li><% } %>
-                        <% if (produto.material) { %><li><strong>Material:</strong> <%= produto.material %></li><% } %>
-                        <% if (produto.protecao) { %><li><strong>Proteção:</strong> <%= produto.protecao %></li><% } %>
+                        <% 
+                        // Primeiro os campos fixos
+                        const camposFixos = [
+                            { campo: 'marca', label: 'Marca' },
+                            { campo: 'modelo', label: 'Modelo' },
+                            { campo: 'cor', label: 'Cor' },
+                            { campo: 'tamanho', label: 'Tamanho' },
+                            { campo: 'peso', label: 'Peso', unidade: 'kg' },
+                            { campo: 'cilindrada', label: 'Cilindrada' },
+                            { campo: 'potencia', label: 'Potência' },
+                            { campo: 'tanque', label: 'Tanque' },
+                            { campo: 'estoque', label: 'Estoque' },
+                            { campo: 'material', label: 'Material' },
+                            { campo: 'protecao', label: 'Proteção' }
+                        ];
+
+                        // Renderiza campos fixos
+                        camposFixos.forEach(({campo, label, unidade}) => {
+                            if (produto[campo]) { 
+                        %>
+                            <li>
+                                <strong><%= label %>:</strong> 
+                                <%= produto[campo] %><%= unidade ? ' ' + unidade : '' %>
+                            </li>
+                        <%  }
+                        });
+
+                        // Depois os campos dinâmicos do JSON especificacoes
+                        if (produto.especificacoes) {
+                            let specs;
+                            try {
+                                specs = JSON.parse(produto.especificacoes);
+                            } catch(e) {
+                                specs = {};
+                            }
+
+                            // Labels para campos dinâmicos
+                            const labelsEspecificos = {
+                                tipo_motor: 'Tipo de Motor',
+                                refrigeracao: 'Sistema de Refrigeração',
+                                partida: 'Tipo de Partida',
+                                quilometragem: 'Quilometragem',
+                                marchas: 'Número de Marchas',
+                                material_casco: 'Material do Casco',
+                                tipo_viseira: 'Tipo de Viseira',
+                                sistema_retencao: 'Sistema de Retenção',
+                                certificacao: 'Certificação',
+                                tipo_oleo: 'Tipo de Óleo',
+                                viscosidade: 'Viscosidade',
+                                volume_unidade: 'Volume da Unidade',
+                                formato_venda: 'Formato de Venda',
+                                tipo_recipiente: 'Tipo de Recipiente',
+                                aplicacao: 'Aplicação Recomendada',
+                                tipo_peca: 'Tipo de Peça',
+                                modelo_compativel: 'Modelo Compatível',
+                                numero_peca: 'Número da Peça (OEM)',
+                                dimensoes: 'Dimensões',
+                                posicao_lado: 'Posição / Lado',
+                                quantidade_kit: 'Quantidade no Kit',
+                                garantia: 'Garantia'
+                            };
+
+                            // Renderiza campos dinâmicos
+                            Object.entries(specs).forEach(([key, value]) => {
+                                if (value && String(value).trim() !== '') {
+                                    const label = labelsEspecificos[key] || 
+                                                key.replace(/_/g, ' ')
+                                                   .replace(/\b\w/g, l => l.toUpperCase());
+                        %>
+                            <li><strong><%= label %>:</strong> <%= value %></li>
+                        <%      }
+                            });
+                        } %>
                     </ul>
                 </div>
                 <form id="addToCartForm" action="/carrinho/adicionar" method="POST" class="mb-3">

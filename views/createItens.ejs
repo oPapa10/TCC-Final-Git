@@ -3,449 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Produtos | Admin</title>
+    <title>Cadastro de Produtos</title>
+
+    <link rel="stylesheet" href="/stylesheets/createItens.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/menu-superior.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
-    <style>
-        :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --secondary: #4cc9f0;
-            --accent: #7209b7;
-            --success: #28a745;
-            --light-bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-dark: #2b2d42;
-            --text-light: #8d99ae;
-        }
-
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 20px;
-            flex: 1;
-        }
-
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .header-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            position: relative;
-            display: inline-block;
-        }
-
-        .header-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 2px;
-        }
-
-        .btn-voltar {
-            background-color: var(--primary);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .btn-voltar:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
-        }
-
-        .card-edit {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-edit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-        }
-
-        .alert-success {
-            background-color: rgba(40, 167, 69, 0.15);
-            border-left: 4px solid var(--success);
-            color: var(--success);
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 0.7rem;
-            display: block;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-control {
-            border: 2px solid #e0e3eb;
-            border-radius: 10px;
-            padding: 0.85rem 1.2rem;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 1.5rem;
-            background-color: #f8fafc;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
-            background-color: #fff;
-        }
-
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .btn-salvar {
-            background: linear-gradient(to right, var(--success), #5cb85c);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-            margin-top: 1rem;
-        }
-
-        .btn-salvar:hover {
-            background: linear-gradient(to right, #218838, #4cae4c);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-        }
-
-        select.form-control {
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234361ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1rem;
-        }
-
-        .file-input-container {
-            background-color: #f8f9fa;
-            border: 2px dashed #d1d7e0;
-            border-radius: 10px;
-            padding: 1.5rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .file-input-container:hover {
-            border-color: var(--primary);
-            background-color: #f0f4ff;
-        }
-
-        .file-input-label {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            font-weight: 500;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .file-input-required::after {
-            content: ' *';
-            color: #dc3545;
-        }
-
-        .footer {
-            background: var(--card-bg);
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            padding: 1.5rem 0;
-        }
-
-        .footer .text-muted {
-            color: var(--text-light) !important;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 15px;
-            }
-
-            .card-edit {
-                padding: 1.5rem;
-            }
-
-            .header-title {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-4">
         <div class="header-section">
-            <a href="/admCenterMotos" class="btn-voltar" title="Voltar">
-                <i class="fas fa-arrow-left"></i> Voltar
+            <a href="/admCenterMotos" class="btn-voltar">
+                <i class="fas fa-arrow-left"></i> Voltar ao ADM
             </a>
-            <h1 class="header-title">Cadastro de Produtos</h1>
+            <h2 class="header-title"><i class="fas fa-box-open me-2"></i>Cadastro de Produtos</h2>
         </div>
 
-        <div class="card-edit">
-            <% if (typeof sucesso !== 'undefined' && sucesso) { %>
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle me-2"></i> Produto cadastrado com sucesso!
+        <form action="/createItens/produtos" method="POST" enctype="multipart/form-data" id="productForm">
+            <% 
+                // helper para mapear nome da categoria para a chave usada nos botões/js
+                function mapKey(nome){
+                    const s = (nome||'').toLowerCase();
+                    if(s.includes('capacete') || s.includes('cap')) return 'capacete';
+                    if(s.includes('vest') || s.includes('roup') || s.includes('tshirt') || s.includes('roupa')) return 'vestuario';
+                    if(s.includes('moto')) return 'moto';
+                    if(s.includes('óleo')||s.includes('oleo')||s.includes('oil')) return 'oleo';
+                    if(s.includes('peça')||s.includes('peca')||s.includes('peças')||s.includes('pecas')) return 'pecas';
+                    return 'outros';
+                }
+            %>
+
+            <!-- CATEGORIAS (botões fixos) -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-tags me-2"></i>Categoria do Produto</h5>
+                    <div id="categoriaButtons" class="d-flex flex-wrap">
+                        <button type="button" class="btn btn-categoria" data-key="vestuario">
+                            <i class="fas fa-tshirt me-2"></i> Vestuário
+                        </button>
+                        <button type="button" class="btn btn-categoria" data-key="capacete">
+                            <i class="fas fa-shield-alt me-2"></i> Capacete
+                        </button>
+                        <button type="button" class="btn btn-categoria" data-key="moto">
+                            <i class="fas fa-motorcycle me-2"></i> Moto
+                        </button>
+                        <button type="button" class="btn btn-categoria" data-key="oleo">
+                            <i class="fas fa-oil-can me-2"></i> Óleo
+                        </button>
+                        <button type="button" class="btn btn-categoria" data-key="pecas">
+                            <i class="fas fa-cog me-2"></i> Peças
+                        </button>
+                        <button type="button" class="btn btn-categoria" data-key="outros">
+                            <i class="fas fa-ellipsis-h me-2"></i> Outros / Geral
+                        </button>
+                    </div>
                 </div>
-            <% } %>
+            </div>
 
-            <form id="productForm" action="/createItens/produtos" method="POST" enctype="multipart/form-data">
-                <div class="row">
-                    <!-- Coluna Esquerda -->
-                    <div class="col-md-6">
-                        <!-- Inputs principais -->
-                        <div class="form-group">
-                            <label class="form-label" for="nome">Nome do Produto</label>
-                            <input type="text" class="form-control" id="nome" name="nome" maxlength="100" required>
+            <!-- INFORMAÇÕES BÁSICAS (oculto até escolher categoria) -->
+            <div class="card" id="info-basicas" style="display:none;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Informações Básicas</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nome" class="form-label">Nome do Produto</label>
+                            <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Jaqueta X, Capacete ASX..." required>
+                            <div class="invalid-feedback">Por favor, informe o nome do produto.</div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="valor" class="form-label">Valor (R$)</label>
+                            <input type="number" id="valor" name="valor" class="form-control" step="0.01" min="0" placeholder="0,00" required>
+                            <div class="invalid-feedback">Por favor, informe um valor válido.</div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="valor">Valor (R$)</label>
-                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="categoria">Categoria</label>
-                            <select class="form-control" id="categoria" name="categoria" required>
-                                <option value="">Selecione uma categoria</option>
-                                <% categorias.forEach(function(cat) { %>
-                                    <option value="<%= cat.ID %>"><%= cat.nome %></option>
-                                <% }) %>
+                        <!-- AQUI: mostra as categorias cadastradas do banco -->
+                        <div class="col-md-3 mb-3">
+                            <label for="categoria_id" class="form-label">Categoria (catálogo)</label>
+                            <select id="categoria_id" name="categoria_id" class="form-control" required>
+                                <option value="">Selecione uma categoria cadastrada</option>
+                                <% if (typeof categorias !== 'undefined' && categorias.length) { %>
+                                    <% categorias.forEach(function(cat){ %>
+                                        <option value="<%= cat.ID %>" data-key="<%= mapKey(cat.nome) %>"><%= cat.nome %></option>
+                                    <% }) %>
+                                <% } %>
                             </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="cor">Cor</label>
-                            <input type="text" class="form-control" id="cor" name="cor" maxlength="25">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="tamanho">Tamanho</label>
-                            <input type="text" class="form-control" id="tamanho" name="tamanho" maxlength="15">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="peso">Peso (kg)</label>
-                            <input type="number" step="0.01" class="form-control" id="peso" name="peso">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="cilindrada">Cilindrada</label>
-                            <input type="text" class="form-control" id="cilindrada" name="cilindrada" maxlength="50">
-                        </div>
-                    </div>
-
-                    <!-- Coluna Direita -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="potencia">Potência</label>
-                            <input type="text" class="form-control" id="potencia" name="potencia" maxlength="50">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="tanque">Tanque</label>
-                            <input type="text" class="form-control" id="tanque" name="tanque" maxlength="50">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="material">Material</label>
-                            <input type="text" class="form-control" id="material" name="material" maxlength="100">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="protecao">Proteção</label>
-                            <input type="text" class="form-control" id="protecao" name="protecao" maxlength="100">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="descricao">Descrição</label>
-                            <textarea class="form-control" id="descricao" name="descricao" maxlength="255"></textarea>
+                            <input type="hidden" id="categoria_key" name="categoria_key" value="">
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Upload de Imagens -->
-                <div class="row mt-3">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label file-input-required" for="imagem">Imagem Principal</label>
+            <!-- CAMPOS DINÂMICOS -->
+            <div class="card" id="card-especificacoes" style="display:none;">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-list-alt me-2"></i>Especificações do Produto</h5>
+                    <div id="campos-dinamicos"></div>
+                </div>
+            </div>
+
+            <!-- IMAGENS -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-images me-2"></i>Imagens do Produto</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label file-input-required">Imagem Principal</label>
                             <div class="file-input-container">
-                                <input type="file" id="imagem" name="imagem" accept="image/*" class="form-control">
-                                <label for="imagem" style="cursor: pointer;">
-                                    <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--primary);"></i>
-                                    <div class="file-input-label">Clique para selecionar a imagem principal</div>
-                                    <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
-                                </label>
-                                <div class="mt-3">
-                                    <label class="form-label" for="imagemLink">Ou informe o link da imagem principal</label>
-                                    <input type="url" id="imagemLink" name="imagemLink" class="form-control" placeholder="https://exemplo.com/imagem.jpg">
-                                </div>
+                                <input type="file" id="imagemFile" name="imagem" accept="image/*" class="form-control mb-3">
+                                <div class="file-input-label">Clique para selecionar a imagem principal</div>
+                                <small class="text-muted d-block mb-3">Formatos: JPG, PNG, WEBP (Máx. 5MB)</small>
+
+                                <label class="form-label mt-3">Ou informe o link da imagem principal</label>
+                                <input type="url" id="imagemLink" name="imagemLink" class="form-control" placeholder="https://exemplo.com/imagem.jpg">
+                                <small class="text-muted d-block mt-2">Se informar link, o upload será desativado e vice-versa.</small>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label file-input-required" for="thumbnails">Thumbnails (URLs separadas por vírgula)</label>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Thumbnails (miniaturas)</label>
                             <div class="file-input-container">
-                                <input type="text" class="form-control" id="thumbnails" name="thumbnails" placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg">
-                                <div class="mt-3">
-                                    <label class="form-label" for="thumbnailUpload">Ou selecione uma imagem para thumbnail</label>
-                                    <input type="file" id="thumbnailUpload" name="thumbnailUpload" accept="image/*" class="form-control">
-                                    <label for="thumbnailUpload" style="cursor: pointer;">
-                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--primary);"></i>
-                                        <div class="file-input-label">Clique para selecionar uma thumbnail</div>
-                                        <small class="text-muted">Formatos: JPG, PNG (Máx. 5MB)</small>
-                                    </label>
-                                </div>
+                                <label class="form-label">URLs (separe por vírgula)</label>
+                                <input type="text" id="thumbnails" name="thumbnails" class="form-control mb-3" placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg">
+
+                                <label class="form-label mt-3">Ou selecione arquivo(s) para thumbnail</label>
+                                <input type="file" id="thumbnailUpload" name="thumbnailUpload" accept="image/*" class="form-control" multiple>
+                                <small class="text-muted d-block mt-2">URLs e uploads podem ser usados simultaneamente; upload será priorizado se presente.</small>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" class="btn-salvar">
-                    <i class="fas fa-save"></i> Cadastrar Produto
-                </button>
-            </form>
-        </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Cadastrar Produto
+            </button>
+        </form>
     </div>
-
-    <footer class="footer mt-auto py-3">
-        <div class="container text-center">
-            <span class="text-muted">&copy; <%= new Date().getFullYear() %> Center Motos. Todos os direitos reservados.</span>
-        </div>
-    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/createItens.js"></script>
-    <script>
-        // Mostra o nome do arquivo selecionado
-        document.getElementById('imagem').addEventListener('change', function (e) {
-            const fileName = e.target.files[0]?.name || 'Nenhum arquivo selecionado';
-            const fileLabel = document.querySelector('.file-input-label');
-            fileLabel.textContent = fileName;
-            fileLabel.style.fontWeight = '600';
-            fileLabel.style.color = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
-        });
-
-        // Validação do formulário
-        document.getElementById('productForm').addEventListener('submit', function (e) {
-            // Validação dos campos obrigatórios normais
-            const requiredFields = this.querySelectorAll('[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.style.borderColor = '#dc3545';
-                    isValid = false;
-                }
-            });
-
-            // Validação customizada para imagem principal
-            const imagemInput = document.getElementById('imagem');
-            const imagemLinkInput = document.getElementById('imagemLink');
-            if (
-                (!imagemInput.value || imagemInput.disabled) &&
-                (!imagemLinkInput.value || imagemLinkInput.disabled)
-            ) {
-                isValid = false;
-                imagemInput.style.borderColor = '#dc3545';
-                imagemLinkInput.style.borderColor = '#dc3545';
-                alert('Selecione uma imagem principal ou informe o link!');
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-                alert('Por favor, preencha todos os campos obrigatórios!');
-            }
-        });
-
-        // Bloqueia upload se link for preenchido e vice-versa
-        const imagemInput = document.getElementById('imagem');
-        const imagemLinkInput = document.getElementById('imagemLink');
-
-        imagemInput.addEventListener('change', function () {
-            if (imagemInput.files.length > 0) {
-                imagemLinkInput.disabled = true;
-                imagemLinkInput.value = '';
-            } else {
-                imagemLinkInput.disabled = false;
-            }
-        });
-
-        imagemLinkInput.addEventListener('input', function () {
-            if (imagemLinkInput.value.trim() !== '') {
-                imagemInput.disabled = true;
-                imagemInput.value = '';
-                document.querySelector('.file-input-label').textContent = 'Clique para selecionar a imagem principal';
-            } else {
-                imagemInput.disabled = false;
-            }
-        });
-    </script>
 </body>
 </html>

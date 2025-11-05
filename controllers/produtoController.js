@@ -103,43 +103,33 @@ exports.formulario = (req, res) => {
 
 // Criar produto
 exports.criar = (req, res) => {
-  const {
-    nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-    estoque, material, protecao, thumbnails, categoria
-  } = req.body;
+    const categoria = req.body.categoria;
+    const campos = {};
+    
+    // Buscar campos da categoria
+    db.query('SELECT campos FROM categoria WHERE ID = ?', [categoria], (err, results) => {
+        if (err) return res.status(500).send('Erro ao buscar categoria');
+        
+        const camposCategoria = JSON.parse(results[0].campos);
+        
+        // Montar objeto com valores dos campos
+        camposCategoria.forEach(campo => {
+            const id = campo.toLowerCase().replace(/ /g, '_');
+            campos[id] = req.body[id];
+        });
 
-  let imagem = '';
-  if (req.file) {
-    imagem = '/uploads/' + req.file.filename;
-  }
+        // Salvar no banco com os campos específicos
+        const produto = {
+            ...campos,
+            categoria_id: categoria,
+            imagem: req.file ? '/uploads/' + req.file.filename : ''
+        };
 
-  const estoqueFinal = typeof estoque !== 'undefined' ? Number(estoque) : 0;
-  const slug = gerarSlug(nome || 'produto');
-
-  // Corrige peso: envia null se vazio
-  const pesoFinal = (peso && peso.trim() !== '') ? Number(peso) : null;
-
-  Produto.create({
-    nome: nome || '',
-    cor: cor || '',
-    tamanho: tamanho || '',
-    peso: pesoFinal,
-    valor: valor ? Number(valor) : 0,
-    cilindrada: cilindrada || '',
-    descricao: descricao || '',
-    potencia: potencia || '',
-    tanque: tanque || '',
-    estoque: estoqueFinal,
-    material: material || '',
-    protecao: protecao || '',
-    imagem: imagem || '',
-    thumbnails: thumbnails || '',
-    Categoria_ID: categoria,
-    slug
-  }, (err) => {
-    if (err) return res.status(500).send('Erro ao criar produto: ' + (err.sqlMessage || err.message));
-    res.redirect('/seeProduto');
-  });
+        Produto.create(produto, (err) => {
+            if (err) return res.status(500).send('Erro ao criar produto');
+            res.redirect('/seeProduto');
+        });
+    });
 };
 
 // Atualizar produto

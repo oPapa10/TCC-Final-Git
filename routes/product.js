@@ -11,7 +11,7 @@ const produtoController = require('../controllers/produtoController');
 router.get('/p/:slug', (req, res) => {
     const slug = req.params.slug;
     db.query(
-        `SELECT p.*, pr.valor_promocional
+        `SELECT p.*, pr.valor_promocional, p.especificacoes
          FROM Produto p
          LEFT JOIN (
              SELECT produto_id, MAX(valor_promocional) AS valor_promocional
