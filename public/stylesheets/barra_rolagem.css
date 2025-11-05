@@ -1,14 +1,35 @@
 /* Para Chrome, Edge e Safari */
-body::-webkit-scrollbar {
-  display: none;
+body::-webkit-scrollbar,
+.notifications-container::-webkit-scrollbar,
+.notification-list::-webkit-scrollbar,
+div::-webkit-scrollbar {
+    width: 0 !important;
+    display: none !important;
 }
 
 /* Para Firefox */
-body {
-  scrollbar-width: none;
+body,
+.notifications-container,
+.notification-list,
+div {
+    scrollbar-width: none !important;
 }
 
 /* Para IE e Edge antigo */
-body {
-  -ms-overflow-style: none;
+body,
+.notifications-container,
+.notification-list,
+div {
+    -ms-overflow-style: none !important;
+}
+
+/* Força a ocultação em todos os elementos com rolagem */
+* {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar {
+    width: 0 !important;
+    display: none !important;
 }

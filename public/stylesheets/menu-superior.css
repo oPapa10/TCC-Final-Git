@@ -39,7 +39,8 @@
 }
 
 /* ===== CONTADOR DE CARRINHO (GLOBAL) ===== */
-.cart-counter {
+
+/* .cart-counter {
     position: absolute;
     top: -8px;
     right: -8px;
@@ -54,7 +55,7 @@
     justify-content: center;
     font-weight: bold;
     border: 2px solid white;
-}
+} */
 
 .nav-item-cart {
     position: relative;
@@ -286,3 +287,142 @@
     text-shadow: none !important;
 }
 
+/* Forçar navbar com a mesma cor/gradiente da primeira parte do hero-section */
+nav.navbar-custom,
+nav.navbar-custom.fixed-top,
+#navbar2 {
+    background: linear-gradient(135deg, #0d6efd 0%, #0d6efd 30%, #0d6efd 100%) !important;
+    background-color: #0d6efd !important; /* fallback sólido */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+    color: #ffffff !important;
+}
+
+/* garantir que o container interno não altere a cor */
+nav.navbar-custom .container,
+#navbar2 .container {
+    background: transparent !important;
+}
+
+/* links e marca em branco para contraste */
+nav.navbar-custom .nav-link,
+nav.navbar-custom .navbar-brand,
+#navbar2 .nav-link,
+#navbar2 .navbar-brand {
+    color: #ffffff !important;
+}
+
+/* garantir que o toggler e ícones fiquem visíveis sobre esse fundo */
+.navbar-toggler-icon,
+.navbar-custom .nav-icon,
+.navbar-custom .fa,
+#navbar2 .nav-icon {
+    filter: none !important;
+    color: #fff !important;
+}
+
+/* Reduzir espaçamento e padding dos botões do menu superior (desktop) */
+html body nav.navbar-custom .navbar-nav.ms-auto.flex-row.flex-nowrap.align-items-center {
+    gap: 2px !important;          /* espaço entre itens do menu */
+    padding: 0 8px !important;
+    align-items: center !important;
+}
+
+/* ===== RESPONSIVO: forçar texto e ícones PRETOS no collapse / offcanvas ===== */
+@media (max-width: 991px) {
+  /* background claro do painel responsivo para contraste com texto preto */
+  html body .navbar-custom .navbar-collapse.show,
+  html body .offcanvas,
+  html body .offcanvas.show,
+  html body .offcanvas.offcanvas-start {
+    background: #f8f9fa !important;
+    color: #111 !important;
+  }
+
+  /* links e ícones dentro do collapse/offcanvas */
+  html body .navbar-custom .navbar-collapse.show .nav-link,
+  html body .navbar-custom .navbar-collapse.show .navbar-brand,
+  html body .offcanvas .nav-link,
+  html body .offcanvas .nav-link i,
+  html body .offcanvas .fa {
+    color: #111 !important;
+    background: transparent !important;
+  }
+
+  /* ícones fontawesome e imagens dentro do collapse/offcanvas */
+  html body .navbar-custom .navbar-collapse.show .fa,
+  html body .navbar-custom .navbar-collapse.show .nav-icon,
+  html body .offcanvas .fa,
+  html body .offcanvas .nav-icon {
+    filter: none !important;
+    opacity: 1 !important;
+    color: #111 !important;
+  }
+
+  /* botão toggler: três risquinhos PRETOS */
+  .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 7h22M4 15h22M4 23h22'/></svg>") !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+}
+/* proteção extra: garantir cor preta em qualquer fallback */
+html body .offcanvas .nav-link, html body .offcanvas .nav-link * { color: #111 !important; }
+/* Atualize estas regras no final do arquivo */
+/* Substitua ou adicione estas regras para padronizar o espaçamento */
+.navbar-nav.ms-auto {
+    gap: 2px !important;          /* mesmo espaçamento do index */
+    padding-right: 8px !important; /* mesmo padding do index */
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Ajuste os botões da nav para terem o mesmo tamanho */
+.nav-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 8px !important;
+    height: 52px !important;
+    width: 52px !important;
+    margin: 0 !important; /* Remove margens extras */
+}
+
+/* Ajuste específico para o botão com nome de usuário */
+.nav-link:has(span) {
+    width: auto !important;
+    padding: 8px 16px !important;
+    margin-right: 8px !important; /* Reduzido para manter consistência */
+}
+
+/* Remove margens extras dos itens de navegação */
+.nav-item {
+    margin: 0 !important;
+}
+
+/* Ajuste do avatar */
+.nav-avatar,
+.nav-avatar-placeholder {
+    width: 36px !important;
+    height: 36px !important;
+    object-fit: cover;
+    margin-left: 8px !important; /* Espaço entre o texto e o avatar */
+}
+
+/* Ajuste do espaçamento entre itens do menu */
+.navbar-nav.ms-auto {
+    gap: 16px !important;
+    padding-right: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* Ajuste para o texto de boas-vindas */
+.nav-link span {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 200px !important; /* Ajuste este valor conforme necessário */
+}

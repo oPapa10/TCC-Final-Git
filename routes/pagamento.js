@@ -416,8 +416,34 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
         }
         // limpar checkout
         delete req.session.checkout;
- 
-        return res.render('pagamento-confirmado', { valor: valorFormulario, descricao, usuario });
+
+        // montar dados para a view (nome/imagem/preco) e enviar para a template
+        let itensParaView = [];
+        try {
+          const ids = itensProcessar.map(i => Number(i.produtoId)).filter(Boolean);
+          if (ids.length) {
+            const placeholders = ids.map(()=>'?').join(',');
+            const rows = await new Promise((resolve, reject) => {
+              db.query(`SELECT ID, nome, imagem, valor FROM Produto WHERE ID IN (${placeholders})`, ids, (err, r) => err ? reject(err) : resolve(r || []));
+            });
+            itensParaView = itensProcessar.map(it => {
+              const prod = rows.find(r => Number(r.ID) === Number(it.produtoId)) || {};
+              const precoUnit = (prod && prod.valor != null) ? Number(prod.valor) : Number(it.precoUnitario || 0);
+              return {
+                produtoId: Number(it.produtoId),
+                nome: prod.nome || it.nome || '',
+                imagem: prod.imagem || it.imagem || '/images/placeholder.png',
+                quantidade: Number(it.quantidade || 1),
+                precoUnitario: precoUnit
+              };
+            });
+          }
+        } catch (e) {
+          console.warn('[compraConfirmacao] falha ao montar itensParaView:', e);
+        }
+        const produtoImg = (itensParaView && itensParaView[0]) ? itensParaView[0].imagem : undefined;
+        const produtoNome = (itensParaView && itensParaView[0]) ? itensParaView[0].nome : undefined;
+        return res.render('compraConfirmacao', { valor: valorFormulario, descricao, usuario, itens: itensParaView, produtoImg, produtoNome });
     } catch (err) {
         console.error('Erro em /pagamento/compraConfirmacao:', err);
         return res.status(500).render('error', { error: err, message: 'Erro ao confirmar pedido via PIX' });
@@ -506,17 +532,38 @@ async function handlePixConfirm(req, res) {
      }
      delete req.session.checkout;
  
-     return res.render('pagamento-confirmado', { valor: valorFormulario, descricao, usuario });
-   } catch (err) {
-     console.error('Erro em /pagamento/compraConfirmacao (handler):', err);
-     return res.status(500).render('error', { error: err, message: 'Erro ao confirmar pedido via PIX' });
-   }
-}
- 
-// associa o handler às rotas existentes e ao novo alias /confirmar
-router.post('/compraConfirmacao', exigeLogin, handlePixConfirm);
-router.post('/confirmar', exigeLogin, handlePixConfirm);
- 
+     // montar itens para view (caso exista) e renderizar
+     let itensParaView2 = [];
+     try {
+       const ids2 = itensProcessar.map(i => Number(i.produtoId)).filter(Boolean);
+       if (ids2.length) {
+         const ph = ids2.map(()=>'?').join(',');
+         const rows2 = await new Promise((resolve,reject) => {
+           db.query(`SELECT ID, nome, imagem, valor FROM Produto WHERE ID IN (${ph})`, ids2, (err,r) => err ? reject(err) : resolve(r || []));
+         });
+         itensParaView2 = itensProcessar.map(it => {
+           const prod = rows2.find(r => Number(r.ID) === Number(it.produtoId)) || {};
+           return {
+             produtoId: Number(it.produtoId),
+             nome: prod.nome || it.nome || '',
+             imagem: prod.imagem || it.imagem || '/images/placeholder.png',
+             quantidade: Number(it.quantidade || 1),
+             precoUnitario: prod.valor != null ? Number(prod.valor) : Number(it.precoUnitario || 0)
+           };
+         });
+       }
+     } catch(e) {
+       console.warn('[compraConfirmacao][handlePixConfirm] erro montar itens:', e);
+     }
+     const produtoImg2 = (itensParaView2 && itensParaView2[0]) ? itensParaView2[0].imagem : undefined;
+     const produtoNome2 = (itensParaView2 && itensParaView2[0]) ? itensParaView2[0].nome : undefined;
+     return res.render('compraConfirmacao', { valor: valorFormulario, descricao, usuario, itens: itensParaView2, produtoImg: produtoImg2, produtoNome: produtoNome2 });
+    } catch (err) {
+      console.error('Erro em handlePixConfirm:', err);
+      return res.status(500).render('error', { error: err, message: 'Erro interno ao processar pagamento' });
+    }
+} // fim handlePixConfirm
+
 // Rota cartao - mesma lógica de leitura de checkout
 router.post('/cartao', exigeLogin, async (req, res) => {
   try {
@@ -566,7 +613,7 @@ router.post('/cartao', exigeLogin, async (req, res) => {
     }
     delete req.session.checkout;
  
-    return res.render('pagamento-confirmado', { valor: req.body.valor || 0, descricao, usuario });
+    return res.render('compraConfirmacao', { valor: req.body.valor || 0, descricao, usuario });
   } catch (err) {
     console.error('Erro em /pagamento/cartao:', err);
     return res.status(500).render('error', { error: err, message: 'Erro ao processar pagamento por cartão' });
@@ -639,4 +686,5 @@ function extractItemsFromReq(req) {
    return [];
  }
 
+// garante exportar o router para o app principal
 module.exports = router;

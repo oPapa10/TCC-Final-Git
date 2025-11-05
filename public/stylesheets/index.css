@@ -163,6 +163,20 @@
     padding: 0 15px;
 }
 
+/* Reduzir espaçamento dos botões da navbar */
+.navbar-nav.mx-auto.flex-row.flex-nowrap.align-items-center {
+    gap: 2px !important;         /* espaço entre botões */
+    padding: 0 8px !important;   /* padding lateral do grupo */
+}
+
+.btn-category,
+.navbar-custom .nav-link {
+    padding: 6px 10px !important; /* menor padding interno dos botões/links */
+    margin: 0 !important;
+    font-size: 0.95rem !important;
+    border-radius: 12px !important;
+}
+
 /* Barra de rolagem horizontal nas categorias */
 #navbarNavCategorias .navbar-nav.mx-auto {
     max-width: 1000px;
@@ -374,12 +388,14 @@
   }
 }
 
+/* Remova ou comente este bloco */
 /* Contador do Carrinho - Estilizado */
+/*
 .cart-counter {
     position: absolute;
     top: -6px;
     right: -6px;
-    background-color: #dc3545; /* vermelho Bootstrap */
+    background-color: #dc3545; 
     color: white;
     border-radius: 50%;
     width: 20px;
@@ -403,6 +419,7 @@
 .nav-item {
     position: relative;
 }
+*/
 
 .alert-custom {
     background-color: #f8f9fa;

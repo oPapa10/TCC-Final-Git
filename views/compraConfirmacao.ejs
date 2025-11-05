@@ -1,0 +1,66 @@
+<!-- página de confirmação de compra (rota: /pagamento/compraConfirmacao) -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <%- include('partials/head', { title: 'Compra Confirmada' }) %>
+  <body class="compra-confirmacao d-flex flex-column min-vh-100 <%= (!itens || !itens.length) ? 'single-item' : '' %>">
+    <%- include('partials/navbar') %>
+
+    <main class="flex-fill">
+      <div class="confirmation-wrapper">
+        <div class="confirmation-card">
+          <div class="confirmation-head mb-3">
+            <div class="confirm-icon">
+              <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+            </div>
+            <div class="confirm-text">
+              <h1 class="h5 mb-0">Pagamento Recebido</h1>
+            </div>
+          </div>
+
+          <div class="confirmation-body d-flex">
+            <% if (!Array.isArray(itens) || !itens.length) { %>
+            <div class="media-thumb me-3">
+              <% if (typeof produtoImg !== 'undefined' && produtoImg) { %>
+                <img src="<%= produtoImg %>" alt="<%= (typeof produtoNome !== 'undefined' && produtoNome) ? produtoNome : 'Produto' %>" class="img-fluid rounded">
+              <% } else { %>
+                <img src="/images/placeholder.png" alt="Produto" class="img-fluid rounded">
+              <% } %>
+            </div>
+            <% } %>
+
+            <div class="confirmation-text flex-fill">
+              <p class="mb-2">
+                Recebemos o pagamento de <strong>R$ <%= Number(typeof valor !== 'undefined' ? valor : 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) %></strong>.
+              </p>
+
+              <% if (typeof itens !== 'undefined' && Array.isArray(itens) && itens.length) { %>
+                <div class="items-list mb-2">
+                  <% itens.forEach(function(it){ %>
+                    <div class="d-flex align-items-center item-row mb-2">
+                      <img src="<%= it.imagem %>" class="item-thumb me-2 rounded" alt="<%= it.nome %>">
+                      <div>
+                        <div class="fw-bold"><%= it.nome %></div>
+                        <div class="small text-muted">Qtd: <%= it.quantidade %> • R$ <%= Number(it.precoUnitario).toLocaleString('pt-BR', {minimumFractionDigits:2}) %></div>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+
+              <div class="confirmation-note text-muted small">
+                Ao confirmar o recebimento no app, você poderá avaliá-lo. Notificações foram enviadas ao sistema administrativo.
+              </div>
+            </div>
+          </div>
+
+          <div class="confirmation-actions mt-3 text-center">
+            <a href="/" class="btn btn-primary me-2">Voltar à loja</a>
+            <a href="/notificacoes" class="btn btn-outline-secondary">Ver pedidos</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('partials/footer') %>
+  </body>
+</html>

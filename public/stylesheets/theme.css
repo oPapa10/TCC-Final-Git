@@ -1532,3 +1532,18 @@ body.dark-theme nav.navbar-custom.fixed-top .navbar-nav.ms-auto .nav-link {
     border: none !important;
     box-shadow: none !important;
 }
+
+/* ===== GARANTIA: index-footer mantém cor das categorias mesmo no tema escuro ===== */
+html body footer#index-footer,
+body.dark-theme footer#index-footer,
+body[data-theme="dark"] footer#index-footer {
+    background: var(--primary-medium, #495057) !important;
+    color: var(--text-light, #f8f9fa) !important;
+    border-top: 1px solid rgba(0,0,0,0.06) !important;
+    box-shadow: none !important;
+}
+
+/* Evita que regras genéricas de footer.dark-theme sobrescrevam o index-footer */
+body.dark-theme footer.footer:not(#index-footer) {
+    /* footers normais do site continuam a responder ao tema escuro */
+}

@@ -507,6 +507,46 @@ body {
     margin: 0;
 }
 
+/* FIX: navbar com mesma cor/gradiente da primeira parte do hero e sem "bleed" do fundo */
+nav.navbar-custom,
+nav.navbar-custom.fixed-top,
+#navbar2 {
+    background: linear-gradient(135deg, #0d6efd 0%, #0d6efd 30%, #0d6efd 100%) !important;
+    background-color: #0d6efd !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    position: relative !important;
+    z-index: 1200 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+}
+
+/* remover fundos/paddings internos que podem mostrar outra cor nas laterais */
+nav.navbar-custom .container,
+#navbar2 .container,
+nav.navbar-custom .navbar-collapse,
+nav.navbar-custom .navbar-nav {
+    background: transparent !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* garantir que o hero fique encostado na navbar (evita mostrar o background da página) */
+.hero-section {
+    margin-top: 0 !important;
+    /* manter espaçamento visual se necessário: ajuste 80px conforme a altura real da navbar */
+    padding-top: 80px !important;
+}
+
+/* proteção mobile */
+@media (max-width: 991px) {
+    nav.navbar-custom,
+    #navbar2 {
+        background: linear-gradient(135deg, #0d6efd 0%, #0d6efd 30%, #0d6efd 100%) !important;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .main-content {

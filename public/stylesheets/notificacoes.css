@@ -99,10 +99,33 @@ body.dark-theme {
 
 /* Layout do conteúdo da notificação */
 .notification-content {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex !important;
   gap: 20px;
-  align-items: start;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* imagem fixa à esquerda */
+.notification-image {
+  flex: 0 0 80px;
+  width: 80px;
+  height: 80px;
+}
+
+/* texto ocupa o centro e permite quebra correta */
+.notification-text {
+  flex: 1 1 auto;
+  min-width: 0; /* permite truncamento/quebra correta em flex */
+}
+
+/* meta (status / botões) à direita */
+.notification-meta {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+  text-align: right;
 }
 
 /* Imagem do produto */
@@ -266,45 +289,38 @@ body.dark-theme .alert-warning {
   margin-left: 12px;
 }
 
-/* Responsividade */
+/* Garantir espaçamento/padding do menu superior igual às outras páginas */
+html body nav.navbar-custom .navbar-nav.ms-auto.flex-row.flex-nowrap.align-items-center {
+    gap: 6px !important;
+    padding: 0 8px !important;
+    align-items: center !important;
+}
+
+html body nav.navbar-custom .navbar-nav.ms-auto.flex-row.flex-nowrap.align-items-center .nav-link,
+html body nav.navbar-custom .navbar-nav.ms-auto.flex-row.flex-nowrap.align-items-center .btn {
+    padding: 8px 12px !important;
+    font-size: 0.9rem !important;
+    border-radius: 20px !important;
+}
+
+/* Responsividade: ajustes em telas menores */
 @media (max-width: 768px) {
-  .container.mt-5.mb-5 {
-    padding: 0 16px;
-  }
-  
-  .notification-content {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .notification-image {
-    width: 60px;
-    height: 60px;
-    justify-self: start;
-  }
-  
-  .notification-meta {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    text-align: left;
-  }
-  
-  .notification-header h3 {
-    font-size: 1.5rem;
-  }
-  
   .notification-card {
-    padding: 20px;
+    padding: 16px;
   }
   
-  .empty-state {
-    padding: 40px 24px;
+  .notification-title {
+    font-size: 1rem;
   }
   
-  .empty-state i {
-    font-size: 3rem;
+  .status-badge {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .confirm-btn {
+    padding: 6px 14px;
+    font-size: 0.8rem;
   }
 }
 
@@ -364,3 +380,5 @@ body.dark-theme .alert-warning {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
+
+/* Remover trecho quebrado/conflictante que estava no final do arquivo */

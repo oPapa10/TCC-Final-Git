@@ -5,7 +5,6 @@
       <img src="/images/logo2.png" alt="Logomarca" class="logo-img" />
     </a>
 
-    <% /* Search + Admin serão renderizados somente se incluir com showSearch/showAdmin = true */ %>
     <% if (typeof showSearch !== 'undefined' && showSearch) { %>
       <div class="search-container ms-md-3 flex-grow-1">
         <div class="input-group" style="max-width:420px;">
@@ -28,7 +27,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- offcanvas lateral esquerda -->
+    <!-- offcanvas lateral esquerda (MANTER APENAS ESTE BLOCO, remover duplicatas) -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenuIndex" aria-labelledby="offcanvasMenuIndexLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasMenuIndexLabel">
@@ -74,38 +73,53 @@
       </div>
     </div>
 
-    <!-- desktop collapse: mantém apenas o ícone de opções (remove botão grande duplicado) -->
+    <!-- restante do collapse/desktop menu -->
     <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNavMenuSuperior">
       <ul class="navbar-nav ms-auto flex-row flex-nowrap align-items-center">
-        <!-- colocar admin como nav-item (aparece à direita junto com ícones) -->
         <% if (typeof showAdmin !== 'undefined' && showAdmin) { %>
-          <li class="nav-item admin-nav-item d-none d-md-flex align-items-center">
-            <a class="nav-link" href="/admCenterMotos" id="admin-button-desktop">
+          <li class="nav-item">
+            <a class="nav-link nav-btn" href="/admCenterMotos" id="admin-button-desktop">
               <i class="fas fa-user-shield"></i>
             </a>
           </li>
         <% } %>
+        
         <% if (typeof usuario !== 'undefined' && usuario) { %>
-          <li class="nav-item d-flex align-items-center">
-            <a href="/perfil" class="nav-link d-flex align-items-center" style="cursor:pointer;">
+          <li class="nav-item">
+            <a href="/perfil" class="nav-link nav-btn">
               <span class="me-2">Bem-vindo, <%= usuario.nome.split(' ')[0] %></span>
               <% if (usuario.avatar && usuario.avatar.match(/\.(jpg|jpeg|png|gif)$/i)) { %>
-                <img src="<%= usuario.avatar %>" alt="Avatar" class="rounded-circle" style="width:32px; height:32px; object-fit:cover;">
+                <img src="<%= usuario.avatar %>" alt="Avatar" class="rounded-circle nav-avatar">
               <% } else { %>
-                <span class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width:32px; height:32px;">
-                  <i class="fas fa-user" style="font-size: 1.3rem; color: #888;"></i>
+                <span class="rounded-circle nav-avatar-placeholder">
+                  <i class="fas fa-user"></i>
                 </span>
               <% } %>
             </a>
           </li>
         <% } %>
 
-        <li class="nav-item"><a class="nav-link" href="/"><img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" class="nav-icon" alt="Início"></a></li>
-        <li class="nav-item"><a class="nav-link" href="/perfil"><img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="nav-icon" alt="Perfil"></a></li>
-        <li class="nav-item"><a class="nav-link" href="/carrinho"><img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" class="nav-icon" alt="Carrinho"><span id="cartCounter" class="cart-counter"></span></a></li>
+        <li class="nav-item">
+          <a class="nav-link nav-btn" href="/">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" class="nav-icon" alt="Início">
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link nav-btn" href="/perfil">
+            <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="nav-icon" alt="Perfil">
+          </a>
+        </li>
+        
+        <li class="nav-item">
+          <a class="nav-link nav-btn" href="/carrinho">
+            <img src="https://cdn-icons-png.flaticon.com/512/6713/6713723.png" class="nav-icon" alt="Carrinho">
+            <span id="cartCounter" class="cart-counter"></span>
+          </a>
+        </li>
 
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOpcoes" role="button" data-bs-toggle="dropdown">
+          <a class="nav-link nav-btn dropdown-toggle" href="#" id="navbarDropdownOpcoes" role="button" data-bs-toggle="dropdown">
             <img src="https://static.vecteezy.com/system/resources/previews/019/858/703/non_2x/menu-flat-color-outline-icon-free-png.png" alt="Opções" class="nav-icon"/>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownOpcoes">

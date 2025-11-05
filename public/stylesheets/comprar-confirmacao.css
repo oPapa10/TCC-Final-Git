@@ -1,0 +1,276 @@
+/* ESCOPO: todas as regras abaixo aplicam-se apenas quando <body> tem a classe .compra-confirmacao */
+body.compra-confirmacao {
+  --conf-max-width: 980px;
+  --conf-gap: 1rem;
+  --conf-radius: 12px;
+}
+
+/* garante espaçamento por causa da navbar fixa */
+body.compra-confirmacao main { padding-top: calc(var(--navbar-height, 72px) + 8px) !important; }
+
+/* wrapper central */
+body.compra-confirmacao .confirmation-wrapper {
+  max-width: var(--conf-max-width);
+  margin: 2.5rem auto;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+/* card principal */
+body.compra-confirmacao .confirmation-card {
+  background: #ffffff;
+  border-radius: var(--conf-radius);
+  padding: 1.25rem;
+  border: 1px solid rgba(15,23,42,0.04);
+  box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+}
+
+/* Cabeçalho: ícone ao lado do título */
+body.compra-confirmacao .confirmation-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+body.compra-confirmacao .confirm-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body.compra-confirmacao .confirm-icon i {
+  font-size: 36px; /* controla tamanho do ícone */
+  line-height: 1;
+}
+body.compra-confirmacao .confirm-text h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+body.compra-confirmacao .confirm-text .text-muted { margin-top: 2px; }
+
+/* corpo: mini-imagem + texto */
+body.compra-confirmacao .confirmation-body { gap: var(--conf-gap); align-items:flex-start; }
+body.compra_confirmacao .media-thumb img { width:120px; height:120px; object-fit:cover; border-radius:8px; }
+
+/* texto e info */
+body.compra-confirmacao .confirmation-text p { margin:0; color:#374151; line-height:1.45; }
+body.compra-confirmacao .order-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:8px; }
+body.compra-confirmacao .order-grid .text-muted { font-size:0.78rem; }
+body.compra_confirmacao .order-grid .fw-bold { font-size:0.95rem; }
+
+/* lista de itens */
+body.compra-confirmacao .items-list .item-row { gap:12px; }
+body.compra-confirmacao .item-thumb { width:56px; height:56px; object-fit:cover; border-radius:8px; }
+
+/* ações */
+body.compra-confirmacao .confirmation-actions .btn { min-width:140px; }
+
+/* nota inferior */
+body.compra-confirmacao .confirmation-note { max-width:780px; margin:0 auto; }
+
+/* responsivo */
+@media (max-width: 880px) {
+  body.compra-confirmacao .order-grid { grid-template-columns: repeat(2,1fr); }
+  body.compra-confirmacao .media-thumb img { width:96px; height:96px; }
+}
+@media (max-width: 520px) {
+  body.compra-confirmacao .order-grid { grid-template-columns: 1fr; text-align:center; }
+  body.compra-confirmacao .confirmation-body { flex-direction:column; align-items:center; text-align:center; }
+  body.compra-confirmacao .confirmation-text { text-align:center; }
+  body.compra-confirmacao .confirmation-actions { justify-content:center; flex-wrap:wrap; }
+}
+
+/* ===== OVERRIDES FINAIS (APLICADOS APENAS NA PÁGINA .compra-confirmacao) ===== */
+/* aumenta especificidade e cobre variações de badge (id/class/pseudo) */
+body.compra-confirmacao #cartCounter,
+body.compra-confirmacao #cart-counter,
+body.compra-confirmacao .cart-counter,
+body.compra-confirmacao .cart-badge,
+body.compra-confirmacao .badge-notify,
+body.compra-confirmacao .notification-dot,
+body.compra-confirmacao .notif-dot,
+body.compra-confirmacao .nav-cart .badge,
+body.compra-confirmacao nav .badge,
+body.compra-confirmacao .nav-item-cart .cart-counter {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* proteger pseudo-elementos que adicionam bolinhas */
+body.compra-confirmacao nav .nav-link::after,
+body.compra_confirmacao nav .nav-link::before,
+body.compra_confirmacao .nav-link .badge::after,
+body.compra_confirmacao .nav-link .badge::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* garantir que o conteúdo do card fique centralizado e com largura limitada */
+body.compra-confirmacao .confirmation-wrapper,
+body.compra-confirmacao main .confirmation-wrapper,
+body.compra_confirmacao .pix-container,
+body.compra_confirmacao .buy-confirmation-alert {
+    max-width: 980px !important;
+    margin: 2.5rem auto !important;
+    padding: 0 12px !important;
+    box-sizing: border-box !important;
+}
+
+/* forçar card com padding e box centrado */
+body.compra-confirmacao .confirmation-card,
+body.compra_confirmacao .pix-container {
+    margin: 0 auto !important;
+    padding: 1.25rem !important;
+    background: #fff !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(15,23,42,0.04) !important;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06) !important;
+    text-align: left !important;
+}
+
+/* garantir layout flex do corpo quando aplicável */
+body.compra-confirmacao .confirmation-body,
+body.compra_confirmacao .buy-confirmation-alert .content {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+}
+
+/* ajuste responsivo empilhando no mobile */
+@media (max-width: 768px) {
+    body.compra-confirmacao .confirmation-body,
+    body.compra_confirmacao .buy-confirmation-alert .content {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+    body.compra_confirmacao .confirmation-text { width: 100% !important; }
+    body.compra_confirmacao .media-thumb img,
+    body.compra_confirmacao .item-thumb { margin: 0 auto !important; }
+}
+
+/* proteção extra: se algum CSS global aplicar float/position, neutralizamos */
+body.compra-confirmacao .confirmation-card * {
+    float: none !important;
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+}
+
+/* ===== FIX: alinhamento da imagem e layout da confirmação ===== */
+
+/* Corrige seletores com underline (typo) e garante comportamento consistente */
+body.compra-confirmacao .confirmation-body {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 1rem !important;
+  align-items: center !important;      /* centraliza verticalmente imagem e texto */
+  justify-content: flex-start !important;
+  flex-wrap: wrap !important;
+}
+
+/* Mini-imagem principal do pedido */
+body.compra-confirmacao .media-thumb {
+  flex: 0 0 160px !important;
+  width: 160px !important;
+  height: 160px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  border-radius: 10px !important;
+  background: #f4f6f8 !important;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.04) !important;
+  margin: 0 !important;
+}
+
+/* Garante que a img ocupe o container corretamente */
+body.compra-confirmacao .media-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Thumb dos itens da lista */
+body.compra-confirmacao .item-thumb {
+  width: 56px !important;
+  height: 56px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  box-shadow: 0 6px 12px rgba(15,23,42,0.04) !important;
+}
+
+/* Texto: manter alinhamento consistente; quando houver bastante espaço, esquerda; mobile centralizado via media query */
+body.compra-confirmacao .confirmation-text {
+  text-align: left !important;
+  min-width: 0 !important; /* evita overflow em flex */
+}
+
+/* Mobile: empilha e centraliza */
+@media (max-width: 720px) {
+  body.compra_confirmacao .confirmation-body {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  body.compra_confirmacao .media-thumb {
+    width: 120px !important;
+    height: 120px !important;
+  }
+  body.compra_confirmacao .confirmation-text { text-align: center !important; }
+  body.compra_confirmacao .items-list .item-row { justify-content: center !important; }
+}
+
+/* Se houver lista de itens, garantir que o .media-thumb grande não quebre layout
+   (EJS já evita renderizar, mas este fallback protege CSS antigo) */
+body.compra-confirmacao .items-list + .media-thumb,
+body.compra-confirmacao .confirmation-body .media-thumb.hidden-if-items {
+  display: none !important;
+}
+
+/* garante que quando media-thumb for exibida ela esteja dimensionada corretamente */
+body.compra-confirmacao .media-thumb { max-width: 160px; width: 160px; height: 160px; overflow: hidden; border-radius:10px; }
+body.compra_confirmacao .media-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+/* Centraliza só o bloco de textos dentro da confirmação (título, valor e itens) */
+body.compra-confirmacao .confirmation-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.4rem;
+}
+
+/* Centraliza cada linha da lista de itens e mantém thumb pequena à esquerda */
+body.compra-confirmacao .items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+body.compra-confirmacao .items-list .item-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+body.compra-confirmacao .items-list .item-row > div {
+  text-align: center;
+}
+
+/* Protege o ícone/heading para não deslocar: mantém layout do header inalterado */
+body.compra-confirmacao .confirmation-head { display:flex; align-items:center; justify-content:center; gap:0.8rem; }
+/* garante que a media-thumb grande continue escondida quando há lista */
+body.compra-confirmacao .media-thumb { display:none; }
+body.compra_confirmacao .media-thumb img { width:100%; height:100%; object-fit:cover; display:block; }

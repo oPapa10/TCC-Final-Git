@@ -1,43 +1,143 @@
 /* ===== ESTRUTURA GLOBAL ===== */
 html, body {
-    height: 100%;
+    height: 100% !important;
 }
-
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Garante que o body ocupe pelo menos toda a altura da viewport */
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
 }
 
-.container {
-    flex: 1; /* Faz o container principal crescer e empurrar o footer para baixo */
+/* Área principal cresce para empurrar footer */
+main, .site-main, .content, .page-content, .container-fluid.px-0, #produtos, .promo-carousel-container, .main-content {
+    flex: 1 0 auto !important;
 }
 
-.main-content {
-    flex: 1;
-}
-
-/* ===== FOOTER ===== */
+/* ===== FOOTER PADRÃO (PÁGINAS NORMAIS) ===== */
+/* fundo claro para footers das outras páginas */
 .footer {
-    background-color: var(--primary-medium) !important;
-    color: white;
+    background-color: #495057 !important; /* cinza claro padrão */
+    color: #495057 !important;
     padding-top: 2rem;
-    margin-top: 50px;
+    margin-top: 0; /* removido gap excessivo */
+    border-top: 1px solid rgba(0,0,0,0.06) !important;
+    box-shadow: none !important;
 }
 
+/* links no footer padrão */
 .footer a {
-    color: var(--text-light);
-    text-decoration: none;
-    transition: color 0.3s;
+    color: inherit !important;
+    text-decoration: none !important;
+}
+.footer a:hover { text-decoration: underline !important; }
+
+/* ===== FOOTER ESPECÍFICO DO INDEX (MESMA COR DAS CATEGORIAS) ===== */
+footer#index-footer,
+#page footer#index-footer,
+footer#index-footer.footer {
+    background: var(--primary-medium, #495057) !important; /* mesma cor do fundo das categorias */
+    color: var(--text-light, #f8f9fa) !important;
+    border-top: 1px solid rgba(0,0,0,0.06) !important;
+    margin-top: 0 !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    z-index: 1035 !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
 }
 
-.footer a:hover {
-    color: #d1d1d1;
-    text-decoration: underline;
+/* container interno do footer do index */
+footer#index-footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    background: transparent !important;
 }
 
-.copyright {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem 0;
-    margin-top: 2rem;
+/* evita que margens anteriores criem gap */
+nav + footer#index-footer,
+#navbar2 + footer#index-footer,
+.container + footer#index-footer,
+.row + footer#index-footer {
+    margin-top: 0 !important;
+    padding-top: 1.25rem !important;
+}
+
+/* Segurança: zera margens-residuais que podem criar espaços visíveis */
+body > *:not(footer) {
+    margin-bottom: 0 !important;
+}
+
+/* Mobile tweaks */
+@media (max-width: 576px) {
+    footer.footer .container,
+    footer#index-footer .container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+}
+
+/* ===== OVERRIDES FINAIS (prioridade máxima) ===== */
+/* 1) Garantir INDEX footer = mesma cor das categorias (alto nível de especificidade) */
+html body footer#index-footer,
+body > footer#index-footer,
+#page footer#index-footer,
+footer#index-footer.footer {
+    background: var(--primary-medium, #495057) !important;
+    color: var(--text-light, #f8f9fa) !important;
+    border-top: 1px solid rgba(0,0,0,0.06) !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+    margin-top: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    z-index: 1040 !important;
+    box-shadow: none !important;
+    background-clip: padding-box !important;
+}
+
+/* Remove qualquer regra que deixe texto invisível (ex.: color igual ao fundo) */
+html body footer#index-footer * {
+    color: inherit !important;
+}
+
+/* 2) Todos os outros footers => fundo claro "normal" (exceto index) */
+html body footer.footer:not(#index-footer),
+body footer.footer:not(#index-footer),
+footer.footer:not(#index-footer) {
+    background: #495057 !important;
+    color: #f8f9fa !important;
+    border-top: 1px solid rgba(0,0,0,0.06) !important;
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+    margin-top: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 3) Zerar gap entre nav e qualquer footer */
+nav + footer.footer,
+#navbar2 + footer.footer,
+nav + footer#index-footer,
+#navbar2 + footer#index-footer,
+.container + footer.footer {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* 4) Neutraliza regras genéricas conflitantes aplicadas por .footer (só override) */
+html body .footer {
+    background: unset !important;
+    color: unset !important;
+}
+
+/* 5) Protege index-footer contra theme.dark overrides */
+body.dark-theme footer#index-footer,
+html body.dark-theme footer#index-footer {
+    background: var(--primary-medium, #495057) !important;
+    color: var(--text-light, #f8f9fa) !important;
+    border-top: 1px solid rgba(0,0,0,0.06) !important;
 }
