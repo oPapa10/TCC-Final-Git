@@ -23,57 +23,76 @@ exports.findById = (id, callback) => {
 };
 
 exports.create = (produto, callback) => {
-    // Lista completa de campos permitidos
-    const camposPermitidos = [
-        'nome', 'valor', 'descricao', 'Categoria_ID', 'thumbnails', 
-        'estoque', 'slug', 'especificacoes', 'cor', 'cilindrada',
-        'potencia', 'tanque', 'material', 'protecao', 'imagem',
-        'marca', 'modelo', 'tamanho', 'peso', 'ano',
-        'tipo_motor', 'refrigeracao', 'partida', 'quilometragem', 'marchas',
-        'material_casco', 'tipo_viseira', 'sistema_retencao', 'certificacao',
-        'tipo_oleo', 'viscosidade', 'volume_unidade', 'formato_venda',
-        'tipo_recipiente', 'aplicacao', 'tipo_peca', 'modelo_compativel',
-        'numero_peca', 'dimensoes', 'posicao_lado', 'quantidade_kit',
-        'garantia'
-    ];
-    
-    // Filtra campos com valores
-    const campos = [];
-    const valores = [];
-    const especificacoes = {};
-    
-    // Processa campos normais e especificações
-    Object.entries(produto).forEach(([campo, valor]) => {
-        if (valor !== undefined && valor !== '' && valor !== null) {
-            // Se é um campo direto da tabela
-            if (camposPermitidos.includes(campo)) {
-                campos.push(campo);
-                valores.push(valor);
-            } 
-            // Se não é um campo sistema, adiciona às especificações
-            else if (!['categoria_key', 'imagemLink', 'submit'].includes(campo)) {
-                especificacoes[campo] = valor;
+    // consulta colunas reais da tabela produto para evitar ER_BAD_FIELD_ERROR
+    db.query(
+      `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'produto'`,
+      (err, cols) => {
+        if (err) return callback(err);
+
+        // mapa lowerCase -> columnName real
+        const colMap = {};
+        cols.forEach(r => { colMap[String(r.COLUMN_NAME).toLowerCase()] = r.COLUMN_NAME; });
+
+        const sistemaIgnore = new Set(['categoria_key', 'imagelink', 'submit', 'thumbnailupload', 'imagem']);
+        const campos = [];
+        const valores = [];
+        const especificacoes = {};
+
+        // se já veio especificacoes no payload, tenta mesclar
+        if (produto.especificacoes) {
+          try {
+            const parsed = typeof produto.especificacoes === 'string' ? JSON.parse(produto.especificacoes) : produto.especificacoes;
+            if (parsed && typeof parsed === 'object') {
+              Object.assign(especificacoes, parsed);
             }
+          } catch (e) {
+            // ignora parse error e trata como string simples (não mesclar)
+          }
+          // removemos para não processar novamente abaixo
+          delete produto.especificacoes;
         }
-    });
 
-    // Adiciona especificações como JSON se houver alguma
-    if (Object.keys(especificacoes).length > 0) {
-        campos.push('especificacoes');
-        valores.push(JSON.stringify(especificacoes));
-    }
+        const usadoCols = new Set();
 
-    const sql = `
-        INSERT INTO produto 
-        (${campos.join(', ')})
-        VALUES 
-        (${campos.map(() => '?').join(', ')})
-    `;
+        Object.entries(produto).forEach(([campo, valor]) => {
+          if (valor === undefined || valor === null || valor === '') return;
 
-    console.log('SQL:', sql);
-    console.log('Valores:', valores);
+          const chaveLower = String(campo).toLowerCase();
 
-    db.query(sql, valores, callback);
+          if (colMap[chaveLower]) {
+            const realCol = colMap[chaveLower];
+            // evita duplicar mesma coluna (ex: Categoria_ID e categoria_id)
+            if (!usadoCols.has(realCol)) {
+              campos.push(realCol);
+              valores.push(valor);
+              usadoCols.add(realCol);
+            }
+          } else if (!sistemaIgnore.has(chaveLower)) {
+            // este campo não existe como coluna -> fica em especificacoes
+            especificacoes[campo] = valor;
+          }
+        });
+
+        // adiciona especificacoes consolidado se houver chaves
+        if (Object.keys(especificacoes).length > 0) {
+          // se houver coluna especificacoes no DB, usa o nome real; senão usa 'especificacoes' mesmo (inserção falhará se não existir)
+          const especificacoesCol = colMap['especificacoes'] || 'especificacoes';
+          campos.push(especificacoesCol);
+          valores.push(JSON.stringify(especificacoes));
+        }
+
+        if (campos.length === 0) {
+          return callback(new Error('Nenhum campo válido para inserir no produto'));
+        }
+
+        const sql = `INSERT INTO produto (${campos.join(', ')}) VALUES (${campos.map(() => '?').join(', ')})`;
+        console.log('SQL:', sql);
+        console.log('Valores:', valores);
+
+        db.query(sql, valores, callback);
+      }
+    );
 };
 
 // ATUALIZAÇÃO COM REMOÇÃO DE PROMOÇÃO SE ESTOQUE = 0

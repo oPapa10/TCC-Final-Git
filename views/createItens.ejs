@@ -21,6 +21,19 @@
             <h2 class="header-title"><i class="fas fa-box-open me-2"></i>Cadastro de Produtos</h2>
         </div>
 
+        <!-- Alertas -->
+        <% if (sucesso) { %>
+            <div class="alert-custom alert-success-custom">
+                <div class="alert-content">
+                    <i class="fas fa-check-circle alert-icon"></i>
+                    <div>
+                        <h5>Produto cadastrado com sucesso!</h5>
+                        <p class="mb-0">O produto foi adicionado ao catálogo.</p>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
         <form action="/createItens/produtos" method="POST" enctype="multipart/form-data" id="productForm">
             <% 
                 // helper para mapear nome da categoria para a chave usada nos botões/js

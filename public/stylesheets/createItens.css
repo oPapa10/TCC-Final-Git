@@ -293,6 +293,43 @@ select.form-control option[value=""] {
     color: white;
 }
 
+/* ===== ALERTAS ===== */
+.alert-custom {
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.alert-success-custom {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border-left: 4px solid var(--success);
+}
+
+.alert-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.alert-icon {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+    color: var(--success);
+}
+
+.alert-content h5 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+}
+
+.alert-content p {
+    margin: 0;
+    color: var(--text-dark);
+    opacity: 0.8;
+}
+
 /* ===== ANIMAÇÕES ===== */
 .fade-in {
     animation: fadeIn 0.5s ease-in-out;
