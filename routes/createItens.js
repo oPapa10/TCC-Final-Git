@@ -23,12 +23,27 @@ function slugify(text) {
     .replace(/-+$/, '');
 }
 
-// GET form
+// Rota para buscar categorias do produto
 router.get('/', (req, res) => {
-  db.query('SELECT * FROM Categoria', (err, categorias) => {
-    if (err) return res.status(500).send('Erro ao carregar categorias');
-    res.render('createItens', { categorias, sucesso: false });
-  });
+    // Busca categorias de produto com seus campos
+    db.query('SELECT * FROM CategoriasProduto', (err, categorias) => {
+        if (err) {
+            console.error('Erro ao buscar categorias:', err);
+            return res.redirect('/');
+        }
+        
+        // Parse os campos JSON de cada categoria
+        categorias = categorias.map(cat => {
+            try {
+                cat.campos = JSON.parse(cat.campos);
+            } catch (e) {
+                cat.campos = [];
+            }
+            return cat;
+        });
+
+        res.render('createItens', { categorias });
+    });
 });
 
 // POST criar produto - ajustado para receber categoria_id e campos dinâmicos
@@ -111,6 +126,40 @@ router.post('/produtos', upload.fields([
     console.error('Erro no POST /createItens/produtos:', err);
     res.status(500).send('Erro inesperado no servidor');
   }
+});
+
+router.post('/criar', upload.single('imagem'), (req, res) => {
+    const produto = req.body;
+    
+    // Busca campos da categoria selecionada
+    db.query('SELECT campos FROM CategoriasProduto WHERE ID = ?', [produto.categoria], (err, results) => {
+        if (err || !results.length) {
+            console.error('Erro ao buscar categoria:', err);
+            return res.redirect('/createItens');
+        }
+
+        let camposCategoria = [];
+        try {
+            camposCategoria = JSON.parse(results[0].campos);
+        } catch (e) {
+            console.error('Erro ao parsear campos da categoria:', e);
+        }
+
+        // Cria objeto de especificações apenas com campos da categoria
+        const especificacoes = {};
+        camposCategoria.forEach(campo => {
+            const key = typeof campo === 'string' ? campo : campo.key;
+            if (produto[key]) {
+                especificacoes[key] = produto[key];
+            }
+        });
+
+        // Atualiza o produto com as especificações e categoria
+        produto.especificacoes = JSON.stringify(especificacoes);
+        produto.CategoriaProduto_ID = produto.categoria;
+
+        // ... resto do código de criação do produto ...
+    });
 });
 
 module.exports = router;

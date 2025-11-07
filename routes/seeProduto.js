@@ -6,10 +6,13 @@ const db = require('../config/db');
 
 //Rota para home
 router.get('/', (req, res) => {
-    // Supondo que Produto é seu model
-    Produto.findAll((err, produtos) => {
+    db.query(`
+        SELECT p.*, c.nome as categoria_nome 
+        FROM Produto p
+        LEFT JOIN Categoria c ON p.Categoria_ID = c.ID
+    `, (err, produtos) => {
         if (err) return res.status(500).send('Erro ao buscar produtos');
-        res.render('seeProduto', { produtos }); // <-- produtos deve ser passado aqui!
+        res.render('seeProduto', { produtos });
     });
 });
 
@@ -44,6 +47,25 @@ router.post('/excluir/:id', (req, res) => {
             });
         });
     });
+});
+
+// Rota para detalhes do produto (mova para antes do module.exports)
+router.get('/produto/detalhes/:id', (req, res) => {
+    const id = req.params.id;
+    db.query(`
+        SELECT p.*, c.nome as categoria_nome 
+        FROM Produto p 
+        LEFT JOIN Categoria c ON p.Categoria_ID = c.ID 
+        WHERE p.ID = ?`, 
+        [id], 
+        (err, results) => {
+            if (err || !results.length) {
+                console.error('Erro ao buscar produto:', err);
+                return res.redirect('/seeProduto');
+            }
+            res.render('produtoDetalhes', { produto: results[0] });
+        }
+    );
 });
 
 module.exports = router;

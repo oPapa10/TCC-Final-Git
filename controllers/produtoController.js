@@ -15,29 +15,46 @@ exports.listar = (req, res) => {
 exports.detalhar = (req, res) => {
   const produtoId = req.params.id;
   db.query('SELECT * FROM PRODUTO WHERE ID = ?', [produtoId], (err, produtos) => {
-    if (err || produtos.length === 0) return res.render('product', { produto: null, avaliacoes: [], relacionados: [] });
+    if (err || produtos.length === 0) return res.render('product', { produto: null, avaliacoes: [], relacionados: [], categoriaCampos: [] });
 
     const produto = produtos[0];
 
-    // Busca avaliações
-    db.query(
-      `SELECT a.*, u.nome AS usuario_nome 
-       FROM AVALIACAO a 
-       JOIN CLIENTE u ON a.usuario_id = u.ID 
-       WHERE a.produto_id = ? 
-       ORDER BY a.data_avaliacao DESC`,
-      [produtoId],
-      (err2, avaliacoes) => {
-        // Busca produtos relacionados (opcional)
-        db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produtoId], (err3, relacionados) => {
-          res.render('product', {
-            produto,
-            avaliacoes: avaliacoes || [],
-            relacionados: relacionados || []
-          });
-        });
+    // busca campos da categoria
+    db.query('SELECT campos FROM categoria WHERE ID = ?', [produto.Categoria_ID], (errCat, rowsCat) => {
+      let categoriaCampos = [];
+      if (!errCat && rowsCat && rowsCat[0] && rowsCat[0].campos) {
+        try {
+          const arr = JSON.parse(rowsCat[0].campos);
+          categoriaCampos = Array.isArray(arr) ? arr.map(c => {
+            const key = String(c).toLowerCase().replace(/\s+/g,'_');
+            return { key, label: String(c) };
+          }) : [];
+        } catch(e) {
+          categoriaCampos = [];
+        }
       }
-    );
+
+      // Busca avaliações
+      db.query(
+        `SELECT a.*, u.nome AS usuario_nome 
+         FROM AVALIACAO a 
+         JOIN CLIENTE u ON a.usuario_id = u.ID 
+         WHERE a.produto_id = ? 
+         ORDER BY a.data_avaliacao DESC`,
+        [produtoId],
+        (err2, avaliacoes) => {
+          // Busca produtos relacionados (opcional)
+          db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produtoId], (err3, relacionados) => {
+            res.render('product', {
+              produto,
+              avaliacoes: avaliacoes || [],
+              relacionados: relacionados || [],
+              categoriaCampos
+            });
+          });
+        }
+      );
+    });
   });
 };
 
@@ -56,7 +73,7 @@ exports.detalharPorSlug = (req, res) => {
       [slug],
       (err, results) => {
           if (err || results.length === 0) {
-              return res.render('product', { produto: null, avaliacoes: [], relacionados: [] });
+              return res.render('product', { produto: null, avaliacoes: [], relacionados: [], categoriaCampos: [] });
           }
           const produto = results[0];
           produto.valor_promocional = produto.valor_promocional ? Number(produto.valor_promocional) : undefined;
@@ -71,25 +88,39 @@ exports.detalharPorSlug = (req, res) => {
               produto.thumbnails = [];
           }
 
-          // Busca avaliações para o produto pelo slug
-          db.query(
-            `SELECT a.*, u.nome AS usuario_nome 
-             FROM AVALIACAO a 
-             JOIN CLIENTE u ON a.usuario_id = u.ID 
-             WHERE a.produto_id = ? 
-             ORDER BY a.data_avaliacao DESC`,
-            [produto.ID],
-            (err2, avaliacoes) => {
-              // Busca produtos relacionados (opcional)
-              db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produto.ID], (err3, relacionados) => {
-                res.render('product', {
-                  produto,
-                  avaliacoes: avaliacoes || [],
-                  relacionados: relacionados || []
-                });
-              });
+          // busca campos da categoria
+          db.query('SELECT campos FROM categoria WHERE ID = ?', [produto.Categoria_ID], (errCat, rowsCat) => {
+            let categoriaCampos = [];
+            if (!errCat && rowsCat && rowsCat[0] && rowsCat[0].campos) {
+              try {
+                const arr = JSON.parse(rowsCat[0].campos);
+                categoriaCampos = Array.isArray(arr) ? arr.map(c => {
+                  const key = String(c).toLowerCase().replace(/\s+/g,'_');
+                  return { key, label: String(c) };
+                }) : [];
+              } catch(e) { categoriaCampos = []; }
             }
-          );
+
+            // continua o fluxo (buscar avaliações e relacionados)
+            db.query(
+              `SELECT a.*, u.nome AS usuario_nome 
+               FROM AVALIACAO a 
+               JOIN CLIENTE u ON a.usuario_id = u.ID 
+               WHERE a.produto_id = ? 
+               ORDER BY a.data_avaliacao DESC`,
+              [produto.ID],
+              (err2, avaliacoes) => {
+                db.query('SELECT * FROM PRODUTO WHERE Categoria_ID = ? AND ID != ? LIMIT 4', [produto.Categoria_ID, produto.ID], (err3, relacionados) => {
+                  res.render('product', {
+                    produto,
+                    avaliacoes: avaliacoes || [],
+                    relacionados: relacionados || [],
+                    categoriaCampos
+                  });
+                });
+              }
+            );
+          });
       }
   );
 };

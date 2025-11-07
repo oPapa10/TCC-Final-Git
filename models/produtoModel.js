@@ -97,35 +97,82 @@ exports.create = (produto, callback) => {
 
 // ATUALIZAÇÃO COM REMOÇÃO DE PROMOÇÃO SE ESTOQUE = 0
 exports.update = (id, produto, callback) => {
-  db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, results) => {
-    if (err || !results[0]) return callback(err || new Error('Produto não encontrado'));
-    const atual = results[0];
+  // busca colunas reais
+  db.query(
+    `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'produto'`,
+    (err, cols) => {
+      if (err) return callback(err);
+      const colMap = {};
+      cols.forEach(r => { colMap[String(r.COLUMN_NAME).toLowerCase()] = r.COLUMN_NAME; });
 
-    // Corrige peso: envia null se vazio
-    const pesoFinal = (produto.peso !== undefined && produto.peso !== '') ? produto.peso : atual.peso;
+      const sistemaIgnore = new Set(['submit', '_method']); // ignores comuns
+      const updates = [];
+      const values = [];
+      let novasEspecificacoes = {};
 
-    const sql = `UPDATE Produto SET 
-        nome = ?, valor = ?, Categoria_ID = ?, cor = ?, tamanho = ?, peso = ?, cilindrada = ?, potencia = ?, tanque = ?, material = ?, protecao = ?, thumbnails = ?, imagem = ?, descricao = ?
-        WHERE ID = ?`;
-    const values = [
-      produto.nome ?? atual.nome,
-      produto.valor ?? atual.valor,
-      produto.Categoria_ID ?? atual.Categoria_ID,
-      produto.cor ?? atual.cor,
-      produto.tamanho ?? atual.tamanho,
-      pesoFinal,
-      produto.cilindrada ?? atual.cilindrada,
-      produto.potencia ?? atual.potencia,
-      produto.tanque ?? atual.tanque,
-      produto.material ?? atual.material,
-      produto.protecao ?? atual.protecao,
-      produto.thumbnails ?? atual.thumbnails,
-      produto.imagem ?? atual.imagem,
-      produto.descricao ?? atual.descricao,
-      id
-    ];
-    db.query(sql, values, callback);
-  });
+      // se veio especificacoes como string/obj, tenta parsear e mesclar depois
+      if (produto.especificacoes) {
+        try {
+          const parsed = typeof produto.especificacoes === 'string' ? JSON.parse(produto.especificacoes) : produto.especificacoes;
+          if (parsed && typeof parsed === 'object') {
+            Object.assign(novasEspecificacoes, parsed);
+          }
+        } catch (e) {
+          // se não for JSON, ignora (pode haver campos individuais)
+        }
+        delete produto.especificacoes;
+      }
+
+      // percorre keys do objeto recebido
+      Object.entries(produto).forEach(([k, v]) => {
+        if (v === undefined || v === null) return;
+        const keyLow = String(k).toLowerCase();
+        if (sistemaIgnore.has(keyLow)) return;
+
+        // se coluna existe no DB, adiciona ao UPDATE
+        if (colMap[keyLow]) {
+          updates.push(`${colMap[keyLow]} = ?`);
+          values.push(v);
+        } else {
+          // trata como especificacao dinâmica
+          novasEspecificacoes[k] = v;
+        }
+      });
+
+      // antes de gravar, obter especificacoes atuais para mesclar
+      db.query('SELECT especificacoes FROM Produto WHERE ID = ?', [id], (err2, rows) => {
+        if (err2) return callback(err2);
+        let atualEspec = {};
+        if (rows && rows[0] && rows[0].especificacoes) {
+          try {
+            atualEspec = typeof rows[0].especificacoes === 'string' ? JSON.parse(rows[0].especificacoes) : rows[0].especificacoes;
+            if (!atualEspec || typeof atualEspec !== 'object') atualEspec = {};
+          } catch (e) { atualEspec = {}; }
+        }
+
+        // mescla atual + novas (novas sobrescrevem)
+        const especFinal = Object.assign({}, atualEspec, novasEspecificacoes);
+
+        // se coluna especificacoes existe no DB, adiciona ao UPDATE
+        if (colMap['especificacoes']) {
+          updates.push(`${colMap['especificacoes']} = ?`);
+          values.push(JSON.stringify(especFinal));
+        } else if (Object.keys(especFinal).length > 0) {
+          // se não há coluna, nada a fazer com especificações (opcional: retornar erro)
+          console.warn('[MODEL] Coluna especificacoes não existe; especificações não serão salvas.');
+        }
+
+        if (updates.length === 0) {
+          return callback(new Error('Nenhum campo para atualizar'));
+        }
+
+        const sql = `UPDATE Produto SET ${updates.join(', ')} WHERE ID = ?`;
+        values.push(id);
+        db.query(sql, values, callback);
+      });
+    }
+  );
 };
 
 exports.delete = (id, callback) => {

@@ -10,113 +10,209 @@
     <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header-section">
-            <a href="/seeProduto" class="btn-voltar">
-                <i class="fas fa-arrow-left"></i> Voltar
+    <div class="edit-container">
+        <div class="edit-header">
+            <a href="/seeProduto" class="header-back">
+                <i class="fas fa-arrow-left"></i> Voltar para Produtos
             </a>
-            <h1 class="header-title ms-4">Editar Produto</h1>
+            <h1 class="header-title">Editar Produto</h1>
         </div>
-        <div class="card-edit">
-            <form action="/produtos/editar/<%= produto.ID %>" method="POST">
-                <!-- Imagem atual -->
-                <div class="image-container">
-                    <% if (produto.imagem) { %>
-                        <img src="<%= produto.imagem %>" alt="Imagem atual do produto" class="current-image">
-                        <span class="image-badge">IMAGEM ATUAL</span>
-                    <% } else { %>
-                        <div class="no-image">
-                            <i class="fas fa-box-open"></i>
+
+        <div class="edit-card">
+            <% 
+            // RECEBE categoriaCampos (array vindo da rota). Normaliza aqui por segurança.
+            const categoriaCamposRaw = typeof categoriaCampos !== 'undefined' ? categoriaCampos : [];
+            const categoriaCamposArr = Array.isArray(categoriaCamposRaw)
+              ? categoriaCamposRaw.map(c => {
+                  if (typeof c === 'string') return { key: c.toLowerCase().replace(/\s+/g,'_'), label: c };
+                  if (c && typeof c === 'object' && c.key) return { key: String(c.key).toLowerCase(), label: c.label || c.key };
+                  return null;
+                }).filter(Boolean)
+              : [];
+
+            // parse especificacoes do produto (obj)
+            let especObj = {};
+            try {
+                especObj = produto && produto.especificacoes
+                  ? (typeof produto.especificacoes === 'string' ? JSON.parse(produto.especificacoes) : produto.especificacoes)
+                  : {};
+                if (!especObj || typeof especObj !== 'object') especObj = {};
+            } catch (e) {
+                especObj = {};
+            }
+
+            const getValue = (k) => {
+                if (!k) return '';
+                if (produto && (produto[k] !== undefined && produto[k] !== null && String(produto[k]).trim() !== '')) return produto[k];
+                if (especObj && (especObj[k] !== undefined && especObj[k] !== null && String(especObj[k]).trim() !== '')) return especObj[k];
+                return '';
+            };
+            %>
+
+            <form action="/produtos/editar/<%= produto.ID %>" method="POST" enctype="multipart/form-data" class="edit-form">
+                <!-- Seção de Imagens (AGORA aparece antes das informações básicas) -->
+                <div class="form-section">
+                    <h3 class="section-title">Imagens do Produto</h3>
+                    <div class="images-section">
+                        <div class="image-upload-grid">
+                            <!-- Imagem Principal -->
+                            <div class="main-image-container">
+                                <span class="image-badge">Imagem Principal</span>
+                                <div class="image-preview-container">
+                                    <% if (produto.imagem) { %>
+                                        <img id="previewMainImage" src="<%= produto.imagem %>" alt="Imagem atual" class="current-image">
+                                    <% } else { %>
+                                        <div class="no-image">
+                                            <i class="fas fa-camera"></i>
+                                            <span>Sem Imagem</span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Upload de Imagens -->
+                            <div class="upload-options">
+                                <input type="hidden" name="imagemAtual" value="<%= produto.imagem %>">
+                                
+                                <div class="upload-option">
+                                    <span class="option-label">Upload de Arquivo</span>
+                                    <div class="file-input">
+                                        <input id="imagemFile" name="imagem" type="file" accept="image/*" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="upload-option">
+                                    <span class="option-label">Ou Informar Link</span>
+                                    <input id="imagemLink" name="imagemLink" type="url" class="form-control" placeholder="https://exemplo.com/imagem.jpg">
+                                    <small class="help-text">Se enviar arquivo, o link será ignorado automaticamente</small>
+                                </div>
+                            </div>
                         </div>
-                        <span class="image-badge">SEM IMAGEM</span>
-                    <% } %>
-                    <input type="hidden" name="imagemAtual" value="<%= produto.imagem %>">
-                </div>
-                <!-- Upload de nova imagem -->
-                <label class="file-input-label" for="imagem">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <div class="file-input-text">Clique para alterar a imagem ou arraste uma nova</div>
-                    <input type="file" id="imagem" name="imagem" accept="image/*" style="display: none;">
-                </label>
-                <!-- Campos do formulário -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="nome">NOME DO PRODUTO</label>
-                            <input type="text" class="form-control" id="nome" name="nome" value="<%= produto.nome %>" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="valor">VALOR (R$)</label>
-                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" value="<%= produto.valor %>" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="categoria">CATEGORIA</label>
-                            <select class="form-control" id="categoria" name="categoria" required>
-                                <% categorias.forEach(function(cat) { %>
-                                    <option value="<%= cat.ID %>" <%= produto.Categoria_ID == cat.ID ? 'selected' : '' %>><%= cat.nome %></option>
-                                <% }) %>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cor">COR</label>
-                            <input type="text" class="form-control" id="cor" name="cor" value="<%= produto.cor %>">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="tamanho">TAMANHO</label>
-                            <input type="text" class="form-control" id="tamanho" name="tamanho" value="<%= produto.tamanho %>">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="peso">PESO</label>
-                            <input type="text" class="form-control" id="peso" name="peso" value="<%= produto.peso %>">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="cilindrada">CILINDRADA</label>
-                            <input type="text" class="form-control" id="cilindrada" name="cilindrada" value="<%= produto.cilindrada %>">
+
+                        <!-- Thumbnails -->
+                        <div class="thumbnails-section">
+                            <span class="option-label">Thumbnails Adicionais</span>
+                            
+                            <% 
+                            // parse thumbnails existentes
+                            let thumbs = [];
+                            if (produto.thumbnails) {
+                                try {
+                                    thumbs = typeof produto.thumbnails === 'string' ? JSON.parse(produto.thumbnails) : produto.thumbnails;
+                                } catch(e) {
+                                    thumbs = String(produto.thumbnails).split(',').map(s => s.trim()).filter(Boolean);
+                                }
+                            }
+                            %>
+
+                            <div id="thumbsList" class="thumbs-preview">
+                                <% thumbs.forEach(function(url, idx) { %>
+                                    <div class="thumb-item existing" data-url="<%= url %>">
+                                        <img src="<%= url %>" alt="Thumbnail <%= idx + 1 %>">
+                                        <button type="button" class="btn-remove-thumb" title="Remover">×</button>
+                                        <input type="hidden" name="existingThumbnails[]" value="<%= url %>">
+                                    </div>
+                                <% }); %>
+                            </div>
+
+                            <div class="upload-options">
+                                <div class="upload-option">
+                                    <span class="option-label">Upload Múltiplo</span>
+                                    <div class="file-input">
+                                        <input id="thumbnailUpload" name="thumbnailUpload" type="file" accept="image/*" multiple class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="upload-option">
+                                    <span class="option-label">Ou Inserir URLs</span>
+                                    <input id="thumbnailLinks" name="thumbnailLinks" type="text" class="form-control" placeholder="https://ex1.jpg, https://ex2.jpg">
+                                    <small class="help-text">Separe por vírgula. Uploads têm prioridade sobre links</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="potencia">POTÊNCIA</label>
-                            <input type="text" class="form-control" id="potencia" name="potencia" value="<%= produto.potencia %>">
+                </div>
+
+                <!-- Seção de Informações Básicas -->
+                <div class="form-section">
+                    <h3 class="section-title">Informações Básicas</h3>
+                    <div class="form-grid">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label class="form-label">Nome do Produto</label>
+                                <input type="text" name="nome" class="form-control" value="<%= produto.nome %>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Valor (R$)</label>
+                                <input type="number" step="0.01" name="valor" class="form-control" value="<%= produto.valor %>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Categoria</label>
+                                <select name="categoria" class="form-control" required>
+                                    <% categorias.forEach(function(cat) { %>
+                                        <option value="<%= cat.ID %>" <%= produto.Categoria_ID == cat.ID ? 'selected' : '' %>><%= cat.nome %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label" for="tanque">TANQUE</label>
-                            <input type="text" class="form-control" id="tanque" name="tanque" value="<%= produto.tanque %>">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="material">MATERIAL</label>
-                            <input type="text" class="form-control" id="material" name="material" value="<%= produto.material %>">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="protecao">PROTEÇÃO</label>
-                            <input type="text" class="form-control" id="protecao" name="protecao" value="<%= produto.protecao %>">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="thumbnails">THUMBNAILS (URLs separadas por vírgula)</label>
-                            <input type="text" class="form-control" id="thumbnails" name="thumbnails" value="<%= produto.thumbnails %>" placeholder="https://exemplo.com/img1.jpg, https://exemplo.com/img2.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="thumbnailUpload">Ou selecione uma imagem para thumbnail</label>
-                            <input type="file" id="thumbnailUpload" name="thumbnailUpload" accept="image/*" class="form-control">
-                        </div>
-                        <!-- ESTOQUE não editável aqui -->
-                        <div class="form-group">
-                            <label class="form-label" for="quantidade">QUANTIDADE EM ESTOQUE</label>
-                            <input type="number" class="form-control" id="quantidade" name="quantidade" value="<%= produto.estoque %>" readonly style="background:#f1f3f5;cursor:not-allowed;">
-                            <small class="text-muted">O estoque só pode ser alterado na tela de entrada de estoque.</small>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="descricao">DESCRIÇÃO</label>
-                            <textarea class="form-control" id="descricao" name="descricao"><%= produto.descricao %></textarea>
+
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label class="form-label">Estoque</label>
+                                <input type="number" class="form-control" value="<%= produto.estoque %>" readonly>
+                                <small class="help-text">Campo somente leitura - controle de estoque é feito separadamente</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Descrição</label>
+                                <textarea name="descricao" class="form-control" rows="4" placeholder="Descreva o produto..."><%= produto.descricao || '' %></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn-salvar">
-                    <i class="fas fa-save"></i> SALVAR ALTERAÇÕES
-                </button>
+
+                <!-- Campos Dinâmicos da Categoria -->
+                <% if (categoriaCamposArr.length > 0) { %>
+                    <div class="form-section">
+                        <h3 class="section-title">Especificações da Categoria</h3>
+                        <div class="dynamic-fields">
+                            <div class="fields-grid">
+                                <% categoriaCamposArr.forEach(function(campo) { 
+                                    const key = campo.key;
+                                    const label = campo.label || campo.key;
+                                    const value = getValue(key);
+                                %>
+                                    <div class="form-group">
+                                        <label class="form-label"><%= label %></label>
+                                        <input type="text" 
+                                               name="<%= key %>" 
+                                               class="form-control" 
+                                               value="<%= value %>"
+                                               placeholder="<%= value ? '' : 'Informe ' + label.toLowerCase() %>">
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Nenhum campo específico definido para esta categoria.
+                    </div>
+                <% } %>
+
+                <!-- Botões de Ação -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-salvar">
+                        <i class="fas fa-save"></i> SALVAR ALTERAÇÕES
+                    </button>
+                </div>
             </form>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/javascripts/editProduto.js"></script>
 </body>

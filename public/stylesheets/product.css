@@ -177,6 +177,34 @@
     color: var(--primary-dark);
 }
 
+/* Ajustes para duas colunas nos detalhes */
+.details-section .row {
+    margin: 0 -15px;
+}
+
+.details-section .col-md-6 {
+    padding: 0 15px;
+}
+
+.details-section .details-list {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0;
+}
+
+.details-section .details-list li {
+    margin-bottom: 12px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.details-section .details-list li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+}
+
 /* Seletor de Quantidade */
 .quantity-selector {
     display: flex;

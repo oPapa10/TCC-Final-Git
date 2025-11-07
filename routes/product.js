@@ -56,37 +56,114 @@ router.get('/p/:slug', (req, res) => {
     );
 });
 
-// Rota GET para exibir o formulário de edição
+// Rota GET para editar produto
 router.get('/produtos/editar/:id', (req, res) => {
     const id = req.params.id;
-    Produto.findById(id, (err, produto) => {
-        if (err || !produto) return res.status(404).send('Produto não encontrado');
-        Categoria.findAll((err, categorias) => {
-            if (err) return res.status(500).send('Erro ao buscar categorias');
-            res.render('editProduto', { produto, categorias });
+    const query = `
+        SELECT p.*, cp.campos as categoria_campos, cp.nome as categoria_nome, cp.ID as CategoriaProduto_ID
+        FROM Produto p
+        LEFT JOIN CategoriasProduto cp ON p.CategoriaProduto_ID = cp.ID
+        WHERE p.ID = ?
+    `;
+    db.query(query, [id], (err, results) => {
+        if (err || !results.length) {
+            console.error('Erro ao buscar produto:', err);
+            return res.redirect('/seeProduto');
+        }
+        const produto = results[0];
+
+        // normaliza campos da categoria (garante array de objetos {key,label})
+        let camposCategoria = [];
+        if (produto.categoria_campos) {
+            try {
+                const parsed = (typeof produto.categoria_campos === 'string') ? JSON.parse(produto.categoria_campos) : produto.categoria_campos;
+                if (Array.isArray(parsed)) {
+                    camposCategoria = parsed.map(c => {
+                        if (typeof c === 'string') return { key: c.toLowerCase().replace(/\s+/g,'_'), label: c };
+                        if (c && typeof c === 'object' && c.key) return { key: String(c.key).toLowerCase(), label: c.label || c.key };
+                        return null;
+                    }).filter(Boolean);
+                }
+            } catch (e) {
+                console.error('Erro ao parsear categoria_campos:', e);
+                camposCategoria = [];
+            }
+        }
+
+        // Busca todas as categorias de produto para o select (agora usa tabela Categoria do catálogo)
+        db.query('SELECT * FROM Categoria', (errCat, categoriasCatalogo) => {
+            if (errCat) {
+                console.error('Erro ao buscar categorias do catálogo:', errCat);
+                categoriasCatalogo = [];
+            }
+            res.render('editProduto', {
+                produto,
+                categorias: categoriasCatalogo || [], // usado no select da view
+                categoriaCampos: camposCategoria
+            });
         });
     });
 });
 
 // Rota POST para salvar a edição
-router.post('/produtos/editar/:id', upload.single('imagem'), (req, res) => {
+router.post('/produtos/editar/:id', upload.fields([
+  { name: 'imagem', maxCount: 1 },
+  { name: 'thumbnailUpload', maxCount: 10 }
+]), (req, res) => {
     const id = req.params.id;
     const {
         nome, valor, valor_promocional, categoria, cor, tamanho, peso, cilindrada,
-        potencia, tanque, material, protecao, thumbnails, descricao
+        potencia, tanque, material, protecao, descricao
     } = req.body;
 
-    // Se não enviar nova imagem, mantém a atual
-    let imagem = req.body.imagemAtual;
-    if (req.file) {
-        imagem = '/uploads/' + req.file.filename;
+    // Prioriza upload de imagem, senão link, senão mantém imagemAtual
+    let imagem = req.body.imagemAtual || '';
+    if (req.files && req.files['imagem'] && req.files['imagem'][0]) {
+        imagem = '/uploads/' + req.files['imagem'][0].filename;
+    } else if (req.body.imagemLink && req.body.imagemLink.trim()) {
+        imagem = req.body.imagemLink.trim();
     }
 
-    // Atualize o produto no banco
+    // Thumbnails: prioridade upload múltiplo > newThumbnailLinks[] (inputs gerados) > thumbnailLinks (texto) > existingThumbnails[]
+    let thumbnailsFinal = [];
+
+    // existing thumbnails (hidden) continuam se não removidas
+    const existingHidden = req.body['existingThumbnails[]'] || req.body.existingThumbnails;
+    if (existingHidden) {
+      if (Array.isArray(existingHidden)) thumbnailsFinal.push(...existingHidden);
+      else thumbnailsFinal.push(existingHidden);
+    }
+
+    // arquivos enviados (uploads)
+    if (req.files && req.files['thumbnailUpload'] && req.files['thumbnailUpload'].length > 0) {
+      const ups = req.files['thumbnailUpload'].map(f => '/uploads/' + f.filename);
+      thumbnailsFinal = thumbnailsFinal.concat(ups);
+    }
+
+    // novos links adicionados via inputs hidden name="newThumbnailLinks[]"
+    const newLinksInput = req.body.newThumbnailLinks || req.body['newThumbnailLinks[]'];
+    if (newLinksInput) {
+      if (Array.isArray(newLinksInput)) thumbnailsFinal = thumbnailsFinal.concat(newLinksInput);
+      else thumbnailsFinal.push(newLinksInput);
+    }
+
+    // campo de texto thumbnailLinks (comma separated)
+    if (req.body.thumbnailLinks) {
+      const txtLinks = String(req.body.thumbnailLinks).split(',').map(s => s.trim()).filter(Boolean);
+      thumbnailsFinal = thumbnailsFinal.concat(txtLinks);
+    }
+
+    // remove duplicatas e limpas entradas vazias
+    thumbnailsFinal = thumbnailsFinal.filter(Boolean);
+    thumbnailsFinal = Array.from(new Set(thumbnailsFinal));
+
+    // Salva como JSON (compatível com parsing em controllers/views)
+    const thumbnailsStr = thumbnailsFinal.length ? JSON.stringify(thumbnailsFinal) : (req.body.thumbnails || null);
+
     Produto.update(id, {
         nome,
         valor,
-        valor_promocional, // <-- adicione aqui
+        valor_promocional,
         Categoria_ID: categoria,
         cor,
         tamanho,
@@ -96,7 +173,7 @@ router.post('/produtos/editar/:id', upload.single('imagem'), (req, res) => {
         tanque,
         material,
         protecao,
-        thumbnails,
+        thumbnails: thumbnailsStr,
         imagem,
         descricao
     }, (err) => {

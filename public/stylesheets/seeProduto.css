@@ -578,6 +578,60 @@ body {
     padding: 2rem;
 }
 
+/* ===== ESTILOS PARA PÁGINA DE DETALHES ===== */
+.produto-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.info-item label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.thumbnails-container {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.thumbnail-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+}
+
+.especificacoes-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.spec-item {
+    background: var(--light-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    height: 100%;
+}
+
+.spec-item label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.spec-item div {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 1200px) {
     .container-lg {
@@ -658,4 +712,35 @@ body {
         width: 2.2rem;
         height: 2.2rem;
     }
+}
+
+/* Adicione/modifique estas classes */
+.card.produto-item {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+
+.card-footer {
+    margin-top: auto;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border-color);
+    background: transparent;
+    padding: 1rem;
+}
+
+.produto-item a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajuste a margem do último elemento no card-body para evitar espaço extra */
+.card-body > *:last-child {
+    margin-bottom: 0;
 }

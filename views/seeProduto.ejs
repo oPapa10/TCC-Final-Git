@@ -1,233 +1,227 @@
 <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Produtos Cadastrados | Admin</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="/stylesheets/seeProduto.css">
-        <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
-    </head>
-    <body>
-        <div class="container-lg">
-            <!-- Header Section -->
-            <div class="header-section">
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos Cadastrados | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/seeProduto.css">
+    <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
+</head>
+<body>
+    <div class="container-lg">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="d-flex align-items-center gap-3">
                 <a href="/admCenterMotos" class="btn-voltar">
                     <i class="fas fa-arrow-left"></i> Voltar ao ADM
                 </a>
-                <h1 class="header-title">
+                <h1 class="header-title mb-0">
                     <i class="fas fa-boxes me-2"></i>Produtos Cadastrados
                 </h1>
+            </div>
+            <div class="d-flex gap-2">
+                <div class="dropdown">
+                    <button class="btn-voltar dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter me-2"></i>Filtrar
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><h6 class="dropdown-header">Categorias</h6></li>
+                        <li><a class="dropdown-item" href="#" data-filter="all">Todos</a></li>
+                        <% 
+                        // Busca categorias únicas com seus nomes
+                        let categoriasUnicas = new Map();
+                        produtos.forEach(p => {
+                            const id = p.Categoria_ID;
+                            const nome = p.categoria_nome;
+                            if (id && nome) {
+                                categoriasUnicas.set(id, nome);
+                            }
+                        });
+                        
+                        // Converte para array e ordena por nome
+                        Array.from(categoriasUnicas.entries())
+                            .sort((a, b) => a[1].localeCompare(b[1]))
+                            .forEach(([id, nome]) => { 
+                        %>
+                            <li>
+                                <a class="dropdown-item" href="#" data-filter="<%= nome %>">
+                                    <%= nome %>
+                                </a>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
                 <a href="/createItens" class="btn-novo">
                     <i class="fas fa-plus me-2"></i> Novo Produto
                 </a>
             </div>
+        </div>
 
-            <!-- Search and Stats -->
-            <div class="search-stats-section">
-                <div class="search-container">
-                    <div class="search-box">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="form-control search-input" id="searchProduto" placeholder="Pesquisar produto por nome, categoria ou ID...">
+        <!-- Search and Stats -->
+        <div class="search-stats-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control search-input" id="searchProduto" 
+                           placeholder="Pesquisar por nome, ID, categoria, especificações...">
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-icon total">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.length %></h3>
+                        <p>Total</p>
                     </div>
                 </div>
-                
-                <div class="stats-container">
-                    <div class="stat-item">
-                        <div class="stat-icon total">
-                            <i class="fas fa-box"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3><%= produtos.length %></h3>
-                            <p>Total de Produtos</p>
-                        </div>
+                <div class="stat-item">
+                    <div class="stat-icon available">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-icon available">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3><%= produtos.filter(p => p.estoque > 0).length %></h3>
-                            <p>Disponíveis</p>
-                        </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.filter(p => p.estoque > 0).length %></h3>
+                        <p>Em Estoque</p>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-icon low">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3><%= produtos.filter(p => p.estoque <= 5 && p.estoque > 0).length %></h3>
-                            <p>Estoque Baixo</p>
-                        </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon low">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><%= produtos.filter(p => p.estoque > 0 && p.estoque <= 5).length %></h3>
+                        <p>Estoque Baixo</p>
                     </div>
                 </div>
             </div>
-
-            <% if (produtos.length > 0) { %>
-                <!-- Products Table -->
-                <div class="card-promocao">
-                    <div class="table-header">
-                        <h3 class="table-title">
-                            <i class="fas fa-list me-2"></i>
-                            Lista de Produtos
-                        </h3>
-                        <div class="table-actions">
-                            <span class="results-count"><%= produtos.length %> produtos encontrados</span>
-                        </div>
-                    </div>
-
-                    <div class="table-container">
-                        <table class="table table-hover align-middle produtos-table">
-                            <thead>
-                                <tr>
-                                    <th class="fixed-column-id">ID</th>
-                                    <th class="fixed-column-img">Imagem</th>
-                                    <th class="column-nome">Nome</th>
-                                    <th class="column-valor">Valor</th>
-                                    <th class="column-categoria">Categoria</th>
-                                    <th>Cor</th>
-                                    <th>Tamanho</th>
-                                    <th>Peso</th>
-                                    <th>Cilindrada</th>
-                                    <th>Potência</th>
-                                    <th>Tanque</th>
-                                    <th>Material</th>
-                                    <th>Proteção</th>
-                                    <th class="column-estoque">Estoque</th>
-                                    <th class="column-descricao">Descrição</th>
-                                    <th>Thumbnails</th>
-                                    <th class="fixed-column-action">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% produtos.forEach(function(produto) { %>
-                                    <tr class="produto-row" data-id="<%= produto.ID %>" data-nome="<%= (produto.nome || '').toLowerCase() %>" data-categoria="<%= (produto.categoria_nome || produto.categoria || produto.Categoria_ID) %>">
-                                        <td class="fixed-column-id">
-                                            <span class="produto-id">#<%= produto.ID %></span>
-                                        </td>
-                                        <td class="fixed-column-img">
-                                            <div class="produto-img-container">
-                                                <% if (produto.imagem) { %>
-                                                    <img src="<%= produto.imagem %>" alt="Imagem do Produto" class="produto-img">
-                                                <% } else { %>
-                                                    <div class="produto-img-placeholder">
-                                                        <i class="fas fa-box-open"></i>
-                                                    </div>
-                                                <% } %>
-                                            </div>
-                                        </td>
-                                        <td class="column-nome">
-                                            <strong class="produto-nome"><%= produto.nome %></strong>
-                                        </td>
-                                        <td class="column-valor">
-                                            <span class="produto-valor">R$ <%= produto.valor ? Number(produto.valor).toFixed(2).replace('.', ',') : '0,00' %></span>
-                                        </td>
-                                        <td class="column-categoria">
-                                            <span class="badge-categoria"><%= produto.categoria_nome || produto.categoria || produto.Categoria_ID %></span>
-                                        </td>
-                                        <td><%= produto.cor || '' %></td>
-                                        <td><%= produto.tamanho || '' %></td>
-                                        <td><%= produto.peso || '' %></td>
-                                        <td><%= produto.cilindrada || '' %></td>
-                                        <td><%= produto.potencia || '' %></td>
-                                        <td><%= produto.tanque || '' %></td>
-                                        <td><%= produto.material || '' %></td>
-                                        <td><%= produto.protecao || '' %></td>
-                                        <td class="column-estoque">
-                                            <span class="estoque-badge <%= produto.estoque > 10 ? 'estoque-alto' : (produto.estoque > 0 ? 'estoque-medio' : 'estoque-baixo') %>">
-                                                <%= produto.estoque %>
-                                                <i class="fas <%= produto.estoque > 10 ? 'fa-check' : (produto.estoque > 0 ? 'fa-exclamation' : 'fa-times') %> ms-1"></i>
-                                            </span>
-                                        </td>
-                                        <td class="column-descricao">
-                                            <div class="produto-descricao"><%= produto.descricao || 'Sem descrição' %></div>
-                                        </td>
-                                        <td>
-                                            <% if (produto.thumbnails) {
-                                                let thumbs = Array.isArray(produto.thumbnails) ? produto.thumbnails : String(produto.thumbnails).split(',');
-                                            %>
-                                                <% thumbs.forEach(function(url) { %>
-                                                    <a href="<%= url.trim() %>" target="_blank">
-                                                        <img src="<%= url.trim() %>" alt="Thumbnail" style="width:40px;height:40px;object-fit:cover;border-radius:6px;margin:2px;">
-                                                    </a>
-                                                <% }) %>
-                                            <% } %>
-                                        </td>
-                                        <td class="fixed-column-action">
-                                            <div class="action-btns">
-                                                <a href="/produtos/editar/<%= produto.ID %>" class="action-btn edit" title="Editar Produto">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </a>
-                                                <form action="/seeProduto/excluir/<%= produto.ID %>" method="POST" class="d-inline">
-                                                    <!-- botão abre modal de confirmação em vez do confirm() nativo -->
-                                                    <button type="button" class="action-btn delete btn-delete-prod" title="Excluir Produto"
-                                                            data-id="<%= produto.ID %>"
-                                                            data-nome="<%= (produto.nome || '').replace(/\"/g, '&quot;') %>">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </form>
-                                                
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            <% } else { %>
-                <!-- Empty State -->
-                <div class="empty-state card-promocao">
-                    <div class="empty-content">
-                        <div class="empty-icon">
-                            <i class="fas fa-box-open"></i>
-                        </div>
-                        <h3>Nenhum produto cadastrado</h3>
-                        <p class="empty-text">Você ainda não possui produtos cadastrados no sistema.</p>
-                        <a href="/createItens" class="btn-novo btn-novo-large">
-                            <i class="fas fa-plus me-2"></i> Adicionar Primeiro Produto
-                        </a>
-                    </div>
-                </div>
-            <% } %>
         </div>
 
-        <!-- Product Details Modal -->
-        <div class="modal fade" id="productModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
+        <!-- Products Grid -->
+        <div class="row" id="produtosGrid">
+            <% produtos.forEach(produto => { %>
+                <div class="col-12 col-md-6 col-lg-4 mb-4 produto-card" 
+                     data-id="<%= produto.ID %>"
+                     data-nome="<%= produto.nome?.toLowerCase() %>"
+                     data-categoria="<%= produto.categoria_nome || produto.categoria || produto.Categoria_ID %>">
+                    
+                    <div class="card h-100 produto-item">
+                        <a href="/seeProduto/produto/detalhes/<%= produto.ID %>" class="text-decoration-none">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="produto-id">#<%= produto.ID %></span>
+                                <span class="badge-categoria">
+                                    <%= produto.categoria_nome || 'Sem categoria' %>
+                                </span>
+                            </div>
+                            
+                            <div class="card-body">
+                                <div class="row g-0">
+                                    <div class="col-4">
+                                        <% if (produto.imagem) { %>
+                                            <img src="<%= produto.imagem %>" class="img-fluid rounded produto-img" alt="<%= produto.nome %>">
+                                        <% } else { %>
+                                            <div class="produto-img-placeholder">
+                                                <i class="fas fa-box-open"></i>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                    <div class="col-8 ps-3">
+                                        <h5 class="produto-nome mb-2"><%= produto.nome %></h5>
+                                        <div class="produto-valor mb-2">R$ <%= Number(produto.valor).toFixed(2).replace('.', ',') %></div>
+                                        
+                                        <!-- Substitua o código da badge de estoque -->
+                                        <div class="estoque-badge <%= produto.estoque > 10 ? 'estoque-alto' : (produto.estoque > 0 ? 'estoque-medio' : 'estoque-baixo') %>">
+                                            <i class="fas <%= produto.estoque > 10 ? 'fa-check' : (produto.estoque > 0 ? 'fa-exclamation' : 'fa-times') %>"></i>
+                                            Estoque: <%= produto.estoque %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Detalhes Expandíveis -->
+                                <div class="produto-detalhes mt-3" style="display:none;">
+                                    <% 
+                                    const campos = [
+                                        { key: 'cor', label: 'Cor' },
+                                        { key: 'tamanho', label: 'Tamanho' },
+                                        { key: 'peso', label: 'Peso' },
+                                        { key: 'cilindrada', label: 'Cilindrada' },
+                                        { key: 'potencia', label: 'Potência' },
+                                        { key: 'tanque', label: 'Tanque' },
+                                        { key: 'material', label: 'Material' },
+                                        { key: 'protecao', label: 'Proteção' }
+                                    ];
+                                    
+                                    let especificacoes = {};
+                                    try {
+                                        especificacoes = JSON.parse(produto.especificacoes || '{}');
+                                    } catch(e) {}
+                                    %>
+
+                                    <div class="row g-2">
+                                        <% campos.forEach(({key, label}) => { %>
+                                            <% if (produto[key] || especificacoes[key]) { %>
+                                                <div class="col-6">
+                                                    <small class="text-muted"><%= label %>:</small>
+                                                    <div><%= produto[key] || especificacoes[key] %></div>
+                                                </div>
+                                            <% } %>
+                                        <% }); %>
+                                    </div>
+
+                                    <% if (produto.descricao) { %>
+                                        <div class="mt-2">
+                                            <small class="text-muted">Descrição:</small>
+                                            <div class="produto-descricao"><%= produto.descricao %></div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Removido o botão de info -->
+                        </a>
+                        
+                        <div class="card-footer">
+                            <div class="action-btns">
+                                <a href="/produtos/editar/<%= produto.ID %>" class="action-btn edit" title="Editar">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <button type="button" class="action-btn delete btn-delete-prod" 
+                                        data-id="<%= produto.ID %>"
+                                        data-nome="<%= produto.nome %>"
+                                        title="Excluir">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Modal de Confirmação -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Detalhes do Produto</h5>
+                        <h5 class="modal-title">Confirmar Exclusão</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body" id="productDetails">
-                        <!-- Details will be loaded here -->
+                    <div class="modal-body">
+                        <p id="confirmDeleteText"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Excluir</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Adicione no final do arquivo (antes de fechar body) o modal de confirmação -->
-        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
-          <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteLabel">Confirmar remoção</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-              </div>
-              <div class="modal-body">
-                <p id="confirmDeleteText">Tem certeza que deseja remover este produto? Esta ação não pode ser desfeita.</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Excluir</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="/javascripts/seeProduto.js"></script>
-    </body>
-    </html>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/javascripts/seeProduto.js"></script>
+</body>
+</html>

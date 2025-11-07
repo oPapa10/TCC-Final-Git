@@ -95,84 +95,127 @@
                 <p class="product-description"><%= produto.descricao %></p>
                 <div class="details-section product-details mb-4">
                     <h5 class="section-title">Detalhes do Produto</h5>
-                    <ul class="details-list">
-                        <% 
-                        // Lista completa de campos fixos para todos os tipos de produto
-                        const camposFixos = [
-                            // Campos comuns
-                            { campo: 'marca', label: 'Marca' },
-                            { campo: 'modelo', label: 'Modelo' },
-                            { campo: 'cor', label: 'Cor' },
-                            { campo: 'tamanho', label: 'Tamanho' },
-                            { campo: 'material', label: 'Material' },
-                            { campo: 'peso', label: 'Peso', unidade: 'kg' },
-                            
-                            // Campos específicos de Moto
-                            { campo: 'ano', label: 'Ano' },
-                            { campo: 'cilindrada', label: 'Cilindrada' },
-                            { campo: 'tipo_motor', label: 'Tipo de Motor' },
-                            { campo: 'refrigeracao', label: 'Sistema de Refrigeração' },
-                            { campo: 'partida', label: 'Tipo de Partida' },
-                            { campo: 'quilometragem', label: 'Quilometragem' },
-                            { campo: 'marchas', label: 'Número de Marchas' },
-                            
-                            // Campos específicos de Capacete
-                            { campo: 'material_casco', label: 'Material do Casco' },
-                            { campo: 'tipo_viseira', label: 'Tipo de Viseira' },
-                            { campo: 'sistema_retencao', label: 'Sistema de Retenção' },
-                            { campo: 'certificacao', label: 'Certificação' },
-                            
-                            // Campos específicos de Óleo
-                            { campo: 'tipo_oleo', label: 'Tipo de Óleo' },
-                            { campo: 'viscosidade', label: 'Viscosidade' },
-                            { campo: 'volume_unidade', label: 'Volume da Unidade', unidade: 'ml' },
-                            { campo: 'formato_venda', label: 'Formato de Venda' },
-                            { campo: 'tipo_recipiente', label: 'Tipo de Recipiente' },
-                            { campo: 'aplicacao', label: 'Aplicação Recomendada' },
-                            
-                            // Campos específicos de Peças
-                            { campo: 'tipo_peca', label: 'Tipo de Peça' },
-                            { campo: 'modelo_compativel', label: 'Modelo Compatível' },
-                            { campo: 'numero_peca', label: 'Número da Peça (OEM)' },
-                            { campo: 'dimensoes', label: 'Dimensões', unidade: 'mm' },
-                            { campo: 'posicao_lado', label: 'Posição / Lado' },
-                            { campo: 'quantidade_kit', label: 'Quantidade no Kit' },
-                            { campo: 'garantia', label: 'Garantia' },
-                            
-                            // Outros campos
-                            { campo: 'potencia', label: 'Potência' },
-                            { campo: 'tanque', label: 'Tanque' },
-                            { campo: 'protecao', label: 'Proteção' },
-                            { campo: 'estoque', label: 'Estoque' }
-                        ];
+                    
+                    <% 
+                    // Lista completa de campos fixos para todos os tipos de produto
+                    const camposFixos = [
+                        // Campos comuns
+                        { campo: 'marca', label: 'Marca' },
+                        { campo: 'modelo', label: 'Modelo' },
+                        { campo: 'cor', label: 'Cor' },
+                        { campo: 'tamanho', label: 'Tamanho' },
+                        { campo: 'material', label: 'Material' },
+                        { campo: 'peso', label: 'Peso', unidade: 'kg' },
+                        
+                        // Campos específicos de Moto
+                        { campo: 'ano', label: 'Ano' },
+                        { campo: 'cilindrada', label: 'Cilindrada' },
+                        { campo: 'tipo_motor', label: 'Tipo de Motor' },
+                        { campo: 'refrigeracao', label: 'Sistema de Refrigeração' },
+                        { campo: 'partida', label: 'Tipo de Partida' },
+                        { campo: 'quilometragem', label: 'Quilometragem' },
+                        { campo: 'marchas', label: 'Número de Marchas' },
+                        
+                        // Campos específicos de Capacete
+                        { campo: 'material_casco', label: 'Material do Casco' },
+                        { campo: 'tipo_viseira', label: 'Tipo de Viseira' },
+                        { campo: 'sistema_retencao', label: 'Sistema de Retenção' },
+                        { campo: 'certificacao', label: 'Certificação' },
+                        
+                        // Campos específicos de Óleo
+                        { campo: 'tipo_oleo', label: 'Tipo de Óleo' },
+                        { campo: 'viscosidade', label: 'Viscosidade' },
+                        { campo: 'volume_unidade', label: 'Volume da Unidade', unidade: 'ml' },
+                        { campo: 'formato_venda', label: 'Formato de Venda' },
+                        { campo: 'tipo_recipiente', label: 'Tipo de Recipiente' },
+                        { campo: 'aplicacao', label: 'Aplicação Recomendada' },
+                        
+                        // Campos específicos de Peças
+                        { campo: 'tipo_peca', label: 'Tipo de Peça' },
+                        { campo: 'modelo_compativel', label: 'Modelo Compatível' },
+                        { campo: 'numero_peca', label: 'Número da Peça (OEM)' },
+                        { campo: 'dimensoes', label: 'Dimensões', unidade: 'mm' },
+                        { campo: 'posicao_lado', label: 'Posição / Lado' },
+                        { campo: 'quantidade_kit', label: 'Quantidade no Kit' },
+                        { campo: 'garantia', label: 'Garantia' },
+                        
+                        // Outros campos
+                        { campo: 'potencia', label: 'Potência' },
+                        { campo: 'tanque', label: 'Tanque' },
+                        { campo: 'protecao', label: 'Proteção' },
+                        { campo: 'estoque', label: 'Estoque' }
+                    ];
 
-                        // Processa especificações
-                        let especificacoesObj = {};
-                        if (produto.especificacoes) {
-                            try {
-                                especificacoesObj = typeof produto.especificacoes === 'string' 
-                                    ? JSON.parse(produto.especificacoes)
-                                    : produto.especificacoes;
-                            } catch (e) {
-                                console.error('Erro ao parsear especificações:', e);
-                            }
+                    // Processa especificações
+                    let especificacoesObj = {};
+                    if (produto.especificacoes) {
+                        try {
+                            especificacoesObj = typeof produto.especificacoes === 'string' 
+                                ? JSON.parse(produto.especificacoes)
+                                : produto.especificacoes;
+                        } catch (e) {
+                            console.error('Erro ao parsear especificações:', e);
                         }
+                    }
 
-                        // Renderiza campos fixos E especificações
-                        camposFixos.forEach(({campo, label, unidade}) => {
-                            // Verifica tanto no produto direto quanto nas especificações
-                            const valor = produto[campo] || especificacoesObj[campo];
-                            
-                            if (valor) { 
-                        %>
-                            <li>
-                                <strong><%= label %>:</strong> 
-                                <%= valor %><%= unidade ? ' ' + unidade : '' %>
-                            </li>
-                        <%  }
-                        });
-                        %>
-                    </ul>
+                    // Array para armazenar todos os detalhes válidos
+                    let detalhesValidos = [];
+
+                    // Coleta todos os detalhes válidos
+                    camposFixos.forEach(({campo, label, unidade}) => {
+                        const valor = produto[campo] || especificacoesObj[campo];
+                        if (valor) {
+                            detalhesValidos.push({
+                                label,
+                                valor,
+                                unidade: unidade || ''
+                            });
+                        }
+                    });
+
+                    // Se tiver mais de 6 detalhes, divide em duas colunas
+                    const usarDuasColunas = detalhesValidos.length > 6;
+                    const metade = Math.ceil(detalhesValidos.length / 2);
+                    %>
+
+                    <div class="row">
+                        <% if (usarDuasColunas) { %>
+                            <!-- Primeira coluna -->
+                            <div class="col-md-6">
+                                <ul class="details-list">
+                                    <% detalhesValidos.slice(0, metade).forEach(detalhe => { %>
+                                        <li>
+                                            <strong><%= detalhe.label %>:</strong> 
+                                            <%= detalhe.valor %><%= detalhe.unidade %>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                            <!-- Segunda coluna -->
+                            <div class="col-md-6">
+                                <ul class="details-list">
+                                    <% detalhesValidos.slice(metade).forEach(detalhe => { %>
+                                        <li>
+                                            <strong><%= detalhe.label %>:</strong> 
+                                            <%= detalhe.valor %><%= detalhe.unidade %>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        <% } else { %>
+                            <!-- Lista única quando houver 6 ou menos itens -->
+                            <div class="col-12">
+                                <ul class="details-list">
+                                    <% detalhesValidos.forEach(detalhe => { %>
+                                        <li>
+                                            <strong><%= detalhe.label %>:</strong> 
+                                            <%= detalhe.valor %><%= detalhe.unidade %>
+                                        </li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        <% } %>
+                    </div>
                 </div>
                 <form id="addToCartForm" action="/carrinho/adicionar" method="POST" class="mb-3">
                     <input type="hidden" name="produtoId" value="<%= produto.ID %>">

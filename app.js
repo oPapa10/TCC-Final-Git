@@ -1,4 +1,4 @@
-require('dotenv').config(); // <-- adicionado: carrega .env antes de usar process.env
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -7,7 +7,10 @@ const logger = require('morgan');
 const methodOverride = require('method-override');
 const session = require('express-session');
 
-// Rotas
+// Primeiro cria a aplicação Express
+const app = express();
+
+// Depois importa as rotas
 const indexRouter = require('./routes/index');
 const perfilRouter = require('./routes/perfil');
 const carrinhoRouter = require('./routes/carrinho');
@@ -21,7 +24,7 @@ const createItensRouter = require('./routes/createItens');
 const admRouter = require('./routes/adm');
 const admVendasRouter = require('./routes/admVendas');
 const categoriaRoutes = require('./routes/categoria');
-const produtoRoutes = require('./routes/produto'); // Corrigido para importar o router certo
+const produtoRoutes = require('./routes/produto');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
 const usuariosRouter = require('./routes/usuarios');
@@ -32,11 +35,10 @@ const editarPerfilRouter = require('./routes/editar-perfil');
 const avaliacaoRouter = require('./routes/avaliacao');
 const pagamentoRouter = require('./routes/pagamento');
 const recuperarSenhaRouter = require('./routes/recuperarSenha');
-const notificacoesRouter = require('./routes/notificacoes'); // { changed code }
+const notificacoesRouter = require('./routes/notificacoes');
 const { router: adminAuthRouter } = require('./routes/adminAuth');
 
-const app = express();
-
+// Configurações
 app.set('etag', false);
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -45,14 +47,14 @@ app.use((req, res, next) => {
     next();
 });
 
-// Configuração do express-session
+// Session
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
 
-// View engine setup
+// View engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -64,7 +66,7 @@ app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware para disponibilizar o usuário na resposta
+// Middleware do usuário
 app.use((req, res, next) => {
     res.locals.usuario = req.session.usuario || null;
     next();
@@ -72,15 +74,14 @@ app.use((req, res, next) => {
 
 // Middleware de logging
 app.use((req, res, next) => {
-  console.log(`[REQ] ${new Date().toISOString()} ${req.method} ${req.originalUrl} referer=${req.get('referer') || '-'}`);
-  next();
+    console.log(`[REQ] ${new Date().toISOString()} ${req.method} ${req.originalUrl} referer=${req.get('referer') || '-'}`);
+    next();
 });
 
 // Rotas
-
 app.use('/', indexRouter);
-app.use('/', productRouter); // Inclui as rotas de produto, inclusive /comprar-agora e /comprar-confirmacao/:produtoId
-app.use('/carrinho', carrinhoRouter); // Isso já está correto!
+app.use('/', productRouter);
+app.use('/carrinho', carrinhoRouter);
 app.use('/cadastro', cadastroRouter);
 app.use('/opcoes', opcoesRouter);
 app.use('/ajuda', ajudaRouter);
@@ -89,8 +90,8 @@ app.use('/seeProduto', seeProdutoRouter);
 app.use('/createCategoria', createCategoriaRouter);
 app.use('/admCenterMotos', admRouter);
 app.use('/admCenterMotos/vendas', admVendasRouter);
-app.use('/categorias', categoriaRoutes);   //  corrigido
-app.use('/produtos', require('./routes/produto'));
+app.use('/categorias', categoriaRoutes);
+app.use('/produtos', produtoRoutes);
 app.use('/login', loginRouter);
 app.use('/perfil', perfilRouter);
 app.use('/logout', logoutRouter);
@@ -99,38 +100,34 @@ app.use('/', perfilPosCadastroRouter);
 app.use('/entradaEstoque', entradaEstoqueRouter);
 app.use('/cadastrarPromocao', cadastrarPromocaoRouter);
 app.use('/editar-perfil', editarPerfilRouter);
-app.use('/avaliacao', avaliacaoRouter); // Nova rota adicionada
+app.use('/avaliacao', avaliacaoRouter);
 app.use('/pagamento', pagamentoRouter);
-app.use('/', recuperarSenhaRouter); // Nova rota para recuperação de senha
-app.use('/', notificacoesRouter); // { changed code }
-app.use('/admin', adminAuthRouter); // rotas /admin/login e /admin/logout
-
-// antiga rota difícil removida — usamos apenas /admCenterMotos
+app.use('/', recuperarSenhaRouter);
+app.use('/', notificacoesRouter);
+app.use('/admin', adminAuthRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// catch 404 and forward to error handler
+// Error handlers
 app.use(function(req, res, next) {
-  res.status(404).render('error', { error: { status: 404 }, message: 'Página não encontrada' });
+    res.status(404).render('error', { error: { status: 404 }, message: 'Página não encontrada' });
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500);
-  res.render('error', { error: err, message: err.message });
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.status(err.status || 500);
+    res.render('error', { error: err, message: err.message });
 });
 
-// handler 404 (último middleware)
 app.use((req, res, next) => {
-  console.warn(`[404] ${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
-  // redireciona para /perfil (não renderiza ejs inexistente)
-  return res.redirect('/perfil');
+    console.warn(`[404] ${new Date().toISOString()} ${req.method} ${req.originalUrl}`);
+    return res.redirect('/perfil');
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
 
 module.exports = app;

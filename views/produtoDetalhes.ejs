@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto | Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/produtoDetalhes.css">
+</head>
+<body>
+    <div class="produto-detalhes-container">
+        <!-- Header -->
+        <div class="detalhes-header">
+            <a href="/seeProduto" class="header-back">
+                <i class="fas fa-arrow-left"></i>
+                Voltar para Produtos
+            </a>
+            <h1 class="header-title">Detalhes do Produto</h1>
+        </div>
+
+        <!-- Grid Principal -->
+        <div class="produto-grid">
+            <!-- Seção de Imagem -->
+            <div class="imagem-section">
+                <div class="imagem-principal">
+                    <% if (produto.imagem) { %>
+                        <img src="<%= produto.imagem %>" alt="<%= produto.nome %>" id="mainImage">
+                    <% } else { %>
+                        <div class="imagem-placeholder">
+                            <i class="fas fa-box-open"></i>
+                            <span>Sem Imagem</span>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Thumbnails -->
+                <div class="thumbnail-grid">
+                    <!-- Thumbnail da imagem principal -->
+                    <% if (produto.imagem) { %>
+                        <div class="thumbnail-item active" onclick="changeImage('<%= produto.imagem %>', this)">
+                            <img src="<%= produto.imagem %>" alt="Imagem Principal">
+                        </div>
+                    <% } %>
+                    
+                    <!-- Thumbnails adicionais -->
+                    <% if (produto.thumbnails) { %>
+                        <% produto.thumbnails.split(',').forEach((thumb, index) => { %>
+                            <div class="thumbnail-item" onclick="changeImage('<%= thumb %>', this)">
+                                <img src="<%= thumb %>" alt="Miniatura <%= index + 1 %>">
+                            </div>
+                        <% }); %>
+                    <% } %>
+                    
+                    <!-- Placeholder se não houver thumbnails -->
+                    <% if (!produto.thumbnails && !produto.imagem) { %>
+                        <div class="thumbnail-item thumbnail-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Seção de Informações -->
+            <div class="info-section">
+                <div class="info-card">
+                    <div class="info-header">
+                        <span class="produto-id">#<%= produto.ID %></span>
+                        <span class="categoria-badge">
+                            <%= produto.categoria_nome || produto.categoria || produto.Categoria_ID %>
+                        </span>
+                    </div>
+
+                    <h2 class="produto-nome"><%= produto.nome %></h2>
+
+                    <div class="metadata-grid">
+                        <div class="meta-item">
+                            <span class="meta-label">Valor</span>
+                            <span class="meta-value valor-destaque">
+                                R$ <%= Number(produto.valor).toFixed(2).replace('.', ',') %>
+                            </span>
+                        </div>
+
+                        <div class="meta-item">
+                            <span class="meta-label">Estoque</span>
+                            <span class="estoque-status <%= produto.estoque > 10 ? 'estoque-alto' : (produto.estoque > 0 ? 'estoque-medio' : 'estoque-baixo') %>">
+                                <i class="fas <%= produto.estoque > 10 ? 'fa-check' : (produto.estoque > 0 ? 'fa-exclamation' : 'fa-times') %>"></i>
+                                <%= produto.estoque %> unidades
+                            </span>
+                        </div>
+                    </div>
+
+                    <% if (produto.descricao) { %>
+                        <div class="descricao-section">
+                            <h4>Descrição</h4>
+                            <p class="descricao-texto"><%= produto.descricao %></p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Especificações -->
+        <div class="especificacoes-section">
+            <h3 class="section-title">Especificações Técnicas</h3>
+            <div class="especificacoes-grid">
+              <%
+              // Protege caso 'produto' seja null/undefined
+              const prod = produto && typeof produto === 'object' ? produto : {};
+
+              const labels2 = {
+                marca: 'Marca', modelo: 'Modelo', cor: 'Cor', tamanho: 'Tamanho', peso: 'Peso',
+                cilindrada: 'Cilindrada', tipo_motor: 'Tipo de Motor', refrigeracao: 'Sistema de Refrigeração',
+                partida: 'Tipo de Partida', quilometragem: 'Quilometragem', marchas: 'Número de Marchas',
+                potencia: 'Potência', tanque: 'Tanque', material: 'Material', protecao: 'Proteção',
+                material_casco: 'Material do Casco', tipo_viseira: 'Tipo de Viseira',
+                sistema_retencao: 'Sistema de Retenção', certificacao: 'Certificação',
+                tipo_oleo: 'Tipo de Óleo', viscosidade: 'Viscosidade', volume_unidade: 'Volume da Unidade',
+                formato_venda: 'Formato de Venda', tipo_recipiente: 'Tipo de Recipiente', aplicacao: 'Aplicação',
+                tipo_peca: 'Tipo de Peça', modelo_compativel: 'Modelo Compatível', numero_peca: 'Número da Peça (OEM)',
+                dimensoes: 'Dimensões', posicao_lado: 'Posição / Lado', quantidade_kit: 'Quantidade no Kit', garantia: 'Garantia'
+              };
+              const unidades2 = { peso: 'kg', volume_unidade: 'ml', dimensoes: 'mm' };
+
+              let especObj = {};
+              if (prod.especificacoes) {
+                try {
+                  especObj = typeof prod.especificacoes === 'string' ? JSON.parse(prod.especificacoes) : prod.especificacoes;
+                  if (!especObj || typeof especObj !== 'object') especObj = {};
+                } catch(e) { especObj = {}; }
+              }
+
+              const combinado2 = {};
+              // copia colunas do produto (se existirem)
+              Object.keys(prod || {}).forEach(k => {
+                const val = prod[k];
+                if (val !== null && val !== undefined) combinado2[String(k).toLowerCase()] = val;
+              });
+              // copia campos vindos do JSON especificacoes
+              Object.keys(especObj || {}).forEach(k => {
+                const val = especObj[k];
+                if (val !== null && val !== undefined) combinado2[String(k).toLowerCase()] = val;
+              });
+
+              const itens = Object.entries(combinado2)
+                .filter(([k,v]) => {
+                  if (['id','nome','valor','descricao','slug','imagem','thumbnails'].includes(k.toLowerCase())) return false;
+                  return v !== '' && v !== null && typeof v !== 'undefined';
+                })
+                .map(([k,v]) => {
+                  let val = v;
+                  if (Array.isArray(v)) val = v.join(', ');
+                  if (typeof v === 'object') {
+                    try { val = JSON.stringify(v); } catch (e) { val = String(v); }
+                  }
+                  if (k.toLowerCase() === 'peso' && !isNaN(Number(v))) val = Number(v).toLocaleString('pt-BR', {maximumFractionDigits: 2});
+                  return { key: k.toLowerCase(), label: labels2[k.toLowerCase()] || k.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()), valor: val, unidade: unidades2[k.toLowerCase()] || '' };
+                });
+
+              itens.sort((a,b) => a.label.localeCompare(b.label));
+              %>
+
+              <% if (itens.length === 0) { %>
+                <div class="text-muted">Nenhuma especificação disponível.</div>
+              <% } else { %>
+                <% itens.forEach(item => { %>
+                  <div class="espec-item">
+                    <span class="espec-label"><%= item.label %></span>
+                    <span class="espec-value"><%= item.valor %><%= item.unidade ? ' ' + item.unidade : '' %></span>
+                  </div>
+                <% }) %>
+              <% } %>
+            </div>
+        </div>
+
+        <!-- Ações -->
+        <div class="acoes-section">
+            <a href="/produtos/editar/<%= produto.ID %>" class="btn btn-primary">
+                <i class="fas fa-pencil-alt"></i>
+                Editar Produto
+            </a>
+            <button type="button" class="btn btn-danger" onclick="openDeleteModal()">
+                <i class="fas fa-trash-alt"></i>
+                Excluir Produto
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="modal-close" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o produto "<strong><%= produto.nome %></strong>"?</p>
+                <p style="color: var(--danger); margin-top: 1rem;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta ação não pode ser desfeita!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    Cancelar
+                </button>
+                <form action="/seeProduto/excluir/<%= produto.ID %>" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        Confirmar Exclusão
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para trocar a imagem principal
+        function changeImage(src, element) {
+            document.getElementById('mainImage').src = src;
+            
+            // Remove a classe active de todas as thumbnails
+            document.querySelectorAll('.thumbnail-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Adiciona a classe active na thumbnail clicada
+            element.classList.add('active');
+        }
+
+        // Funções do modal
+        function openDeleteModal() {
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+</html>
