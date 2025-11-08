@@ -4,6 +4,7 @@ const db = require('../config/db');
 const multer = require('multer');
 const path = require('path');
 const Produto = require('../models/produtoModel');
+const Categoria = require('../models/Categoria'); // <-- ADICIONADO
 
 // Configuração do multer
 const storage = multer.diskStorage({
@@ -25,28 +26,18 @@ function slugify(text) {
 
 // Rota para buscar categorias do produto
 router.get('/', (req, res) => {
-    // Busca categorias de produto com seus campos
-    db.query('SELECT * FROM CategoriasProduto', (err, categorias) => {
+    // Busca categorias criadas via CREATECATEGORIA (tabela Categoria)
+    Categoria.findAll((err, categorias) => {
         if (err) {
-            console.error('Erro ao buscar categorias:', err);
+            console.error('Erro ao buscar categorias do catálogo:', err);
             return res.redirect('/');
         }
-        
-        // Parse os campos JSON de cada categoria
-        categorias = categorias.map(cat => {
-            try {
-                cat.campos = JSON.parse(cat.campos);
-            } catch (e) {
-                cat.campos = [];
-            }
-            return cat;
-        });
-
-        res.render('createItens', { categorias });
+        // garante que 'sucesso' sempre exista para a view
+        res.render('createItens', { categorias, sucesso: false });
     });
 });
 
-// POST criar produto - ajustado para receber categoria_id e campos dinâmicos
+// Rota POST criar produto - modificada para salvar categoria e campos específicos
 router.post('/produtos', upload.fields([
   { name: 'imagem', maxCount: 1 },
   { name: 'thumbnailUpload', maxCount: 10 }
@@ -90,6 +81,30 @@ router.post('/produtos', upload.fields([
       slug = `${baseSlug}-${count++}`;
     }
 
+    // Monta objeto de especificações com base no tipo de produto selecionado
+    const tipoCategoria = body.categoria_key;
+    let especificacoes = {};
+
+    // Mapeamento dos campos por tipo
+    const camposPorTipo = {
+      vestuario: ['marca', 'modelo', 'tamanho', 'cor', 'material', 'genero', 'impermeavel', 'protecoes'],
+      capacete: ['marca', 'modelo', 'tamanho', 'cor', 'material_casco', 'tipo_viseira', 'certificacao'],
+      moto: ['marca', 'modelo', 'ano', 'cilindrada', 'tipo_motor', 'refrigeracao', 'partida', 'quilometragem', 'marchas'],
+      oleo: ['marca', 'tipo_oleo', 'viscosidade', 'volume_unidade', 'especificacao_api'],
+      pecas: ['marca', 'modelo_compativel', 'numero_peca', 'ano_compativel', 'material', 'posicao'],
+      outros: ['marca', 'modelo', 'cor', 'tamanho', 'material']
+    };
+
+    // Pega campos do tipo selecionado
+    const camposPermitidos = camposPorTipo[tipoCategoria] || camposPorTipo.outros;
+
+    // Copia apenas campos permitidos para especificacoes
+    camposPermitidos.forEach(campo => {
+      if (body[campo] !== undefined && body[campo] !== null && body[campo] !== '') {
+        especificacoes[campo] = body[campo];
+      }
+    });
+
     // Prepara objeto para salvar
     const produtoParaSalvar = {
       nome: nome,
@@ -100,14 +115,8 @@ router.post('/produtos', upload.fields([
       thumbnails: thumbnailsFinal,
       estoque: body.estoque ? Number(body.estoque) : 0,
       slug: slug,
-      // Inclui todos os campos do formulário
-      ...body
+      especificacoes: JSON.stringify(especificacoes)
     };
-
-    // Remove campos de sistema
-    delete produtoParaSalvar.categoria_key;
-    delete produtoParaSalvar.imagemLink;
-    delete produtoParaSalvar.submit;
 
     // Cria o produto
     Produto.create(produtoParaSalvar, (err) => {
@@ -116,7 +125,8 @@ router.post('/produtos', upload.fields([
         return res.status(500).send('Erro ao criar produto');
       }
       
-      db.query('SELECT * FROM Categoria', (err2, categorias) => {
+      // Busca categorias para recarregar a página
+      Categoria.findAll((err2, categorias) => {
         if (err2) return res.status(500).send('Erro ao carregar categorias');
         res.render('createItens', { categorias, sucesso: true });
       });

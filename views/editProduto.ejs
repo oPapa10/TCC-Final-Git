@@ -174,15 +174,73 @@
                 </div>
 
                 <!-- Campos Dinâmicos da Categoria -->
-                <% if (categoriaCamposArr.length > 0) { %>
+                <% 
+                  // decide quais campos renderizar
+                  let camposParaRender = [];
+                  
+                  // Se tem campos da categoria, usa eles
+                  if (Array.isArray(categoriaCamposArr) && categoriaCamposArr.length > 0) {
+                    camposParaRender = categoriaCamposArr;
+                  } 
+                  // Senão, pega todos os campos das especificações
+                  else if (produto.especificacoes) {
+                    try {
+                      const especObj = typeof produto.especificacoes === 'string' 
+                        ? JSON.parse(produto.especificacoes) 
+                        : produto.especificacoes;
+
+                      // Converte chaves das especificações em campos
+                      camposParaRender = Object.keys(especObj).map(key => ({
+                        key: key,
+                        label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
+                      }));
+
+                      // Adiciona outros campos que podem estar no produto principal
+                      const camposExtras = [
+                        'marca', 'modelo', 'ano', 'cor', 'tamanho', 'peso', 'material',
+                        'cilindrada', 'tipo_motor', 'refrigeracao', 'partida', 'quilometragem',
+                        'marchas', 'material_casco', 'tipo_viseira', 'certificacao',
+                        'tipo_oleo', 'viscosidade', 'volume_unidade', 'posicao', 'garantia'
+                      ];
+
+                      camposExtras.forEach(campo => {
+                        if (produto[campo] && !camposParaRender.find(c => c.key === campo)) {
+                          camposParaRender.push({
+                            key: campo,
+                            label: campo.charAt(0).toUpperCase() + campo.slice(1).replace(/_/g, ' ')
+                          });
+                        }
+                      });
+                    } catch (e) {
+                      console.error('Erro ao parsear especificações:', e);
+                    }
+                  }
+                %>
+
+                <% if (camposParaRender.length > 0) { %>
                     <div class="form-section">
-                        <h3 class="section-title">Especificações da Categoria</h3>
+                        <h3 class="section-title">Especificações do Produto</h3>
                         <div class="dynamic-fields">
                             <div class="fields-grid">
-                                <% categoriaCamposArr.forEach(function(campo) { 
+                                <% camposParaRender.forEach(function(campo) { 
                                     const key = campo.key;
-                                    const label = campo.label || campo.key;
-                                    const value = getValue(key);
+                                    const label = campo.label;
+                                    let value = '';
+
+                                    // Busca valor nas especificações primeiro
+                                    try {
+                                      const especObj = typeof produto.especificacoes === 'string' 
+                                        ? JSON.parse(produto.especificacoes) 
+                                        : produto.especificacoes;
+                                      if (especObj && especObj[key]) {
+                                        value = especObj[key];
+                                      }
+                                    } catch (e) {}
+
+                                    // Se não achou nas especificações, busca no produto
+                                    if (!value && produto[key]) {
+                                      value = produto[key];
+                                    }
                                 %>
                                     <div class="form-group">
                                         <label class="form-label"><%= label %></label>
@@ -190,7 +248,7 @@
                                                name="<%= key %>" 
                                                class="form-control" 
                                                value="<%= value %>"
-                                               placeholder="<%= value ? '' : 'Informe ' + label.toLowerCase() %>">
+                                               placeholder="Informe <%= label.toLowerCase() %>">
                                     </div>
                                 <% }); %>
                             </div>

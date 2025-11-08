@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Política de Privacidade - Center Motos</title>
-  <link rel="stylesheet" href="/stylesheets/politicaPrivacidade.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/stylesheets/theme.css">
-  <link rel="stylesheet" href="/stylesheets/menu-superior.css">
-  <link rel="stylesheet" href="/stylesheets/footer.css">
-  <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
-  <link rel="stylesheet" href="/stylesheets/seguranca.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidade - Center Motos</title>
+    
+    <link rel="stylesheet" href="/stylesheets/seguranca.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheets/theme.css">
+    <link rel="stylesheet" href="/stylesheets/menu-superior.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="/stylesheets/barra_rolagem.css">
+  
 </head>
 <body>
   <%- include('partials/navbar', { usuario: usuario }) %>
@@ -82,15 +83,6 @@
 
       <!-- Conteúdo Principal -->
       <div class="terms-content">
-        <!-- Ações Rápidas -->
-        <div class="quick-actions">
-          <a href="/termos-uso" class="action-btn action-btn-primary">
-            <i class="fas fa-file-contract"></i>
-            Termos de Uso
-          </a>
-        
-        </div>
-
         <!-- Seções de Conteúdo -->
         <section class="content-section" id="introducao">
           <h3><span class="section-counter">1</span>Introdução</h3>
@@ -304,111 +296,112 @@
   
   <script>
     // Smooth scrolling para navegação interna
-    document.querySelectorAll('.terms-navigation a').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
+document.querySelectorAll('.terms-navigation a').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
       });
-    });
+    }
+  });
+});
 
-    // Progress Bar
-    window.addEventListener('scroll', () => {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.getElementById('progressBar').style.width = scrolled + '%';
-    });
+// Progress Bar
+window.addEventListener('scroll', () => {
+  const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  document.getElementById('progressBar').style.width = scrolled + '%';
+});
 
-    // Back to Top Button
-    const backToTopButton = document.getElementById('backToTop');
+// Back to Top Button
+const backToTopButton = document.getElementById('backToTop');
+
+window.addEventListener('scroll', () => {
+  if (window.pageYOffset > 300) {
+    backToTopButton.classList.add('show');
+  } else {
+    backToTopButton.classList.remove('show');
+  }
+});
+
+backToTopButton.addEventListener('click', (e) => {
+  e.preventDefault();
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
+
+// Section Highlighting
+const sections = document.querySelectorAll('.content-section');
+const navLinks = document.querySelectorAll('.terms-navigation a');
+
+const observerOptions = {
+  root: null,
+  rootMargin: '-20% 0px -60% 0px',
+  threshold: 0
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const id = entry.target.getAttribute('id');
+
+    // ✅ Linha corrigida!
+    const link = document.querySelector(`.terms-navigation a[href="#${id}"]`);
     
-    window.addEventListener('scroll', () => {
-      if (window.pageYOffset > 300) {
-        backToTopButton.classList.add('show');
-      } else {
-        backToTopButton.classList.remove('show');
-      }
-    });
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      link?.classList.add('active');
+    }
+  });
+}, observerOptions);
 
-    backToTopButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
+sections.forEach(section => {
+  observer.observe(section);
+});
 
-    // Section Highlighting
-    const sections = document.querySelectorAll('.content-section');
-    const navLinks = document.querySelectorAll('.terms-navigation a');
+// Mobile navigation toggle
+document.addEventListener('DOMContentLoaded', function() {
+  const navToggle = document.createElement('button');
+  navToggle.className = 'btn btn-primary d-lg-none mb-3 w-100';
+  navToggle.innerHTML = '<i class="fas fa-bars me-2"></i>Menu de Navegação';
+  navToggle.style.display = 'none';
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-20% 0px -60% 0px',
-      threshold: 0
-    };
+  const termsNav = document.querySelector('.terms-navigation');
+  termsNav.parentNode.insertBefore(navToggle, termsNav);
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const id = entry.target.getAttribute('id');
-        const link = document.querySelector(`.terms-navigation a[href="#${id}"]`);
-        
-        if (entry.isIntersecting) {
-          // Remove active class from all links
-          navLinks.forEach(link => link.classList.remove('active'));
-          // Add active class to current link
-          link?.classList.add('active');
-        }
-      });
-    }, observerOptions);
+  // Mostrar o botão apenas no mobile
+  if (window.innerWidth < 992) {
+    navToggle.style.display = 'block';
+    termsNav.style.display = 'none';
+  }
 
-    sections.forEach(section => {
-      observer.observe(section);
-    });
+  navToggle.addEventListener('click', function() {
+    if (termsNav.style.display === 'none') {
+      termsNav.style.display = 'block';
+      this.innerHTML = '<i class="fas fa-times me-2"></i>Fechar Menu';
+    } else {
+      termsNav.style.display = 'none';
+      this.innerHTML = '<i class="fas fa-bars me-2"></i>Menu de Navegação';
+    }
+  });
 
-    // Mobile navigation toggle
-    document.addEventListener('DOMContentLoaded', function() {
-      const navToggle = document.createElement('button');
-      navToggle.className = 'btn btn-primary d-lg-none mb-3 w-100';
-      navToggle.innerHTML = '<i class="fas fa-bars me-2"></i>Menu de Navegação';
+  // Atualizar no resize
+  window.addEventListener('resize', function() {
+    if (window.innerWidth >= 992) {
       navToggle.style.display = 'none';
-      
-      const termsNav = document.querySelector('.terms-navigation');
-      termsNav.parentNode.insertBefore(navToggle, termsNav);
-      
-      // Show toggle on mobile
-      if (window.innerWidth < 992) {
-        navToggle.style.display = 'block';
-        termsNav.style.display = 'none';
-      }
-      
-      navToggle.addEventListener('click', function() {
-        if (termsNav.style.display === 'none') {
-          termsNav.style.display = 'block';
-          this.innerHTML = '<i class="fas fa-times me-2"></i>Fechar Menu';
-        } else {
-          termsNav.style.display = 'none';
-          this.innerHTML = '<i class="fas fa-bars me-2"></i>Menu de Navegação';
-        }
-      });
-      
-      // Handle resize
-      window.addEventListener('resize', function() {
-        if (window.innerWidth >= 992) {
-          navToggle.style.display = 'none';
-          termsNav.style.display = 'block';
-        } else {
-          navToggle.style.display = 'block';
-          termsNav.style.display = 'none';
-        }
-      });
-    });
+      termsNav.style.display = 'block';
+    } else {
+      navToggle.style.display = 'block';
+      termsNav.style.display = 'none';
+    }
+  });
+});
+
   </script>
 </body>
 </html>
