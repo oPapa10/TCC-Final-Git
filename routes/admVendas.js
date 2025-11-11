@@ -72,6 +72,7 @@ function exigeAdm(req, res, next) {
   return next(); // acesso livre
 }
 
+// Rota principal (GET /)
 router.get('/', /*exigeAdm,*/ async (req, res) => {
   try {
     const q = req.query || {};
@@ -262,7 +263,7 @@ router.get('/', /*exigeAdm,*/ async (req, res) => {
   }
 });
 
-// Ações para mudar status da venda (acessíveis no ADM)
+// Rotas de ação (POST /:id/...)
 router.post('/:id/pronto', async (req, res) => {
   const id = Number(req.params.id);
   try {

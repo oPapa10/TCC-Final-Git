@@ -292,17 +292,17 @@
                       <!-- ações conforme status -->
                       <div class="action-buttons">
                         <% if (v.status === 'pendente') { %>
-                          <form method="POST" action="/admCenterMotos/vendas/<%= v.ID %>/pronto" class="d-inline">
-                            <button class="btn-action btn-action-ready">
-                              <i class="fas fa-box me-1"></i>Pronto para envio
-                            </button>
-                          </form>
+                          <button type="button" class="btn-action btn-action-ready action-post"
+                                  data-endpoint="/adm/vendas/<%= v.ID %>/pronto"
+                                  title="Marcar como pronto">
+                            <i class="fas fa-box me-1"></i>Pronto para envio
+                          </button>
                         <% } else if (v.status === 'pronto') { %>
-                          <form method="POST" action="/admCenterMotos/vendas/<%= v.ID %>/caminho" class="d-inline">
-                            <button class="btn-action btn-action-ship">
-                              <i class="fas fa-shipping-fast me-1"></i>Enviar
-                            </button>
-                          </form>
+                          <button type="button" class="btn-action btn-action-ship action-post"
+                                  data-endpoint="/adm/vendas/<%= v.ID %>/caminho"
+                                  title="Marcar como a caminho">
+                            <i class="fas fa-shipping-fast me-1"></i>Enviar
+                          </button>
                         <% } %>
                       </div>
                     </div>
@@ -325,5 +325,46 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+document.addEventListener('click', function(event) {
+  const btn = event.target.closest('.action-post');
+  if (!btn) return;
+  event.preventDefault();
+
+  const raw = btn.dataset.endpoint || '';
+  const m = raw.match(/\/vendas\/(\d+)\/(pronto|caminho|entregue)/);
+  if (!m) {
+    console.error('Endpoint inválido:', raw);
+    return;
+  }
+  const id = m[1];
+  const action = m[2];
+
+  const pathParts = window.location.pathname.split('/').filter(Boolean);
+  let base = '/adm/vendas';
+  if (pathParts.length >= 2) base = '/' + pathParts[0] + '/' + pathParts[1];
+  const endpoint = `${base}/${id}/${action}`;
+  const altBase = base.startsWith('/admCenterMotos') ? base.replace('/admCenterMotos','/adm') : base.replace('/adm','/admCenterMotos');
+  const altEndpoint = `${altBase}/${id}/${action}`;
+
+  // Não trava o botão nem altera o texto permanentemente
+  // Realiza a requisição e recarrega a página (mostra o resultado do servidor)
+  (async () => {
+    try {
+      let resp = await fetch(endpoint, { method: 'POST', credentials: 'same-origin' });
+      if (resp && resp.status === 404) {
+        // tentar alternativa se 404
+        await fetch(altEndpoint, { method: 'POST', credentials: 'same-origin' }).catch(e => console.error('fallback error', e));
+      }
+    } catch (err) {
+      console.error('Erro na requisição:', err);
+      // continua para recarregar mesmo em erro
+    } finally {
+      // aguarda um curto período para garantir que o servidor processe a mudança
+      setTimeout(() => window.location.reload(), 500);
+    }
+  })();
+});
+</script>
 </body>
 </html>
