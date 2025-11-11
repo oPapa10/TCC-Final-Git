@@ -1,13 +1,13 @@
 require('dotenv').config();
 const express = require('express');
-const router = express.Router();
-const QRCode = require('qrcode');
-const nodemailer = require('nodemailer');
-const fs = require('fs');
 const path = require('path');
 const db = require('../config/db');
+const router = express.Router();
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const QRCode = require('qrcode');
 
-// ✅ Configurar transporter FORA das rotas
+// ✅ CONFIGURAR TRANSPORTER PARA EMAIL
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: Number(process.env.EMAIL_PORT),
@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Função para converter imagem para Base64
+// ✅ FUNÇÃO PARA CONVERTER IMAGEM PARA BASE64
 function imageToBase64(relativePath) {
   try {
     const filePath = path.join(__dirname, '..', 'public', relativePath);
@@ -36,6 +36,206 @@ function imageToBase64(relativePath) {
   } catch (err) {
     console.error('[BASE64] Erro ao converter imagem:', err);
     return null;
+  }
+}
+
+// ✅ FUNÇÃO PARA ENVIAR EMAIL DE COMPRA RÁPIDA (1 produto)
+async function sendOrderEmail(usuario, itens = [], valorTotal = 0, descricao = '') {
+  try {
+    const baseItensHtml = itens.map(it => {
+      const imagemBase64 = imageToBase64(it.imagem) || imageToBase64(`/uploads/${path.basename(it.imagem || '')}`) || null;
+      const imgHtml = imagemBase64
+        ? `<img src="${imagemBase64}" alt="${(it.nome||'Produto')}" style="width:88px;height:88px;object-fit:cover;border-radius:6px;border:1px solid #e6e6e6">`
+        : `<div style="width:88px;height:88px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px">Sem imagem</div>`;
+
+      const precoHtml = it.precoOriginal 
+        ? `<div style="font-size:12px;color:#999"><s>R$ ${(Number(it.precoOriginal)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</s></div><div style="color:#28a745;font-weight:600">R$ ${(Number(it.precoUnitario)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`
+        : `R$ ${(Number(it.precoUnitario||0)).toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+
+      return `<tr>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;width:100px">${imgHtml}</td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle">
+          <div style="font-size:14px;color:#111;font-weight:600;margin-bottom:6px">${(it.nome||'Produto')}</div>
+          <div style="font-size:13px;color:#6b7280">Qtd: ${Number(it.quantidade||1)}</div>
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:600">${precoHtml}</td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:700">R$ ${(Number(it.lineTotal|| (it.precoUnitario*it.quantidade) )).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+      </tr>`;
+    }).join('\n');
+
+    const html = `
+      <div style="font-family:Arial,Helvetica,sans-serif;background:#f6f7fb;padding:30px;">
+        <div style="max-width:700px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.08)">
+          <div style="padding:20px 24px;border-bottom:1px solid #eef2f7;background:linear-gradient(90deg,#ffffff,#fbfcff)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:48px;height:48px;border-radius:8px;background:#0b5ed7;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">CM</div>
+              <div>
+                <div style="font-size:16px;color:#0b5ed7;font-weight:700">Center Motos</div>
+                <div style="font-size:12px;color:#6b7280">Confirmação de Pedido</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:18px 24px;">
+            <p style="margin:0 0 12px 0;color:#111;font-size:14px">
+              Olá <strong>${usuario && usuario.nome ? usuario.nome : 'cliente'}</strong>,
+            </p>
+            <p style="margin:0 0 12px 0;color:#4b5563;font-size:13px">
+              Você finalizou a compra de um produto. Confira os detalhes abaixo:
+            </p>
+            <div style="border:1px solid #eef2f7;border-radius:6px;overflow:hidden;margin-top:12px">
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
+                <thead>
+                  <tr style="background:#fafafa">
+                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px">Produto</th>
+                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px"></th>
+                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Valor</th>
+                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${baseItensHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;margin-top:18px;align-items:center;gap:16px">
+              <div style="text-align:right">
+                <div style="color:#6b7280;font-size:13px">Valor total</div>
+                <div style="font-size:20px;color:#111;font-weight:800">R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+              </div>
+            </div>
+
+            <p style="margin-top:18px;color:#6b7280;font-size:13px">
+              Em breve você receberá informações sobre o envio. Se precisar de ajuda, responda este e-mail.
+            </p>
+          </div>
+
+          <div style="padding:14px 24px;background:#fff;border-top:1px solid #eef2f7">
+            <div style="font-size:12px;color:#9ca3af;text-align:center">
+              Center Motos — Loja e Oficina • Rua João José Guimarães, nº 748, Centro, Sombrio
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
+      bcc: process.env.EMAIL_USER || undefined,
+      subject: `Confirmação de Pedido — ${itens.length} produto${itens.length > 1 ? 's' : ''}`,
+      html,
+      text: `Confirmação de pedido. Total: R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}`
+    };
+
+    console.log('[EMAIL-PAGAMENTO] enviando para:', mailOptions.to);
+    await transporter.sendMail(mailOptions);
+    console.log('[EMAIL-PAGAMENTO] envio concluído');
+    return true;
+  } catch (err) {
+    console.error('[EMAIL-PAGAMENTO] falha ao enviar email:', err);
+    return false;
+  }
+}
+
+// ✅ FUNÇÃO PARA ENVIAR EMAIL DO CARRINHO
+async function sendCartOrderEmail(usuario, itens = [], valorTotal = 0) {
+  try {
+    const baseItensHtml = itens.map(it => {
+      const imagemBase64 = imageToBase64(it.imagem) || imageToBase64(`/uploads/${path.basename(it.imagem || '')}`) || null;
+      const imgHtml = imagemBase64
+        ? `<img src="${imagemBase64}" alt="${(it.nome||'Produto')}" style="width:88px;height:88px;object-fit:cover;border-radius:6px;border:1px solid #e6e6e6">`
+        : `<div style="width:88px;height:88px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px">Sem imagem</div>`;
+
+      const precoHtml = it.precoOriginal 
+        ? `<div style="font-size:12px;color:#999"><s>R$ ${(Number(it.precoOriginal)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</s></div><div style="color:#28a745;font-weight:600">R$ ${(Number(it.precoUnitario)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`
+        : `R$ ${(Number(it.precoUnitario||0)).toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+
+      return `<tr>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;width:100px">${imgHtml}</td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle">
+          <div style="font-size:14px;color:#111;font-weight:600;margin-bottom:6px">${(it.nome||'Produto')}</div>
+          <div style="font-size:13px;color:#6b7280">Qtd: ${Number(it.quantidade||1)}</div>
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:600">${precoHtml}</td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:700">R$ ${(Number(it.lineTotal|| (it.precoUnitario*it.quantidade) )).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+      </tr>`;
+    }).join('\n');
+
+    const html = `
+      <div style="font-family:Arial,Helvetica,sans-serif;background:#f6f7fb;padding:30px;">
+        <div style="max-width:700px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.08)">
+          <div style="padding:20px 24px;border-bottom:1px solid #eef2f7;background:linear-gradient(90deg,#ffffff,#fbfcff)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:48px;height:48px;border-radius:8px;background:#0b5ed7;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">CM</div>
+              <div>
+                <div style="font-size:16px;color:#0b5ed7;font-weight:700">Center Motos</div>
+                <div style="font-size:12px;color:#6b7280">Confirmação de Pedido do Carrinho</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:18px 24px;">
+            <p style="margin:0 0 12px 0;color:#111;font-size:14px">
+              Olá <strong>${usuario && usuario.nome ? usuario.nome : 'cliente'}</strong>,
+            </p>
+            <p style="margin:0 0 12px 0;color:#4b5563;font-size:13px">
+              Você finalizou a compra de múltiplos produtos do seu carrinho. Confira os detalhes abaixo:
+            </p>
+            <div style="border:1px solid #eef2f7;border-radius:6px;overflow:hidden;margin-top:12px">
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
+                <thead>
+                  <tr style="background:#fafafa">
+                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px">Produto</th>
+                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px"></th>
+                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Valor</th>
+                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${baseItensHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;margin-top:18px;align-items:center;gap:16px">
+              <div style="text-align:right">
+                <div style="color:#6b7280;font-size:13px">Valor total</div>
+                <div style="font-size:20px;color:#111;font-weight:800">R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+              </div>
+            </div>
+
+            <p style="margin-top:18px;color:#6b7280;font-size:13px">
+              Em breve você receberá informações sobre o envio. Se precisar de ajuda, responda este e-mail.
+            </p>
+          </div>
+
+          <div style="padding:14px 24px;background:#fff;border-top:1px solid #eef2f7">
+            <div style="font-size:12px;color:#9ca3af;text-align:center">
+              Center Motos — Loja e Oficina • Rua João José Guimarães, nº 748, Centro, Sombrio
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
+      bcc: process.env.EMAIL_USER || undefined,
+      subject: `Confirmação de Pedido — Carrinho (${itens.length} produto${itens.length > 1 ? 's' : ''})`,
+      html,
+      text: `Confirmação de pedido do carrinho. Total: R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}`
+    };
+
+    console.log('[EMAIL-CARRINHO] enviando para:', mailOptions.to);
+    await transporter.sendMail(mailOptions);
+    console.log('[EMAIL-CARRINHO] envio concluído');
+    return true;
+  } catch (err) {
+    console.error('[EMAIL-CARRINHO] falha ao enviar email:', err);
+    return false;
   }
 }
 
@@ -87,100 +287,6 @@ function exigeLogin(req, res, next) {
   next();
 }
 
-// Monta HTML do email com imagens embutidas em Base64
-async function sendOrderEmail(usuario, itens = [], valorTotal = 0, descricao = '') {
-  try {
-    const baseItensHtml = itens.map(it => {
-      const imagemBase64 = imageToBase64(it.imagem) || imageToBase64(`/uploads/${path.basename(it.imagem || '')}`) || null;
-      const imgHtml = imagemBase64
-        ? `<img src="${imagemBase64}" alt="${(it.nome||'Produto')}" style="width:88px;height:88px;object-fit:cover;border-radius:6px;border:1px solid #e6e6e6">`
-        : `<div style="width:88px;height:88px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px">Sem imagem</div>`;
-
-      return `<tr>
-        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;width:100px">${imgHtml}</td>
-        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle">
-          <div style="font-size:14px;color:#111;font-weight:600;margin-bottom:6px">${(it.nome||'Produto')}</div>
-          <div style="font-size:13px;color:#6b7280">Qtd: ${Number(it.quantidade||1)}</div>
-        </td>
-        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:600">R$ ${(Number(it.precoUnitario||0)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
-        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:700">R$ ${(Number(it.lineTotal|| (it.precoUnitario*it.quantidade) )).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
-      </tr>`;
-    }).join('\n');
-
-    const html = `
-      <div style="font-family:Arial,Helvetica,sans-serif;background:#f6f7fb;padding:30px;">
-        <div style="max-width:700px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.08)">
-          <div style="padding:20px 24px;border-bottom:1px solid #eef2f7;background:linear-gradient(90deg,#ffffff,#fbfcff)">
-            <div style="display:flex;align-items:center;gap:12px">
-              <div style="width:48px;height:48px;border-radius:8px;background:#0b5ed7;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">CM</div>
-              <div>
-                <div style="font-size:16px;color:#0b5ed7;font-weight:700">Center Motos</div>
-                <div style="font-size:12px;color:#6b7280">Confirmação de Pedido</div>
-              </div>
-            </div>
-          </div>
-
-          <div style="padding:18px 24px;">
-            <p style="margin:0 0 12px 0;color:#111;font-size:14px">
-              Olá <strong>${usuario && usuario.nome ? usuario.nome : 'cliente'}</strong>,
-            </p>
-            ${descricao ? `<p style="margin:0 0 12px 0;color:#4b5563;font-size:13px">${descricao}</p>` : ''}
-            <div style="border:1px solid #eef2f7;border-radius:6px;overflow:hidden;margin-top:12px">
-              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
-                <thead>
-                  <tr style="background:#fafafa">
-                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px">Produto</th>
-                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px"></th>
-                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Valor</th>
-                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${baseItensHtml}
-                </tbody>
-              </table>
-            </div>
-
-            <div style="display:flex;justify-content:flex-end;margin-top:18px;align-items:center;gap:16px">
-              <div style="text-align:right">
-                <div style="color:#6b7280;font-size:13px">Valor total</div>
-                <div style="font-size:20px;color:#111;font-weight:800">R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
-              </div>
-            </div>
-
-            <p style="margin-top:18px;color:#6b7280;font-size:13px">
-              Em breve você receberá informações sobre o envio. Se precisar de ajuda, responda este e-mail.
-            </p>
-          </div>
-
-          <div style="padding:14px 24px;background:#fff;border-top:1px solid #eef2f7">
-            <div style="font-size:12px;color:#9ca3af;text-align:center">
-              Center Motos — Loja e Oficina • Rua João José Guimarães, nº 748, Centro, Sombrio
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-      to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
-      bcc: process.env.EMAIL_USER || undefined,
-      subject: `Confirmação do pedido — ${descricao ? descricao : 'Center Motos'}`,
-      html,
-      text: `Confirmação de pedido. Total: R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}`
-    };
-
-    console.log('[EMAIL] enviando confirmação para:', mailOptions.to, 'itens:', itens.length);
-    await transporter.sendMail(mailOptions);
-    console.log('[EMAIL] envio concluído');
-    return true;
-  } catch (err) {
-    console.error('[EMAIL] falha ao enviar email de pedido:', err);
-    return false;
-  }
-}
-
 /* --- ROTA GET - RENDERIZAR PÁGINA DE PAGAMENTO --- */
 router.get('/', exigeLogin, async (req, res) => {
   try {
@@ -191,6 +297,7 @@ router.get('/', exigeLogin, async (req, res) => {
     let itensParaMostrar = [];
     let valorTotal = Number(valor || 0);
 
+    // Se veio produtoId na query — PRIORIDADE para compra rápida
     if (produtoId) {
       try {
         const rows = await new Promise((resolve, reject) => {
@@ -211,7 +318,6 @@ router.get('/', exigeLogin, async (req, res) => {
           const lineTotal = precoUnit * quantidadeQuery;
           valorTotal = lineTotal;
 
-          // Monta URL da imagem corretamente
           let imagemUrl = '/images/placeholder.png';
           if (prod.imagem) {
             if (/^https?:\/\//i.test(prod.imagem)) {
@@ -229,7 +335,7 @@ router.get('/', exigeLogin, async (req, res) => {
             nome: prod.nome,
             quantidade: quantidadeQuery,
             precoUnitario: precoUnit,
-            precoOriginal: prod.valor_promocional != null ? Number(prod.valorOriginal) : null,  // ✅ ADICIONE ISTO
+            precoOriginal: prod.valor_promocional != null ? Number(prod.valorOriginal) : null,
             lineTotal
           }];
         }
@@ -237,6 +343,70 @@ router.get('/', exigeLogin, async (req, res) => {
         console.warn('[pagamento] erro buscando produto:', dbErr);
       }
     }
+    // Senão, só usa req.session.checkout quando for origem 'cart'
+    else if (req.session.checkout && req.session.checkout.itens && req.session.checkout.itens.length && req.session.checkout.source === 'cart') {
+      console.log('[pagamento] Usando itens do carrinho:', req.session.checkout.itens.length);
+      
+      // Busca dados completos dos produtos do carrinho
+      const ids = req.session.checkout.itens.map(it => Number(it.produtoId));
+      const placeholders = ids.map(() => '?').join(',');
+      
+      const produtosRows = await new Promise((resolve, reject) => {
+        db.query(
+          `SELECT p.ID, p.nome, p.imagem, p.valor AS valorOriginal,
+                  COALESCE(pr.valor_promocional, NULL) AS valor_promocional
+           FROM Produto p
+           LEFT JOIN Promocao pr ON pr.produto_id = p.ID
+           WHERE p.ID IN (${placeholders})`,
+          ids,
+          (err, r) => err ? reject(err) : resolve(r || [])
+        );
+      });
+
+      itensParaMostrar = req.session.checkout.itens.map(it => {
+        const prod = produtosRows.find(p => p.ID === Number(it.produtoId)) || {};
+
+        // determina imagem
+        let imagemUrl = '/images/placeholder.png';
+        if (prod.imagem) {
+          if (/^https?:\/\//i.test(prod.imagem)) {
+            imagemUrl = prod.imagem;
+          } else {
+            const clean = String(prod.imagem).split('?')[0];
+            const filename = path.basename(clean);
+            imagemUrl = `/uploads/${filename}`;
+          }
+        }
+
+        // ✅ calcula preço atual a partir do banco (prioriza promoção)
+        const precoAtual = (prod && prod.valor_promocional != null)
+          ? Number(prod.valor_promocional)
+          : (prod && (prod.valor || prod.valorOriginal) ? Number(prod.valor || prod.valorOriginal) : Number(it.precoUnitario || 0));
+
+        const precoOriginal = (prod && prod.valor_promocional != null)
+          ? Number(prod.valor || prod.valorOriginal)
+          : null;
+
+        const quantidade = Number(it.quantidade || 1);
+        const lineTotal = Number((precoAtual || 0) * quantidade);
+
+        return {
+          produtoId: Number(it.produtoId),
+          imagem: imagemUrl,
+          nome: it.nome || prod.nome || 'Produto',
+          quantidade,
+          precoUnitario: precoAtual,
+          precoOriginal: precoOriginal,
+          lineTotal
+        };
+      });
+
+      // recalcula total com os preços atualizados
+      valorTotal = itensParaMostrar.reduce((sum, it) => sum + (Number(it.lineTotal) || 0), 0);
+    }
+
+    console.log('[pagamento] itensParaMostrar:', itensParaMostrar);
+    console.log('[pagamento] valorTotal:', valorTotal);
 
     const txid = 'pedido-' + Date.now();
     const payload = gerarPayloadPix(
@@ -265,7 +435,7 @@ router.get('/', exigeLogin, async (req, res) => {
   }
 });
 
-// ✅ ROTA POST - PROCESSAR COMPRA
+// ✅ ROTA POST - PROCESSAR COMPRA (CONFIRMAR PEDIDO)
 router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
   try {
     const usuario = req.session.usuario;
@@ -275,7 +445,6 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
     let itensProcessar = [];
     
     console.log('[compraConfirmacao] itensArray recebido:', itensArray);
-    console.log('[compraConfirmacao] req.body completo:', req.body);
 
     if (itensArray) {
       if (Array.isArray(itensArray)) {
@@ -285,10 +454,8 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
       }
     }
 
-    console.log('[compraConfirmacao] itensProcessar após tratamento:', itensProcessar);
-
     if (!itensProcessar.length) {
-      console.error('[compraConfirmacao] Nenhum item encontrado:', { itensArray, itensProcessar });
+      console.error('[compraConfirmacao] Nenhum item encontrado');
       return res.status(400).json({ error: 'Nenhum item para processar' });
     }
 
@@ -312,7 +479,6 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
     });
 
     let itensParaEmail = [];
-    let itensParaSessao = [];
     let somaTotal = 0;
 
     itensProcessar.forEach(it => {
@@ -333,31 +499,38 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
         }
       }
 
-      const itemObj = {
+      itensParaEmail.push({
         produtoId: it.produtoId,
         imagem: imagemUrl,
         nome: prod.nome || 'Produto',
         quantidade: qtd,
         precoUnitario: precoUnit,
-        precoOriginal: (prod.valor_promocional != null) ? Number(prod.valorOriginal) : null,  // ✅ ADICIONE ISTO
+        precoOriginal: (prod.valor_promocional != null) ? Number(prod.valorOriginal) : null,
         lineTotal
-      };
-
-      itensParaEmail.push(itemObj);
-      itensParaSessao.push(itemObj);
+      });
     });
 
     console.log('[compraConfirmacao] email será enviado com:', itensParaEmail.length, 'itens');
 
-    // ✅ ARMAZENA DADOS NA SESSÃO PARA A PÁGINA DE CONFIRMAÇÃO
+    // ✅ ENVIA EMAIL AQUI (após confirmar pedido)
+    try {
+      const isCart = req.session.checkout && req.session.checkout.source === 'cart';
+      if (isCart) {
+        await sendCartOrderEmail(usuario, itensParaEmail, somaTotal || valorFormulario);
+      } else {
+        await sendOrderEmail(usuario, itensParaEmail, somaTotal || valorFormulario, descricao);
+      }
+    } catch (emailErr) {
+      console.error('[compraConfirmacao] erro ao enviar email:', emailErr);
+    }
+
+    // Armazena dados na sessão para página de confirmação
     req.session.ultimaCompra = {
-      itens: itensParaSessao,
+      itens: itensParaEmail,
       valor: somaTotal || valorFormulario,
       descricao: descricao,
       data: new Date().toISOString()
     };
-
-    await sendOrderEmail(usuario, itensParaEmail, somaTotal || valorFormulario, descricao);
 
     res.json({ 
       success: true, 

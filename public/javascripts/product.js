@@ -44,4 +44,74 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  // ✅ CONTROLE DE QUANTIDADE
+  const quantidadeInput = document.getElementById('quantidadeInput');
+  const btnMaisQtd = document.getElementById('btnMaisQtd');
+  const btnMenosQtd = document.getElementById('btnMenosQtd');
+
+  if (btnMaisQtd) {
+    btnMaisQtd.addEventListener('click', (e) => {
+      e.preventDefault();
+      quantidadeInput.value = Math.max(1, Number(quantidadeInput.value) + 1);
+    });
+  }
+
+  if (btnMenosQtd) {
+    btnMenosQtd.addEventListener('click', (e) => {
+      e.preventDefault();
+      quantidadeInput.value = Math.max(1, Number(quantidadeInput.value) - 1);
+    });
+  }
+
+  // ✅ COMPRAR AGORA - com quantidade
+  const btnComprarAgora = document.getElementById('btnComprarAgora');
+  if (btnComprarAgora) {
+    btnComprarAgora.addEventListener('click', (e) => {
+      e.preventDefault();
+      const produtoId = document.querySelector('input[name="produtoId"]')?.value;
+      const quantidade = Number(quantidadeInput.value) || 1;
+      
+      if (produtoId) {
+        window.location.href = `/pagamento?produtoId=${produtoId}&quantidade=${quantidade}`;
+      }
+    });
+  }
+
+  // ✅ ADICIONAR AO CARRINHO - com quantidade
+  const btnAdicionarCarrinho = document.getElementById('btnAdicionarCarrinho');
+  if (btnAdicionarCarrinho) {
+    btnAdicionarCarrinho.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const produtoId = document.querySelector('input[name="produtoId"]')?.value;
+      const quantidade = Number(quantidadeInput.value) || 1;
+
+      if (!produtoId) {
+        alert('Produto não encontrado');
+        return;
+      }
+
+      try {
+        const resp = await fetch('/carrinho/adicionar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ produtoId: Number(produtoId), quantidade })
+        });
+
+        const json = await resp.json();
+        if (json.success) {
+          alert(`${json.produtoNome} adicionado ao carrinho (Qtd: ${quantidade})!`);
+          // Reseta quantidade para 1 após adicionar
+          quantidadeInput.value = 1;
+        } else {
+          alert(json.message || 'Erro ao adicionar ao carrinho');
+        }
+      } catch (err) {
+        console.error('Erro:', err);
+        alert('Erro ao adicionar ao carrinho: ' + err.message);
+      }
+    });
+  }
+});
+
 console.log('product.js carregado');

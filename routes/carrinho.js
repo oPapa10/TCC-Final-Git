@@ -2,6 +2,141 @@ const express = require('express');
 const path = require('path');
 const db = require('../config/db');
 const router = express.Router();
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+
+// ✅ CONFIGURAR TRANSPORTER PARA EMAIL
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: Number(process.env.EMAIL_PORT),
+  secure: process.env.EMAIL_SECURE === 'true',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+// ✅ FUNÇÃO PARA CONVERTER IMAGEM PARA BASE64
+function imageToBase64(relativePath) {
+  try {
+    const filePath = path.join(__dirname, '..', 'public', relativePath);
+    
+    if (!fs.existsSync(filePath)) {
+      console.log('[BASE64] Arquivo não encontrado:', filePath);
+      return null;
+    }
+
+    const fileExtension = path.extname(filePath).toLowerCase().slice(1);
+    const mimeType = fileExtension === 'png' ? 'image/png' : 'image/jpeg';
+
+    const base64 = fs.readFileSync(filePath).toString('base64');
+    return `data:${mimeType};base64,${base64}`;
+  } catch (err) {
+    console.error('[BASE64] Erro ao converter imagem:', err);
+    return null;
+  }
+}
+
+// ✅ FUNÇÃO PARA ENVIAR EMAIL DO CARRINHO
+async function sendCartOrderEmail(usuario, itens = [], valorTotal = 0) {
+  try {
+    const baseItensHtml = itens.map(it => {
+      const imagemBase64 = imageToBase64(it.imagem) || imageToBase64(`/uploads/${path.basename(it.imagem || '')}`) || null;
+      const imgHtml = imagemBase64
+        ? `<img src="${imagemBase64}" alt="${(it.nome||'Produto')}" style="width:88px;height:88px;object-fit:cover;border-radius:6px;border:1px solid #e6e6e6">`
+        : `<div style="width:88px;height:88px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px">Sem imagem</div>`;
+
+      // ✅ MOSTRA PREÇO COM DESCONTO
+      const precoHtml = it.precoOriginal 
+        ? `<div style="font-size:12px;color:#999"><s>R$ ${(Number(it.precoOriginal)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</s></div><div style="color:#28a745;font-weight:600">R$ ${(Number(it.precoUnitario)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`
+        : `R$ ${(Number(it.precoUnitario||0)).toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+
+      return `<tr>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;width:100px">${imgHtml}</td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle">
+          <div style="font-size:14px;color:#111;font-weight:600;margin-bottom:6px">${(it.nome||'Produto')}</div>
+          <div style="font-size:13px;color:#6b7280">Qtd: ${Number(it.quantidade||1)}</div>
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:600">${precoHtml}</td>
+        <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:700">R$ ${(Number(it.lineTotal|| (it.precoUnitario*it.quantidade) )).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+      </tr>`;
+    }).join('\n');
+
+    const html = `
+      <div style="font-family:Arial,Helvetica,sans-serif;background:#f6f7fb;padding:30px;">
+        <div style="max-width:700px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.08)">
+          <div style="padding:20px 24px;border-bottom:1px solid #eef2f7;background:linear-gradient(90deg,#ffffff,#fbfcff)">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:48px;height:48px;border-radius:8px;background:#0b5ed7;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">CM</div>
+              <div>
+                <div style="font-size:16px;color:#0b5ed7;font-weight:700">Center Motos</div>
+                <div style="font-size:12px;color:#6b7280">Confirmação de Pedido do Carrinho</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:18px 24px;">
+            <p style="margin:0 0 12px 0;color:#111;font-size:14px">
+              Olá <strong>${usuario && usuario.nome ? usuario.nome : 'cliente'}</strong>,
+            </p>
+            <p style="margin:0 0 12px 0;color:#4b5563;font-size:13px">
+              Você finalizou a compra de múltiplos produtos do seu carrinho. Confira os detalhes abaixo:
+            </p>
+            <div style="border:1px solid #eef2f7;border-radius:6px;overflow:hidden;margin-top:12px">
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
+                <thead>
+                  <tr style="background:#fafafa">
+                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px">Produto</th>
+                    <th style="text-align:left;padding:12px 12px;color:#6b7280;font-size:13px"></th>
+                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Valor</th>
+                    <th style="text-align:right;padding:12px 12px;color:#6b7280;font-size:13px">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${baseItensHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;margin-top:18px;align-items:center;gap:16px">
+              <div style="text-align:right">
+                <div style="color:#6b7280;font-size:13px">Valor total</div>
+                <div style="font-size:20px;color:#111;font-weight:800">R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+              </div>
+            </div>
+
+            <p style="margin-top:18px;color:#6b7280;font-size:13px">
+              Em breve você receberá informações sobre o envio. Se precisar de ajuda, responda este e-mail.
+            </p>
+          </div>
+
+          <div style="padding:14px 24px;background:#fff;border-top:1px solid #eef2f7">
+            <div style="font-size:12px;color:#9ca3af;text-align:center">
+              Center Motos — Loja e Oficina • Rua João José Guimarães, nº 748, Centro, Sombrio
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      to: usuario && usuario.email ? usuario.email : (process.env.EMAIL_USER || ''),
+      bcc: process.env.EMAIL_USER || undefined,
+      subject: `Confirmação de Pedido — Carrinho (${itens.length} produto${itens.length > 1 ? 's' : ''})`,
+      html,
+      text: `Confirmação de pedido do carrinho. Total: R$ ${Number(valorTotal||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}`
+    };
+
+    console.log('[EMAIL-CARRINHO] enviando confirmação para:', mailOptions.to, 'itens:', itens.length);
+    await transporter.sendMail(mailOptions);
+    console.log('[EMAIL-CARRINHO] envio concluído');
+    return true;
+  } catch (err) {
+    console.error('[EMAIL-CARRINHO] falha ao enviar email:', err);
+    return false;
+  }
+}
 
 // Função para limitar a quantidade no carrinho de acordo com o estoque
 function limitarCarrinhoPorEstoque(carrinho, produtos) {
@@ -87,71 +222,42 @@ router.get('/', (req, res) => {
 
 // Rota para adicionar item ao carrinho
 router.post('/adicionar', (req, res) => {
-    console.log('--- INÍCIO /carrinho/adicionar ---');
-    console.log('req.body:', req.body);
+  const { produtoId, quantidade } = req.body;
+  const qtd = Number(quantidade || 1);
 
-    const { produtoId, quantidade } = req.body;
+  if (!produtoId || qtd < 1) {
+    return res.status(400).json({ success: false, message: 'Dados inválidos' });
+  }
 
-    if (!produtoId || !quantidade) {
-        console.log('FALHA: produtoId ou quantidade ausentes ou inválidos');
-        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-            return res.status(400).json({ success: false, message: 'ID do produto ou quantidade inválidos.' });
-        }
-        return res.status(400).send('ID do produto ou quantidade inválidos.');
+  // Busca nome do produto para resposta
+  db.query('SELECT ID, nome FROM Produto WHERE ID = ?', [produtoId], (err, rows) => {
+    if (err || !rows || !rows.length) {
+      return res.status(404).json({ success: false, message: 'Produto não encontrado' });
     }
 
-    db.query(
-        `SELECT p.*, pr.valor_promocional 
-         FROM Produto p 
-         LEFT JOIN Promocao pr ON pr.produto_id = p.ID 
-         WHERE p.ID = ?`, 
-        [produtoId], 
-        (err, results) => {
-            console.log('Resultado do SELECT produto:', results);
-            if (err || results.length === 0) {
-                console.log('FALHA: Produto não encontrado');
-                return res.status(400).send('Produto não encontrado');
-            }
-            const produto = results[0];
-            const preco = produto.valor_promocional || produto.valor;
-            const estoque = produto.estoque ?? 0;
-            const valorPromocionalAtual = produto.valor_promocional ? Number(produto.valor_promocional) : null;
+    const produtoNome = rows[0].nome;
+    req.session.carrinho = req.session.carrinho || [];
 
-            if (!req.session.carrinho) req.session.carrinho = [];
-            const idx = req.session.carrinho.findIndex(item => item.produtoId == produtoId);
-            const quantidadeAtual = idx >= 0 ? req.session.carrinho[idx].quantidade : 0;
-            let quantidadeTotal = quantidadeAtual + Number(quantidade);
+    const itemExistente = req.session.carrinho.find(item => Number(item.produtoId) === Number(produtoId));
 
-            if (quantidadeTotal > estoque) quantidadeTotal = estoque;
+    if (itemExistente) {
+      itemExistente.quantidade = Number(itemExistente.quantidade || 1) + qtd;
+    } else {
+      req.session.carrinho.push({
+        produtoId: Number(produtoId),
+        quantidade: qtd,
+        nome: produtoNome,
+        // ... outros campos já existentes ...
+      });
+    }
 
-            if (idx >= 0) {
-                req.session.carrinho[idx].quantidade = quantidadeTotal;
-                req.session.carrinho[idx].valorPromocional = valorPromocionalAtual;
-            } else {
-                req.session.carrinho.push({
-                    produtoId: produto.ID,
-                    nome: produto.nome,
-                    preco: preco,
-                    imagem: produto.imagem,
-                    quantidade: Math.min(Number(quantidade), estoque),
-                    valorPromocional: valorPromocionalAtual
-                });
-            }
-
-            if (req.session.usuario) {
-                db.query(
-                    'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = ?',
-                    [req.session.usuario.ID, produto.ID, Math.min(Number(quantidade), estoque), quantidadeTotal]
-                );
-            }
-
-            if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-                console.log('SUCESSO: Produto adicionado ao carrinho');
-                return res.json({ success: true, quantidade: quantidadeTotal, estoque });
-            }
-            res.redirect('/carrinho'); // <-- Corrija aqui!
-        }
-    );
+    res.json({ 
+      success: true, 
+      message: 'Produto adicionado ao carrinho',
+      produtoNome,
+      quantidade: qtd
+    });
+  });
 });
 
 // Rota para remover item do carrinho
@@ -233,33 +339,101 @@ router.post('/mostrar', (req, res) => {
   res.json({ success: true });
 });
 
-router.post('/pedido/finalizar', (req, res) => {
+router.post('/pedido/finalizar', async (req, res) => {
+  try {
     if (!req.session.usuario) {
-        return res.status(401).render('error', { error: { status: 401 }, message: 'Você precisa estar logado para finalizar a compra.' });
+      return res.status(401).render('error', { error: { status: 401 }, message: 'Você precisa estar logado para finalizar a compra.' });
     }
 
     let carrinho = req.session.carrinho || [];
-    // Filtra apenas os itens ativos (não ocultos)
     const ativos = carrinho.filter(item => !item.oculto && !item.semEstoque);
 
     if (ativos.length === 0) {
-        return res.redirect('/carrinho');
+      return res.redirect('/carrinho');
     }
 
-    // salva itens para checkout na sessão (serão usados na página de pagamento)
+    // Helper para query com Promise
+    const queryAsync = (sql, params) => new Promise((resolve, reject) => {
+      db.query(sql, params, (err, rows) => err ? reject(err) : resolve(rows));
+    });
+
+    // Carrega dados atuais dos produtos (preço, estoque, promoção)
+    const ids = ativos.map(it => Number(it.produtoId));
+    const placeholders = ids.map(() => '?').join(',');
+    const produtosRows = await queryAsync(
+      `SELECT p.ID, p.nome, p.imagem, p.valor, p.estoque, COALESCE(pr.valor_promocional, NULL) AS valor_promocional
+       FROM Produto p
+       LEFT JOIN Promocao pr ON pr.produto_id = p.ID
+       WHERE p.ID IN (${placeholders})`,
+      ids
+    );
+
+    // Monta itens para email e checkout com preços atualizados e atualiza estoque
+    const itensParaEmail = [];
+    const itensParaCheckout = [];
+    let somaTotal = 0;
+
+    for (const item of ativos) {
+      const prod = produtosRows.find(p => p.ID === Number(item.produtoId));
+      if (!prod) continue;
+
+      const precoUnitario = (prod.valor_promocional != null) ? Number(prod.valor_promocional) : Number(prod.valor || 0);
+      const precoOriginal = (prod.valor_promocional != null) ? Number(prod.valor || 0) : null;
+      const quantidade = Number(item.quantidade || 1);
+      const lineTotal = precoUnitario * quantidade;
+      somaTotal += lineTotal;
+
+      // Atualiza estoque no banco (garante não negativo)
+      const novoEstoque = Math.max(0, (Number(prod.estoque || 0) - quantidade));
+      try {
+        await queryAsync('UPDATE Produto SET estoque = ? WHERE ID = ?', [novoEstoque, prod.ID]);
+      } catch (err) {
+        console.error('[finalizar] falha ao atualizar estoque para produto', prod.ID, err);
+        // continua mesmo assim (ou você pode optar por abortar)
+      }
+
+      const imagemUrl = prod.imagem ? prod.imagem : '';
+
+      const itemObj = {
+        produtoId: Number(prod.ID),
+        imagem: imagemUrl,
+        nome: prod.nome || item.nome || 'Produto',
+        quantidade,
+        precoUnitario,
+        precoOriginal,
+        lineTotal
+      };
+
+      itensParaEmail.push(itemObj);
+      itensParaCheckout.push({
+        produtoId: Number(prod.ID),
+        quantidade,
+        nome: prod.nome,
+        imagem: imagemUrl,
+        precoUnitario
+      });
+    }
+
+    // Remove do session.carrinho os itens comprados (mantém ocultos e itens não comprados)
+    const compradosIds = itensParaCheckout.map(i => Number(i.produtoId));
+    req.session.carrinho = (req.session.carrinho || []).filter(item => {
+      // mantém se oculto, semEstoque, ou não foi comprado agora
+      return item.oculto || item.semEstoque || !compradosIds.includes(Number(item.produtoId));
+    });
+
+    // salva checkout na sessão
     req.session.checkout = {
-        itens: ativos.map(it => ({
-            produtoId: Number(it.produtoId),
-            quantidade: Number(it.quantidade),
-            nome: it.nome,
-            imagem: it.imagem,
-            precoUnitario: Number(it.preco) || 0
-        })),
-        criadoEm: Date.now()
+      itens: itensParaCheckout,
+      criadoEm: Date.now(),
+      source: 'cart'
     };
 
-    // redireciona para a página de pagamento (onde o usuário confirma método)
+    // redireciona para pagamento (SEM enviar email ainda)
     return res.redirect('/pagamento');
+  } catch (err) {
+    console.error('[finalizar] erro ao processar pedido do carrinho:', err);
+    return res.status(500).render('error', { error: err, message: 'Erro ao finalizar pedido' });
+  }
 });
 
 // Exemplo para rota POST /comprar-agora
@@ -299,7 +473,8 @@ router.post('/comprar-agora', (req, res) => {
             imagem: p.imagem,
             precoUnitario
           }],
-          criadoEm: Date.now()
+          criadoEm: Date.now(),
+          source: 'quick'   // <-- ADICIONE ISTO
         };
 
         // redireciona para a página de pagamento (mostrará apenas este item)

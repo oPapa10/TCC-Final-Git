@@ -274,3 +274,177 @@ body.compra-confirmacao .confirmation-head { display:flex; align-items:center; j
 /* garante que a media-thumb grande continue escondida quando há lista */
 body.compra-confirmacao .media-thumb { display:none; }
 body.compra_confirmacao .media-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+/* Padroniza tamanho e alinhamento dos itens na confirmação de compra */
+.item-row {
+  min-height: 100px;              /* altura mínima uniforme */
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* Thumb da imagem (força tamanho fixo) */
+.item-row .item-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  flex: 0 0 80px;
+}
+
+/* Conteúdo principal ocupa o restante do espaço */
+.item-row .flex-fill {
+  flex: 1 1 auto;
+}
+
+/* Área dos valores/subtotal com largura fixa para alinhamento */
+.item-row > div[style*="text-align:right"] {
+  min-width: 120px;
+  text-align: right;
+}
+
+/* Responsivo: em telas pequenas empilha os elementos */
+@media (max-width: 576px) {
+  .item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: auto;
+  }
+  .item-row .item-thumb {
+    width: 100%;
+    height: 160px;
+    flex: none;
+  }
+  .item-row > div[style*="text-align:right"] {
+    width: 100%;
+    text-align: left;
+    margin-top: 8px;
+  }
+}
+
+/* Garantir que linhas com as classes bootstrap + item-row tenham estilo padronizado */
+.items-list .d-flex.item-row.mb-3.p-2,
+.items-list .item-row,
+.item-row {
+  min-height: 100px !important;        /* altura uniforme */
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 12px !important;            /* p-2 aprox */
+  margin-bottom: 1rem !important;      /* mb-3 aprox */
+  border: 1px solid #eee !important;
+  border-radius: 6px !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+}
+
+/* Thumb da imagem - força tamanho fixo e alinhamento */
+.items-list .item-row .item-thumb,
+.item-row .item-thumb {
+  width: 80px !important;
+  height: 80px !important;
+  object-fit: cover !important;
+  border-radius: 6px !important;
+  border: 1px solid #ddd !important;
+  flex: 0 0 80px !important;
+  margin-right: 12px !important;
+}
+
+/* Conteúdo principal ocupa o restante do espaço e evita overflow */
+.items-list .item-row .flex-fill,
+.item-row .flex-fill {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* Área do subtotal/valor (último bloco) alinhada à direita com largura fixa) */
+.items-list .item-row > div:last-child,
+.item-row > div:last-child {
+  min-width: 120px !important;
+  text-align: right !important;
+  flex: 0 0 140px !important;
+}
+
+/* Ajustes para quando template usa container centralizado (mantém alinhamento) */
+.items-list .item-row > div > .fw-bold,
+.item-row > div > .fw-bold {
+  font-size: 15px !important;
+  color: #111 !important;
+}
+
+/* Responsivo: empilha em telas pequenas */
+@media (max-width: 576px) {
+  .items-list .item-row,
+  .item-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    min-height: auto !important;
+    text-align: left !important;
+  }
+  .items-list .item-row .item-thumb,
+  .item-row .item-thumb {
+    width: 100% !important;
+    height: 160px !important;
+    flex: none !important;
+    margin-right: 0 !important;
+  }
+  .items-list .item-row > div:last-child,
+  .item-row > div:last-child {
+    width: 100% !important;
+    min-width: auto !important;
+    text-align: left !important;
+    margin-top: 8px !important;
+    flex: none !important;
+  }
+}
+
+/* Fix: largura padrão para lista de itens e alinhamento */
+body.compra-confirmacao .items-list {
+  width: 100% !important;
+  max-width: 100% !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+}
+body.compra-confirmacao .items-list .item-row,
+.item-row {
+  width: 100% !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  text-align: left !important;
+  margin: 0 0 1rem 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border: 1px solid rgba(0,0,0,0.04) !important;
+  padding: 12px !important;
+  border-radius: 6px !important;
+}
+body.compra-confirmacao .items-list .item-row > div,
+.item-row > div {
+  text-align: left !important;
+  min-width: 0 !important;
+}
+/* mantém thumb à esquerda e área de valores à direita */
+body.compra-confirmacao .items-list .item-row > div:last-child,
+.item-row > div:last-child {
+  text-align: right !important;
+  flex: 0 0 140px !important;
+  min-width: 120px !important;
+}
+/* Responsivo: empilha no mobile */
+@media (max-width: 576px) {
+  body.compra-confirmacao .items-list .item-row,
+  .item-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  body.compra-confirmacao .items-list .item-row > div:last-child,
+  .item-row > div:last-child {
+    text-align: left !important;
+    flex: none !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+}

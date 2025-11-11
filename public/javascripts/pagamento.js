@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // ✅ MOSTRA LOADER
             const loader = document.getElementById('pagamentoLoader');
             if (loader) {
-                loader.style.display = 'flex';  // ✅ MUDE PARA FLEX AQUI
+                loader.style.display = 'flex';
             }
 
             // ✅ COLETA DADOS MANUALMENTE E ENVIA COMO JSON
@@ -107,19 +107,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log('[DEBUG] Resposta:', json);
 
                 if (json.success && json.redirect) {
-                    // ✅ AGUARDA 1 SEGUNDO ANTES DE REDIRECIONAR
                     setTimeout(() => {
                         window.location.href = json.redirect;
                     }, 1000);
                 } else {
-                    // ❌ ESCONDE LOADER SE ERRO
                     if (loader) {
                         loader.style.display = 'none';
                     }
                     alert(json.message || json.error || 'Erro ao processar pedido');
                 }
             } catch (err) {
-                // ❌ ESCONDE LOADER SE ERRO
                 if (loader) {
                     loader.style.display = 'none';
                 }
@@ -128,26 +125,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    const baseItensHtml = itens.map(it => {
-        const imagemBase64 = imageToBase64(it.imagem) || imageToBase64(`/uploads/${path.basename(it.imagem || '')}`) || null;
-        const imgHtml = imagemBase64
-          ? `<img src="${imagemBase64}" alt="${(it.nome||'Produto')}" style="width:88px;height:88px;object-fit:cover;border-radius:6px;border:1px solid #e6e6e6">`
-          : `<div style="width:88px;height:88px;background:#f3f4f6;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px">Sem imagem</div>`;
-
-        // ✅ MOSTRA PREÇO COM DESCONTO
-        const precoHtml = it.precoOriginal 
-          ? `<div style="font-size:12px;color:#999"><s>R$ ${(Number(it.precoOriginal)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</s></div><div style="color:#28a745;font-weight:600">R$ ${(Number(it.precoUnitario)).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`
-          : `R$ ${(Number(it.precoUnitario||0)).toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
-
-        return `<tr>
-          <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;width:100px">${imgHtml}</td>
-          <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle">
-            <div style="font-size:14px;color:#111;font-weight:600;margin-bottom:6px">${(it.nome||'Produto')}</div>
-            <div style="font-size:13px;color:#6b7280">Qtd: ${Number(it.quantidade||1)}</div>
-          </td>
-          <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:600">${precoHtml}</td>
-          <td style="padding:12px;border-bottom:1px solid #f1f1f1;vertical-align:middle;text-align:right;color:#111;font-weight:700">R$ ${(Number(it.lineTotal|| (it.precoUnitario*it.quantidade) )).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
-        </tr>`;
-      }).join('\n');
 });
