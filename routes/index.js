@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
            WHERE p.estoque > 0`,
           (err, produtos) => {
             if (err) return res.status(500).render('index', { produtos: [], categorias: [], promocoes: [] });
-            db.query('SELECT * FROM Categoria', (err2, categorias) => {
+            db.query('SELECT * FROM Categoria ORDER BY COALESCE(ordem,999), ID', (err2, categorias) => {
               if (err2) return res.status(500).render('index', { produtos, categorias: [], promocoes: [] });
               db.query(
                 `SELECT Promocao.id, Promocao.imagem, Promocao.descricao, Promocao.valor_promocional, Promocao.data_fim, Produto.nome AS produto_nome, Produto.valor AS valor_real, Promocao.produto_id, Produto.slug

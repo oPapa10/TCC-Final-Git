@@ -380,6 +380,27 @@
     border-top: 1px solid #eee;
 }
 
+/* ===== ADICIONADO / AJUSTADO: prevenção de dígitos cortados na descrição relacionada ===== */
+.related-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;            /* limita a 2 linhas em WebKit */
+    -webkit-box-orient: vertical;
+    overflow: hidden;                 /* esconde o restante */
+    text-overflow: ellipsis;
+    line-height: 1.25rem;             /* linha consistente */
+    max-height: calc(1.25rem * 2);    /* fallback para não depender de min-height */
+    margin-bottom: 0.6rem;            /* separa do preço/área inferior */
+    overflow-wrap: anywhere;          /* evita que sequências longas (números) vazem */
+    word-break: break-word;
+    hyphens: auto;
+}
+
+/* Mantém o estilo do card de produto */
+.product-card {
+    position: relative;
+    transition: transform 0.3s;
+}
+
 /* ==================Estilo para o container do preço total */
 .total-price-container {
     background-color: #f8f9fa;

@@ -263,6 +263,10 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(promocoes => {
                 const lista = document.getElementById('listaPromocoes');
                 lista.innerHTML = '';
+                
+                // ATUALIZAR INDICADORES
+                atualizarIndicadores(promocoes);
+                
                 if (!promocoes.length) {
                     lista.innerHTML = '<li class="list-group-item text-center text-muted">Nenhuma promoção cadastrada.</li>';
                     return;
@@ -305,8 +309,33 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    // NOVA FUNÇÃO: Atualizar os indicadores
+    function atualizarIndicadores(promocoes) {
+        const totalPromocoes = promocoes.length;
+        
+        // Contar promoções que expiram hoje
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        
+        const amanha = new Date(hoje);
+        amanha.setDate(amanha.getDate() + 1);
+        
+        const promocoesExpiramHoje = promocoes.filter(promo => {
+            if (!promo.data_fim) return false;
+            const dataFim = new Date(promo.data_fim);
+            return dataFim >= hoje && dataFim < amanha;
+        }).length;
+        
+        // Atualizar elementos HTML
+        document.getElementById('totalPromocoes').textContent = totalPromocoes;
+        document.getElementById('promocoesExpiram').textContent = promocoesExpiramHoje;
+    }
+
     // Chama ao carregar a página
     carregarPromocoes();
+    
+    // Recarregar a cada 30 segundos para manter os indicadores atualizados
+    setInterval(carregarPromocoes, 30000);
 
     // Carregar produtos disponíveis para promoção
     fetch('/cadastrarPromocao/produtos-disponiveis')

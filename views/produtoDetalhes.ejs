@@ -144,7 +144,7 @@
 
               const itens = Object.entries(combinado2)
                 .filter(([k,v]) => {
-                  if (['id','nome','valor','descricao','slug','imagem','thumbnails','categoria_id'].includes(k.toLowerCase())) return false;
+                  if (['id','nome','valor','descricao','slug','imagem','thumbnails','categoria_id','especificacoes'].includes(k.toLowerCase())) return false;
                   return v !== '' && v !== null && typeof v !== 'undefined';
                 })
                 .map(([k,v]) => {

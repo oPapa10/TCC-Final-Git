@@ -65,6 +65,8 @@
                 
                 <% if (n.status === 'pendente') { %>
                   <span class="status-badge status-pendente">Pendente</span>
+                  
+                
                 <% } else if (n.status === 'pronto') { %>
                   <span class="status-badge status-pronto">Pronto</span>
                 <% } else if (n.status === 'a_caminho' && n.venda_id) { %>
@@ -75,8 +77,7 @@
                   </form>
                 <% } else if (n.status === 'entregue') { %>
                   <span class="status-badge status-entregue">Entregue</span>
-                <% } else { %>
-                  <span class="status-badge status-pronto"><%= n.status %></span>
+                  
                 <% } %>
 
                 <!-- Botão REMOVER notificação (apenas remove o registro de notificações) -->
@@ -133,6 +134,7 @@
       const modalText = document.getElementById('confirmDeleteNotificacaoText');
       const confirmBtn = document.getElementById('confirmDeleteNotificacaoBtn');
       let formToSubmit = null;
+      let vendaIdToCancel = null;
 
       const bsModal = modalEl ? new bootstrap.Modal(modalEl) : null;
 
@@ -141,22 +143,44 @@
           e.preventDefault();
           const id = this.getAttribute('data-id');
           const titulo = this.getAttribute('data-titulo') || 'esta notificação';
+          const vendaId = this.getAttribute('data-venda-id');
+          
           // localizar o form pai correspondente
           formToSubmit = this.closest('form');
-          if (modalText) modalText.textContent = `Deseja remover "${titulo}"? Esta ação removerá apenas a notificação.`;
+          vendaIdToCancel = vendaId || null;
+
+          // Determina mensagem baseada no tipo de botão
+          let mensagem = `Deseja remover "${titulo}"? Esta ação removerá apenas a notificação.`;
+          if (vendaId) {
+            mensagem = `Tem certeza que deseja cancelar este pedido? Ele será removido da sua lista.`;
+          }
+
+          if (modalText) modalText.textContent = mensagem;
           if (bsModal) bsModal.show();
         });
       });
 
       if (confirmBtn) {
-        confirmBtn.addEventListener('click', function(){
-          if (formToSubmit) {
+        confirmBtn.addEventListener('click', async function(){
+          // Se tem vendaId, faz requisição para cancelar; senão, faz submit normal
+          if (vendaIdToCancel) {
+            try {
+              const resp = await fetch('/notificacoes/notificacoes/cancelar-pedido', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'vendaId=' + encodeURIComponent(vendaIdToCancel)
+              });
+              if (resp.ok) {
+                window.location.href = '/notificacoes';
+              } else {
+                alert('Erro ao cancelar pedido');
+              }
+            } catch (err) {
+              console.error('Erro:', err);
+              alert('Erro ao cancelar pedido');
+            }
+          } else if (formToSubmit) {
             formToSubmit.submit();
           }
           if (bsModal) bsModal.hide();
         });
-      }
-    })();
-  </script>
-</body>
-</html>

@@ -38,7 +38,16 @@ router.get('/p/:slug', (req, res) => {
         (err3, avaliacoes) => {
           // Busca produtos da mesma categoria, exceto o atual
           db.query(
-            `SELECT * FROM Produto WHERE Categoria_ID = ? AND ID != ? LIMIT 4`,
+            `SELECT p.*, pr.valor_promocional
+             FROM Produto p
+             LEFT JOIN (
+               SELECT produto_id, MAX(valor_promocional) AS valor_promocional
+               FROM Promocao
+               WHERE data_fim IS NULL OR data_fim > NOW()
+               GROUP BY produto_id
+             ) pr ON pr.produto_id = p.ID
+             WHERE p.Categoria_ID = ? AND p.ID != ?
+             LIMIT 4`,
             [categoriaId, produtoId],
             (err2, relacionados) => {
               if (err2 || !relacionados) relacionados = [];

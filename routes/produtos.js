@@ -1,82 +1,139 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
 const Produto = require('../models/produtoModel');
+const Categoria = require('../models/Categoria');
+const db = require('../config/db');
 
-function valorOuAntigo(novo, antigo) {
-    return (novo !== undefined && novo !== null && novo !== '') ? novo : antigo;
-}
+// Configuração do multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'public/uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage });
 
-router.post('/editar/:id', (req, res) => {
-    const id = req.params.id;
-    const {
-        nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-        material, protecao, thumbnails, categoria
-    } = req.body;
-
-    let imagem = req.body.imagemAtual || '';
-    if (req.files && req.files['imagem'] && req.files['imagem'][0]) {
-        imagem = '/uploads/' + req.files['imagem'][0].filename;
+// ✅ ROTA GET - RENDERIZAR FORMULÁRIO DE EDIÇÃO
+router.get('/editar/:id', (req, res) => {
+  const id = req.params.id;
+  
+  // Busca produto
+  db.query('SELECT * FROM Produto WHERE ID = ?', [id], (err, produtosRows) => {
+    if (err || !produtosRows || produtosRows.length === 0) {
+      return res.status(404).render('error', { message: 'Produto não encontrado' });
     }
 
-    let thumbList = [];
-    if (thumbnails) {
-        thumbList = thumbnails.split(',').map(t => t.trim()).filter(t => t);
-    }
-    if (req.files && req.files['thumbnailUpload'] && req.files['thumbnailUpload'][0]) {
-        const uploadedPath = '/uploads/' + req.files['thumbnailUpload'][0].filename;
-        if (!thumbList.includes(uploadedPath)) {
-            thumbList.push(uploadedPath);
-        }
-    }
-    const thumbnailsFinal = thumbList.join(',');
+    const produto = produtosRows[0];
 
-    // LOG: O que chegou do formulário
-    console.log('--- [EDIT PRODUTO] Dados recebidos do form:');
-    console.log({
-        nome, cor, tamanho, peso, valor, cilindrada, descricao, potencia, tanque,
-        material, protecao, thumbnails, categoria, imagem, thumbnailsFinal
-    });
+    // Busca categorias
+    db.query('SELECT * FROM Categoria', (errCat, categorias) => {
+      if (errCat) categorias = [];
 
-    Produto.findById(id, (err, produtoOriginal) => {
-        if (err || !produtoOriginal) {
-            console.log('[EDIT PRODUTO] Produto não encontrado ou erro:', err);
-            return res.status(404).send('Produto não encontrado');
+      // Busca campos da categoria do produto
+      db.query('SELECT campos FROM Categoria WHERE ID = ?', [produto.Categoria_ID], (errCampos, rowsCampos) => {
+        let categoriaCampos = [];
+        if (!errCampos && rowsCampos && rowsCampos[0] && rowsCampos[0].campos) {
+          try {
+            const arr = JSON.parse(rowsCampos[0].campos);
+            categoriaCampos = Array.isArray(arr) ? arr : [];
+          } catch (e) {
+            categoriaCampos = [];
+          }
         }
 
-        // LOG: Produto original do banco
-        console.log('--- [EDIT PRODUTO] Produto original do banco:');
-        console.log(produtoOriginal);
-
-        const produtoAtualizado = {
-            nome: valorOuAntigo(nome, produtoOriginal.nome),
-            cor: valorOuAntigo(cor, produtoOriginal.cor),
-            tamanho: valorOuAntigo(tamanho, produtoOriginal.tamanho),
-            peso: valorOuAntigo(peso, produtoOriginal.peso),
-            valor: valorOuAntigo(valor, produtoOriginal.valor),
-            cilindrada: valorOuAntigo(cilindrada, produtoOriginal.cilindrada),
-            descricao: valorOuAntigo(descricao, produtoOriginal.descricao),
-            potencia: valorOuAntigo(potencia, produtoOriginal.potencia),
-            tanque: valorOuAntigo(tanque, produtoOriginal.tanque),
-            material: valorOuAntigo(material, produtoOriginal.material),
-            protecao: valorOuAntigo(protecao, produtoOriginal.protecao),
-            imagem: valorOuAntigo(imagem, produtoOriginal.imagem),
-            thumbnails: valorOuAntigo(thumbnailsFinal, produtoOriginal.thumbnails),
-            Categoria_ID: valorOuAntigo(categoria, produtoOriginal.Categoria_ID)
-        };
-
-        // LOG: Objeto que será enviado para update
-        console.log('--- [EDIT PRODUTO] Objeto para update:');
-        console.log(produtoAtualizado);
-
-        Produto.update(id, produtoAtualizado, (err2) => {
-            if (err2) {
-                console.log('[EDIT PRODUTO] ERRO ao atualizar produto:', err2);
-                return res.status(500).send('Erro ao atualizar produto');
-            }
-            console.log('[EDIT PRODUTO] Produto atualizado com sucesso!');
-            res.redirect('/seeProduto');
+        res.render('editProduto', {
+          produto,
+          categorias,
+          categoriaCampos
         });
+      });
     });
+  });
+});
+
+// === NOVA/ATUAL ROTA: salvar edição do produto ===
+router.post('/editar/:id', upload.fields([
+  { name: 'imagem', maxCount: 1 },
+  { name: 'thumbnailUpload', maxCount: 10 }
+]), (req, res) => {
+  const id = Number(req.params.id);
+  console.log('[PROD-EDIT] POST recebido — id=', id, 'bodyKeys=', Object.keys(req.body||{}), 'filesKeys=', Object.keys(req.files || {}));
+
+  try {
+    const body = req.body || {};
+    const nome = body.nome;
+    const valor = body.valor;
+    const descricao = body.descricao;
+    const categoria = body.categoria || body.Categoria_ID || body.categoria_id;
+    const imagemAtual = body.imagemAtual || body.imagem || '';
+    const imagemLink = body.imagemLink || '';
+
+    // imagem final (upload > link > atual)
+    let imagemFinal = imagemAtual || '';
+    if (req.files && req.files.imagem && req.files.imagem[0]) {
+      imagemFinal = '/uploads/' + req.files.imagem[0].filename;
+    } else if (imagemLink && imagemLink.trim()) {
+      imagemFinal = imagemLink.trim();
+    }
+
+    // thumbnails: existentes + uploads + links
+    let thumbsFinal = [];
+    if (body.existingThumbnails) {
+      const existing = Array.isArray(body.existingThumbnails) ? body.existingThumbnails : [body.existingThumbnails];
+      thumbsFinal.push(...existing.filter(t => t && t.trim()));
+    }
+    if (req.files && req.files.thumbnailUpload && req.files.thumbnailUpload.length) {
+      req.files.thumbnailUpload.forEach(f => thumbsFinal.push('/uploads/' + f.filename));
+    }
+    if (body.thumbnailLinks) {
+      const links = String(body.thumbnailLinks).split(',').map(s => s.trim()).filter(Boolean);
+      thumbsFinal.push(...links);
+    }
+
+    // COLETA as especificações DINÂMICAS e guarda num único campo JSON
+    const padrao = ['nome','valor','descricao','categoria','Categoria_ID','imagem','imagemAtual','imagemLink','existingThumbnails','thumbnailLinks','thumbnailUpload','_method','id'];
+    const especificacoesObj = {};
+    Object.entries(body).forEach(([k, v]) => {
+      if (!padrao.includes(k) && v !== undefined && v !== null && String(v).trim() !== '') {
+        especificacoesObj[k] = String(v).trim();
+      }
+    });
+
+    // Prepara objeto de atualização: grava as especificações em "especificacoes_raw"
+    const produtoAtualizado = {
+      ...(nome !== undefined ? { nome } : {}),
+      ...(valor !== undefined && valor !== '' ? { valor: Number(valor) } : {}),
+      ...(descricao !== undefined ? { descricao } : {}),
+      ...(categoria ? { Categoria_ID: Number(categoria) } : {}),
+      ...(imagemFinal ? { imagem: imagemFinal } : {}),
+      ...(thumbsFinal.length ? { thumbnails: JSON.stringify(thumbsFinal) } : {}),
+    };
+
+    // se houver especificações, salva como JSON no campo especificacoes_raw (ou altere para 'especificacoes' se for esse)
+    if (Object.keys(especificacoesObj).length > 0) {
+      produtoAtualizado.especificacoes_raw = JSON.stringify(especificacoesObj);
+    }
+
+    // Remove chaves vazias
+    Object.keys(produtoAtualizado).forEach(k => {
+      if (produtoAtualizado[k] === undefined || produtoAtualizado[k] === null || produtoAtualizado[k] === '') delete produtoAtualizado[k];
+    });
+
+    console.log('[PROD-EDIT] dados a gravar:', produtoAtualizado);
+
+    // Usa o método do model (Produto.update) para gravar
+    Produto.update(id, produtoAtualizado, (err, result) => {
+      if (err) {
+        console.error('[PROD-EDIT] erro update:', err);
+        return res.status(500).render('error', { message: 'Erro ao salvar produto', error: err });
+      }
+      console.log('[PROD-EDIT] update OK id=', id);
+      return res.redirect('/seeProduto');
+    });
+  } catch (err) {
+    console.error('[PROD-EDIT] exceção:', err);
+    return res.status(500).send('Erro interno');
+  }
 });
 
 module.exports = router;

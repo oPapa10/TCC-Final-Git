@@ -26,7 +26,7 @@ exports.create = (produto, callback) => {
     // consulta colunas reais da tabela produto para evitar ER_BAD_FIELD_ERROR
     db.query(
       `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'produto'`,
+       WHERE TABLE_SCHEMA = DATABASE() AND LOWER(TABLE_NAME) = 'produto'`,
       (err, cols) => {
         if (err) return callback(err);
 
@@ -100,7 +100,7 @@ exports.update = (id, produto, callback) => {
   // busca colunas reais
   db.query(
     `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'produto'`,
+     WHERE TABLE_SCHEMA = DATABASE() AND LOWER(TABLE_NAME) = 'produto'`,
     (err, cols) => {
       if (err) return callback(err);
       const colMap = {};
@@ -163,7 +163,10 @@ exports.update = (id, produto, callback) => {
           console.warn('[MODEL] Coluna especificacoes não existe; especificações não serão salvas.');
         }
 
+        // depois de montar updates/values, se estiver vazio, log detalhado
         if (updates.length === 0) {
+          console.warn('[MODEL] Nenhum campo para atualizar — colMap keys:', Object.keys(colMap).slice(0,50));
+          console.warn('[MODEL] Objeto produto recebido (keys):', Object.keys(produto));
           return callback(new Error('Nenhum campo para atualizar'));
         }
 

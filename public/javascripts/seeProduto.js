@@ -54,11 +54,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Confirmação de Exclusão
     const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-    let formToDelete = null;
+    let produtoIdToDelete = null;
 
     document.querySelectorAll('.btn-delete-prod').forEach(btn => {
-        btn.addEventListener('click', function() {
-            formToDelete = this.closest('form');
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            produtoIdToDelete = this.getAttribute('data-id');
             const nome = this.getAttribute('data-nome');
             document.getElementById('confirmDeleteText').textContent = 
                 `Deseja excluir "${nome}"? Esta ação não pode ser desfeita.`;
@@ -67,8 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('confirmDeleteBtn')?.addEventListener('click', function() {
-        if (formToDelete) {
-            formToDelete.submit();
+        if (produtoIdToDelete) {
+            const form = document.getElementById(`form-delete-${produtoIdToDelete}`);
+            if (form) {
+                form.submit();
+            }
         }
         confirmModal.hide();
     });

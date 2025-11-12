@@ -512,7 +512,7 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
 
     console.log('[compraConfirmacao] email será enviado com:', itensParaEmail.length, 'itens');
 
-    // ✅ ENVIA EMAIL AQUI (após confirmar pedido)
+    // ✅ ENVIA EMAIL
     try {
       const isCart = req.session.checkout && req.session.checkout.source === 'cart';
       if (isCart) {
@@ -524,6 +524,54 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
       console.error('[compraConfirmacao] erro ao enviar email:', emailErr);
     }
 
+    // ✅ NOVA SEÇÃO: CRIAR VENDAS NO BANCO DE DADOS
+    console.log('[compraConfirmacao] Criando vendas no banco...');
+    
+    for (const item of itensParaEmail) {
+      try {
+        // Insere na tabela VENDE
+        const vendaResult = await new Promise((resolve, reject) => {
+          db.query(
+            `INSERT INTO VENDE (Cliente_ID, Produto_ID, valor_venda, status, hora_venda) 
+             VALUES (?, ?, ?, ?, NOW())`,
+            [usuario.ID, item.produtoId, item.lineTotal, 'pendente'],
+            (err, result) => {
+              if (err) {
+                console.error('[compraConfirmacao] Erro ao inserir venda:', err);
+                return reject(err);
+              }
+              console.log('[compraConfirmacao] Venda inserida com ID:', result.insertId);
+              resolve(result);
+            }
+          );
+        });
+
+        // ✅ CRIAR NOTIFICAÇÃO PARA O USUÁRIO (COM VENDA_ID)
+        await new Promise((resolve, reject) => {
+          const titulo = 'Pedido recebido';
+          const mensagem = `Seu pedido de ${item.nome} (Qtd: ${item.quantidade}) foi recebido! Em breve entraremos em contato.`;
+          const vendaId = vendaResult.insertId; // ✅ USA O ID DA VENDA INSERIDA
+          
+          db.query(
+            `INSERT INTO notificacoes (cliente_id, titulo, mensagem, status, venda_id) 
+             VALUES (?, ?, ?, ?, ?)`,
+            [usuario.ID, titulo, mensagem, 'pendente', vendaId],
+            (err, result) => {
+              if (err) {
+                console.error('[compraConfirmacao] Erro ao criar notificação:', err);
+                return reject(err);
+              }
+              console.log('[compraConfirmacao] Notificação criada com ID:', result.insertId, 'vinculada à venda:', vendaId);
+              resolve(result);
+            }
+          );
+        });
+
+      } catch (itemErr) {
+        console.error('[compraConfirmacao] Erro ao processar item:', itemErr);
+      }
+    }
+
     // Armazena dados na sessão para página de confirmação
     req.session.ultimaCompra = {
       itens: itensParaEmail,
@@ -531,6 +579,11 @@ router.post('/compraConfirmacao', exigeLogin, async (req, res) => {
       descricao: descricao,
       data: new Date().toISOString()
     };
+
+    // Limpa carrinho da sessão após compra
+    if (req.session.checkout) {
+      delete req.session.checkout;
+    }
 
     res.json({ 
       success: true, 

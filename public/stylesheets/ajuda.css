@@ -284,6 +284,72 @@
     text-decoration: underline;
 }
 
+/* Estilos para modais de feedback */
+.modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.modal-body {
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.modal-body i {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-footer {
+    padding: 1.25rem;
+}
+
+.btn-close-white:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+}
+
+/* Melhorias para tema escuro */
+body.dark-theme .modal-content {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+body.dark-theme .modal-body {
+    color: #e0e0e0;
+}
+
+body.dark-theme .form-control {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-theme .form-control:focus {
+    background-color: #3a3a3a;
+    border-color: #0d6efd;
+    color: #e0e0e0;
+}
+
+body.dark-theme .form-label {
+    color: #e0e0e0;
+}
+
 @media (max-width: 768px) {
     .help-header h1 {
         font-size: 2rem;

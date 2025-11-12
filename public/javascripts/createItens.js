@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     capacete: [
       { label: 'Marca', name: 'marca', type: 'text', required: true },
       { label: 'Modelo', name: 'modelo', type: 'text', required: false },
-      { label: 'Tamanho', name: 'tamanho', type: 'select', options: ['P', 'M', 'G', 'GG'], required: false },
+      { label: 'Tamanho', name: 'tamanho', type: 'text', required: false },
       { label: 'Cor', name: 'cor', type: 'text', required: false },
       { label: 'Material do Casco', name: 'material_casco', type: 'text', required: false },
       { label: 'Tipo de Viseira', name: 'tipo_viseira', type: 'text', required: false },
@@ -25,19 +25,19 @@ document.addEventListener('DOMContentLoaded', function () {
     moto: [
       { label: 'Marca', name: 'marca', type: 'text', required: true },
       { label: 'Modelo', name: 'modelo', type: 'text', required: true },
-      { label: 'Ano', name: 'ano', type: 'number', required: false },
+      { label: 'Ano', name: 'ano', type: 'text', required: false },
       { label: 'Cilindrada', name: 'cilindrada', type: 'select', options: ['50cc', '125cc', '150cc', '160cc', '250cc', '300cc', '500cc', '600cc', '1000cc', 'Outra'], required: false },
       { label: 'Cor', name: 'cor', type: 'text', required: false },
       { label: 'Tipo de Motor', name: 'tipo_motor', type: 'select', options: ['2 tempos', '4 tempos'], required: false },
       { label: 'Sistema de Refrigeração', name: 'refrigeracao', type: 'select', options: ['Ar', 'Líquida'], required: false },
       { label: 'Tipo de Partida', name: 'partida', type: 'select', options: ['Elétrica', 'Pedal'], required: false },
-      { label: 'Quilometragem', name: 'quilometragem', type: 'number', required: false },
-      { label: 'Número de Marchas', name: 'marchas', type: 'number', required: false },
+      { label: 'Quilometragem', name: 'quilometragem', type: 'text', required: false },
+      { label: 'Número de Marchas', name: 'marchas', type: 'text', required: false },
       { label: 'Descrição', name: 'descricao', type: 'textarea', required: false }
     ],
     oleo: [
       { label: 'Marca', name: 'marca', type: 'text', required: true },
-      { label: 'Tipo de Óleo', name: 'tipo_oleo', type: 'select', options: ['Mineral', 'Semi-sintético', 'Sintético'], required: false },
+      { label: 'Tipo de Óleo', name: 'tipo_oleo', type: 'text', required: false },
       { label: 'Viscosidade', name: 'viscosidade', type: 'text', required: false },
       { label: 'Volume da Unidade (ml)', name: 'volume_unidade', type: 'number', required: false },
       { label: 'Formato de Venda', name: 'formato_venda', type: 'text', required: false },
@@ -127,10 +127,34 @@ document.addEventListener('DOMContentLoaded', function () {
     const req = campo.required ? 'required' : '';
     
     if (campo.type === 'textarea') {
+      const maxChars = 2000; // Limite para descrição
       wrapper.innerHTML = `
         <label class="form-label" for="${campo.name}">${campo.label}</label>
-        <textarea id="${campo.name}" name="${campo.name}" class="form-control" ${req} rows="3"></textarea>
+        <textarea id="${campo.name}" name="${campo.name}" class="form-control" ${req} rows="3" maxlength="${maxChars}" data-maxchars="${maxChars}"></textarea>
+        <div class="form-text">
+          <span id="char-count-${campo.name}">0</span>/<span>${maxChars}</span> caracteres
+        </div>
       `;
+      
+      // Adiciona listener de contagem
+      setTimeout(() => {
+        const textarea = document.getElementById(campo.name);
+        if (textarea) {
+          textarea.addEventListener('input', function() {
+            const contador = document.getElementById(`char-count-${campo.name}`);
+            if (contador) {
+              contador.textContent = this.value.length;
+              // Muda cor quando próximo do limite
+              if (this.value.length > maxChars * 0.9) {
+                contador.parentElement.style.color = '#dc3545';
+              } else {
+                contador.parentElement.style.color = '#6c757d';
+              }
+            }
+          });
+        }
+      }, 0);
+      
     } else if (campo.type === 'select') {
       wrapper.innerHTML = `
         <label class="form-label" for="${campo.name}">${campo.label}</label>

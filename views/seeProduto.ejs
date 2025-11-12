@@ -188,6 +188,11 @@
                                 <a href="/produtos/editar/<%= produto.ID %>" class="action-btn edit" title="Editar">
                                     <i class="fas fa-pencil-alt"></i>
                                 </a>
+                                <form id="form-delete-<%= produto.ID %>" 
+                                      action="/seeProduto/excluir/<%= produto.ID %>" 
+                                      method="POST" 
+                                      style="display: none;">
+                                </form>
                                 <button type="button" class="action-btn delete btn-delete-prod" 
                                         data-id="<%= produto.ID %>"
                                         data-nome="<%= produto.nome %>"

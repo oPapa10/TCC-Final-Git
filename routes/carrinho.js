@@ -247,16 +247,34 @@ router.post('/adicionar', (req, res) => {
         produtoId: Number(produtoId),
         quantidade: qtd,
         nome: produtoNome,
-        // ... outros campos já existentes ...
       });
     }
 
-    res.json({ 
-      success: true, 
-      message: 'Produto adicionado ao carrinho',
-      produtoNome,
-      quantidade: qtd
-    });
+    // Se usuário logado, persiste no banco (upsert)
+    if (req.session.usuario && req.session.usuario.ID) {
+      const usuarioId = Number(req.session.usuario.ID);
+      db.query(
+        'INSERT INTO CARRINHO (usuario_id, produto_id, quantidade) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantidade = quantidade + ?',
+        [usuarioId, produtoId, qtd, qtd],
+        (dbErr) => {
+          if (dbErr) {
+            console.error('[CARRINHO][adicionar] erro ao persistir no DB:', dbErr);
+            // mesmo em erro de BD, responde sucesso para não bloquear UX
+            return res.json({ success: true, message: 'Produto adicionado ao carrinho (sessão)', produtoNome, quantidade: qtd });
+          }
+          console.log('[CARRINHO][adicionar] persistido no DB:', { usuarioId, produtoId, qtd });
+          return res.json({ success: true, message: 'Produto adicionado ao carrinho', produtoNome, quantidade: qtd });
+        }
+      );
+    } else {
+      // usuário não logado — apenas sessão
+      return res.json({
+        success: true,
+        message: 'Produto adicionado ao carrinho (sessão)',
+        produtoNome,
+        quantidade: qtd
+      });
+    }
   });
 });
 

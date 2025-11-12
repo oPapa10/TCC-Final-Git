@@ -109,7 +109,7 @@ router.post('/produtos', upload.fields([
     const produtoParaSalvar = {
       nome: nome,
       valor: body.valor ? Number(body.valor) : 0,
-      descricao: body.descricao || null,
+      descricao: (body.descricao || '').substring(0, 2000), // Limita a 2000 caracteres
       Categoria_ID: parseInt(body.categoria_id, 10),
       imagem: imagem,
       thumbnails: thumbnailsFinal,

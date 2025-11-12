@@ -70,7 +70,7 @@
                                 </div>
                             <% } else { %>
                                 <% categorias.forEach(function(cat) { %>
-                                    <li class="category-item">
+                                    <li class="category-item" data-id="<%= cat.ID %>">
                                         <div class="category-info">
                                             <span class="category-name"><%= cat.nome %></span>
                                             <span class="category-id">ID: <%= cat.ID %></span>
